@@ -27,7 +27,7 @@ public final class ExampleImageSets
   private final Map<String, JWFileImageSetType> imageSets;
 
   public ExampleImageSets(
-    final Map <String, JWFileImageSetType> inImageSets)
+    final Map<String, JWFileImageSetType> inImageSets)
   {
     this.imageSets = Objects.requireNonNull(inImageSets, "imageSets");
   }

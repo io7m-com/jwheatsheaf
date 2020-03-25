@@ -84,7 +84,10 @@ public final class JWTestFilesystems
     Mockito.when(filesystem.getPath(Mockito.anyString()))
       .thenReturn(path);
 
-    Mockito.when(provider.readAttributes(path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS))
+    Mockito.when(provider.readAttributes(
+      path,
+      BasicFileAttributes.class,
+      LinkOption.NOFOLLOW_LINKS))
       .thenReturn(attributes);
     Mockito.when(provider.readAttributes(path, BasicFileAttributes.class))
       .thenReturn(attributes);
@@ -121,7 +124,10 @@ public final class JWTestFilesystems
     Mockito.when(filesystem.getPath(Mockito.anyString()))
       .thenReturn(path);
 
-    Mockito.when(provider.readAttributes(path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS))
+    Mockito.when(provider.readAttributes(
+      path,
+      BasicFileAttributes.class,
+      LinkOption.NOFOLLOW_LINKS))
       .thenReturn(attributes);
     Mockito.when(provider.readAttributes(path, BasicFileAttributes.class))
       .thenReturn(attributes);

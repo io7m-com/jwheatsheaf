@@ -50,21 +50,21 @@ public final class JWFileListTest
     this.filterAll =
       JWFileChooserFilterAllFiles.create(this.strings);
 
-    this. item0 =
+    this.item0 =
       JWFileItem.builder()
         .setPath(Paths.get("/x"))
         .setModifiedTime(FileTime.fromMillis(0L))
         .setKind(JWFileKind.REGULAR_FILE)
         .setSize(0L)
         .build();
-    this. item1 =
+    this.item1 =
       JWFileItem.builder()
         .setPath(Paths.get("/y"))
         .setModifiedTime(FileTime.fromMillis(0L))
         .setKind(JWFileKind.REGULAR_FILE)
         .setSize(0L)
         .build();
-    this. item2 =
+    this.item2 =
       JWFileItem.builder()
         .setPath(Paths.get("/z"))
         .setModifiedTime(FileTime.fromMillis(0L))

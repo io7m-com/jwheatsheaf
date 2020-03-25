@@ -18,12 +18,12 @@ package com.io7m.jwheatsheaf.ui;
 
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
-import com.io7m.jwheatsheaf.api.JWFileListingFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
+import com.io7m.jwheatsheaf.api.JWFileListingFailed;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -78,6 +78,7 @@ public final class JWFileChooserViewController
     LoggerFactory.getLogger(JWFileChooserViewController.class);
 
   private final ChangeListener<Path> listener;
+  private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
   private JWFileChooserConfiguration configuration;
   private JWFileChooserFilterType filterAll;
   private JWFileChooserFilterType filterOnlyDirectories;
@@ -86,8 +87,6 @@ public final class JWFileChooserViewController
   private JWFileList fileListing;
   private List<Path> result;
   private volatile Path currentDirectory;
-  private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
-
   @FXML
   private Pane mainContent;
   @FXML
@@ -117,7 +116,8 @@ public final class JWFileChooserViewController
   {
     this.listener = this::onPathMenuItemSelected;
     this.result = List.of();
-    this.eventReceiver = new AtomicReference<>(event -> {});
+    this.eventReceiver = new AtomicReference<>(event -> {
+    });
   }
 
   private static List<Path> allParentsOf(
@@ -143,12 +143,14 @@ public final class JWFileChooserViewController
     final Consumer<JWFileChooserEventType> eventReceiver)
   {
     this.eventReceiver.set(
-      Objects.requireNonNullElse(eventReceiver, event -> {}));
+      Objects.requireNonNullElse(eventReceiver, event -> {
+      }));
   }
 
   /**
    * Set the file chooser provider and configuration.
-   *  @param inChoosers      The provider
+   *
+   * @param inChoosers      The provider
    * @param inConfiguration The configuration
    */
 
