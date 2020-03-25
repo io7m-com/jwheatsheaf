@@ -2,7 +2,7 @@
 
 <div xmlns="http://www.w3.org/1999/xhtml">
   <ul>
-    <li>Configurable, styleable (CSS), consistent, non-native file JavaFX chooser.</li>
+    <li>Configurable, styleable (CSS), consistent, non-native JavaFX file chooser.</li>
     <li>Compatible with any JSR 203 filesystem.</li>
     <li>Directory creation.</li>
     <li>Configurable, extensible file/directory filtering.</li>
