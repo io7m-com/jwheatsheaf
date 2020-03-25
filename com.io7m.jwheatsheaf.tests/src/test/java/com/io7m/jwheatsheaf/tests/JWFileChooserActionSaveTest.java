@@ -21,14 +21,11 @@ import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.scene.control.TableRow;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
@@ -38,15 +35,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ExtendWith(ApplicationExtension.class)
-public final class JWFileChooserTest
+public final class JWFileChooserActionSaveTest
 {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(JWFileChooserTest.class);
-
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
   private FileSystem brokenFilesystem;
@@ -70,7 +63,7 @@ public final class JWFileChooserTest
     final var configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
-        .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
+        .setAction(JWFileChooserAction.CREATE)
         .setFileSystem(this.dosFilesystem)
         .build();
 
@@ -81,96 +74,21 @@ public final class JWFileChooserTest
   }
 
   /**
-   * Clicking the cancel button yields nothing.
+   * In SAVE mode, entering a name unlocks the OK button.
    */
 
   @Test
-  public void testCancel(final FxRobot robot)
-  {
-    robot.clickOn("#fileChooserCancelButton");
-    Assertions.assertEquals(List.of(), this.chooser.result());
-    Assertions.assertEquals(0, this.events.size());
-  }
-
-  /**
-   * Clicking the first row of the directory table yields a directory, and
-   * clicking the OK button selects it.
-   */
-
-  @Test
-  public void testDirectorySelect(final FxRobot robot)
-  {
-    final TableRow<?> row = robot.lookup(".table-row-cell").nth(1).query();
-    robot.clickOn(row);
-    robot.clickOn("#fileChooserOKButton");
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList()));
-    Assertions.assertEquals(0, this.events.size());
-  }
-
-  /**
-   * Navigation via the path menu works.
-   */
-
-  @Test
-  public void testPathMenuSelect(final FxRobot robot)
+  public void testActionSaveNamed(final FxRobot robot)
     throws Exception
   {
-    // Test is fragile when run on Travis CI
-    Assumptions.assumeFalse(isTravisCI());
-
-    final var choice =
-      robot.lookup("#fileChooserPathMenu").query();
-
-    robot.clickOn(choice)
-      .clickOn("Z:\\");
-
-    final TableRow<?> row =
-      robot.lookup(".table-row-cell")
-        .nth(0)
-        .query();
-
-    robot.clickOn(row)
+    robot
+      .clickOn("#fileChooserNameField")
+      .write("GCC.EXE")
+      .type(KeyCode.ENTER)
       .clickOn("#fileChooserOKButton");
 
     Assertions.assertEquals(
-      List.of("Z:\\"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList()));
-    Assertions.assertEquals(0, this.events.size());
-  }
-
-  private static boolean isTravisCI()
-  {
-    return Objects.equals(System.getenv("TRAVIS"), "true")
-      && Objects.equals(System.getenv("CI"), "true");
-  }
-
-  /**
-   * Navigation via the filesystem root menu succeeds.
-   */
-
-  @Test
-  public void testSourceMenuSelect(final FxRobot robot)
-    throws Exception
-  {
-    robot.doubleClickOn("Z:\\");
-
-    final TableRow<?> row =
-      robot.lookup(".table-row-cell").nth(1).query();
-
-    robot.clickOn(row)
-      .clickOn("#fileChooserOKButton");
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS"),
+      List.of("Z:\\USERS\\GROUCH\\GCC.EXE"),
       this.chooser.result()
         .stream()
         .map(Path::toString)

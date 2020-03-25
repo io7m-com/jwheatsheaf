@@ -113,4 +113,14 @@ public final class JWStrings
   {
     return this.resourceBundle.getString("ui.filesSelect");
   }
+
+  public String open()
+  {
+    return this.resourceBundle.getString("ui.open");
+  }
+
+  public String save()
+  {
+    return this.resourceBundle.getString("ui.save");
+  }
 }

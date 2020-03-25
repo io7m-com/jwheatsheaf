@@ -64,17 +64,18 @@ final List<Path> selected = chooser.showAndWait();
     .build();
 ]]></pre>
 
-  <h5>Cardinality</h5>
+  <h5>Action</h5>
 
   <p>
-    By default, file choosers are configured to allow the selection of at most one file. This can
-    be changed by specifying the <i>cardinality</i> of the chooser.
+    By default, file choosers are configured to allow the selection of at most one file. The "OK"
+    button cannot be clicked until one file is selected. Other behaviours can be specified by
+    setting the <i>action</i> for the chooser:
   </p>
 
   <pre class="code"><![CDATA[final var configuration =
   JWFileChooserConfiguration.builder()
     .setFileSystem(FileSystems.getDefault())
-    .setCardinality(MULTIPLE)
+    .setAction(OPEN_EXISTING_MULTIPLE)
     .build();
 ]]></pre>
 

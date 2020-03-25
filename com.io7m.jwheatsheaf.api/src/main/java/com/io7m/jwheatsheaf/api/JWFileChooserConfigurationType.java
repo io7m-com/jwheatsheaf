@@ -111,13 +111,13 @@ public interface JWFileChooserConfigurationType
   }
 
   /**
-   * @return The selection cardinality
+   * @return The action that the user is performing
    */
 
   @Value.Default
-  default JWFileChooserCardinality cardinality()
+  default JWFileChooserAction action()
   {
-    return JWFileChooserCardinality.SINGLE;
+    return JWFileChooserAction.OPEN_EXISTING_SINGLE;
   }
 
   /**

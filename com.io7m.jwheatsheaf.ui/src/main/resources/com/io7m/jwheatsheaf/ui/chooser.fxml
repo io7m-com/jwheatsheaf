@@ -60,7 +60,7 @@
       <HBox VBox.vgrow="NEVER">
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileName" HBox.hgrow="NEVER" />
-            <TextField id="fileChooserNameField" fx:id="fileName" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" HBox.hgrow="ALWAYS" />
+            <TextField id="fileChooserNameField" fx:id="fileName" maxHeight="-Infinity" minHeight="-Infinity" onAction="#onNameFieldChanged" onKeyTyped="#onNameFieldChanged" prefHeight="32.0" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <Region layoutX="10.0" layoutY="150.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />

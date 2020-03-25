@@ -398,12 +398,21 @@ public final class JWFileChooserViewController
   @FXML
   private void onOKSelected()
   {
-    this.result =
-      this.directoryTable.getSelectionModel()
-        .getSelectedItems()
-        .stream()
-        .map(JWFileItem::path)
-        .collect(Collectors.toList());
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE:
+        this.result =
+          this.directoryTable.getSelectionModel()
+            .getSelectedItems()
+            .stream()
+            .map(JWFileItem::path)
+            .collect(Collectors.toList());
+        break;
+      case CREATE:
+        this.result =
+          List.of(this.currentDirectory.resolve(this.fileName.getText()));
+        break;
+    }
 
     final var window = this.mainContent.getScene().getWindow();
     window.hide();
@@ -418,8 +427,24 @@ public final class JWFileChooserViewController
     window.hide();
   }
 
+  @FXML
+  private void onNameFieldChanged()
+  {
+    this.reconfigureOKButton();
+  }
+
   private void configureButtons()
   {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE:
+        this.okButton.setText(this.choosers.strings().open());
+        break;
+      case CREATE:
+        this.okButton.setText(this.choosers.strings().save());
+        break;
+    }
+
     this.okButton.setDisable(true);
 
     this.newDirectoryButton.setDisable(
@@ -427,21 +452,20 @@ public final class JWFileChooserViewController
 
     final var selectionModel = this.directoryTable.getSelectionModel();
     selectionModel.selectedItemProperty()
-      .addListener(item -> this.onDirectoryTableSelectedItemChanged());
+      .addListener(item -> this.reconfigureOKButton());
   }
 
   private void configureTableView()
   {
     final var selectionModel = this.directoryTable.getSelectionModel();
-    switch (this.configuration.cardinality()) {
-      case SINGLE: {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_SINGLE:
+      case CREATE:
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
         break;
-      }
-      case MULTIPLE: {
+      case OPEN_EXISTING_MULTIPLE:
         selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
         break;
-      }
     }
 
     this.directoryTable.setPlaceholder(new Label(""));
@@ -589,10 +613,34 @@ public final class JWFileChooserViewController
     throw new UnreachableCodeException();
   }
 
-  private void onDirectoryTableSelectedItemChanged()
+  private void reconfigureOKButton()
   {
-    final var selectionModel = this.directoryTable.getSelectionModel();
-    this.okButton.setDisable(selectionModel.getSelectedItems().size() < 1);
+    boolean enabled = false;
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE: {
+        enabled = this.atLeastOneItemSelected();
+        break;
+      }
+      case CREATE: {
+        enabled = this.atLeastOneItemSelected() || this.fileNameNotEmpty();
+        break;
+      }
+    }
+
+    this.okButton.setDisable(!enabled);
+  }
+
+  private boolean fileNameNotEmpty()
+  {
+    return !this.fileName.getText().isEmpty();
+  }
+
+  private boolean atLeastOneItemSelected()
+  {
+    return this.directoryTable.getSelectionModel()
+      .getSelectedItems()
+      .size() >= 1;
   }
 
   private void onTableRowClicked(

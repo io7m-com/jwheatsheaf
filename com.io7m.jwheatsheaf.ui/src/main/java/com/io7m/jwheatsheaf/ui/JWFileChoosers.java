@@ -138,15 +138,14 @@ public final class JWFileChoosers implements JWFileChoosersType
       dialog.initModality(Modality.APPLICATION_MODAL);
       dialog.setScene(new Scene(pane));
 
-      switch (configuration.cardinality()) {
-        case SINGLE: {
+      switch (configuration.action()) {
+        case CREATE:
+        case OPEN_EXISTING_SINGLE:
           dialog.setTitle(this.strings.fileSelect());
           break;
-        }
-        case MULTIPLE: {
+        case OPEN_EXISTING_MULTIPLE:
           dialog.setTitle(this.strings.filesSelect());
           break;
-        }
       }
 
       return new JWFileChooser(dialog, viewController);
