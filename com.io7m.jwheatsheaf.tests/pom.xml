@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.tests</artifactId>
@@ -58,5 +58,15 @@
       <artifactId>junit-jupiter-engine</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Determine test coverage -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

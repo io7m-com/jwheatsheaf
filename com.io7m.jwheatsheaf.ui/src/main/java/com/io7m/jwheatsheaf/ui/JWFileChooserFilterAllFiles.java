@@ -25,7 +25,8 @@ import java.util.Objects;
  * A filter that trivially accepts all files.
  */
 
-public final class JWFileChooserFilterAllFiles implements JWFileChooserFilterType
+public final class JWFileChooserFilterAllFiles implements
+  JWFileChooserFilterType
 {
   private final String description;
 
