@@ -1,0 +1,28 @@
+<div xmlns="http://www.w3.org/1999/xhtml">
+  <p class="shields">
+      <a href="https://travis-ci.org/io7m/jwheatsheaf">
+         <img src="https://img.shields.io/travis/io7m/jwheatsheaf.png?style=flat-square"
+              alt="Build status"/>
+      </a>
+      <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jwheatsheaf%22">
+         <img src="https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.png?style=flat-square"
+              alt="Maven Central"/>
+      </a>
+      <a href="https://www.codacy.com/app/github_79/jwheatsheaf">
+         <img src="https://img.shields.io/codacy/grade/da626820d81647cf88e5633d7812ccb8.png?style=flat-square"
+              alt="Codacy"/>
+      </a>
+      <a href="https://codecov.io/gh/io7m/jwheatsheaf">
+         <img src="https://img.shields.io/codecov/c/github/io7m/jwheatsheaf.png?style=flat-square"
+              alt="Codecov"/>
+      </a>
+  </p>
+
+  <p>
+    The <tt>jwheatsheaf</tt> package provides a configurable <a href="https://openjfx.io/">JavaFX</a>
+    non-native file chooser dialog component capable of traversing any <a
+    href="https://docs.oracle.com/en/java/javase/13/docs/api/java.base/java/nio/file/package-summary.html">Java NIO
+    filesystem</a>.
+  </p>
+
+</div>

@@ -1,0 +1,51 @@
+.root
+{
+  -fx-font-size: 10pt;
+  -fx-font-family: "Sans";
+
+  -fx-base:              #2b3a3b;
+  -fx-accent:            #47ebca;
+  -fx-default-button:    #47ebca;
+  -fx-focus-color:       #609d9f;
+  -fx-faint-focus-color: #609d9f20;
+}
+
+.progress-bar > .track
+{
+  -fx-background-color: #404040;
+  -fx-background-insets: 0 0 0 0;
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-color: #609d9f;
+  -fx-border-insets: 0 0 0 0;
+  -fx-padding: 0 0 0 0;
+}
+
+.progress-bar > .bar
+{
+  -fx-background-color: #609d9f;
+  -fx-background-insets: 0 0 0 0;
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-insets: 0 0 0 0;
+  -fx-padding: 0 0 0 0;
+}
+
+.button,
+.check-box,
+.choice-box,
+.color-picker.split-button,
+.combo-box-base,
+.container,
+.control-buttons-tab,
+.menu-button,
+.progress-bar,
+.radio-button,
+.text-area,
+.tab,
+.tab-down-button,
+.tab-header-area,
+.tab-pane,
+.toggle-button
+{
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-radius: 0 0 0 0;
+}

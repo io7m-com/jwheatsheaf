@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="mainContent" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.io7m.jwheatsheaf.ui.JWFileChooserViewController">
+   <children>
+      <HBox VBox.vgrow="NEVER">
+         <children>
+            <ChoiceBox id="fileChooserPathMenu" fx:id="pathMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="32.0" styleClass="fileChooserPathMenu" HBox.hgrow="ALWAYS" />
+            <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+            <Button id="fileChooserUpButton" fx:id="upDirectoryButton" layoutX="762.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onUpDirectoryButton" prefHeight="32.0" prefWidth="32.0">
+               <tooltip>
+                  <Tooltip text="%ui.tooltip.goParentDirectory" />
+               </tooltip>
+            </Button>
+            <Region layoutX="722.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+            <Button id="fileChooserCreateDirectoryButton" fx:id="newDirectoryButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCreateDirectoryButton" prefHeight="32.0" prefWidth="32.0">
+               <tooltip>
+                  <Tooltip text="%ui.tooltip.directoryCreate" />
+               </tooltip></Button>
+         </children>
+      </HBox>
+      <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
+      <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <children>
+            <ListView id="fileChooserSourceList" fx:id="sourcesList" prefWidth="160.0" styleClass="fileChooserSourceList" />
+            <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField id="fileChooserSearchField" fx:id="searchField" maxHeight="-Infinity" minHeight="-Infinity" onAction="#onSearchFieldChanged" prefHeight="32.0" promptText="%ui.search">
+                     <tooltip>
+                        <Tooltip text="%ui.tooltip.search" />
+                     </tooltip></TextField>
+                  <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+                  <TableView id="fileChooserDirectoryTable" fx:id="directoryTable" prefHeight="200.0" prefWidth="200.0" styleClass="fileChooserDirectoryTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn editable="false" maxWidth="24.0" minWidth="24.0" prefWidth="24.0" sortable="false" />
+                      <TableColumn editable="false" minWidth="16.0" prefWidth="384.0" text="%ui.columnName" />
+                      <TableColumn editable="false" minWidth="64.0" prefWidth="64.0" text="%ui.columnSize" />
+                        <TableColumn editable="false" minWidth="0.0" prefWidth="128.0" text="%ui.columnModified" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Region layoutX="10.0" layoutY="42.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
+      <HBox VBox.vgrow="NEVER">
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileName" HBox.hgrow="NEVER" />
+            <TextField id="fileChooserNameField" fx:id="fileName" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="10.0" layoutY="150.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
+      <HBox layoutX="10.0" layoutY="158.0" VBox.vgrow="NEVER">
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileType" HBox.hgrow="NEVER" />
+            <ComboBox id="fileChooserFilterMenu" fx:id="fileTypeMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#onFileFilterSelected" prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="10.0" layoutY="190.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
+      <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" VBox.vgrow="NEVER">
+         <children>
+            <Region prefWidth="16.0" HBox.hgrow="ALWAYS" />
+            <Button id="fileChooserCancelButton" fx:id="cancelButton" cancelButton="true" maxHeight="-Infinity" mnemonicParsing="false" onAction="#onCancelSelected" prefHeight="32.0" prefWidth="128.0" text="%ui.cancel" />
+            <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+            <Button id="fileChooserOKButton" fx:id="okButton" defaultButton="true" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" mnemonicParsing="false" onAction="#onOKSelected" prefHeight="32.0" prefWidth="128.0" styleClass="fileChooserOKButton" text="%ui.open" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</VBox>

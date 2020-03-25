@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<div xmlns="http://www.w3.org/1999/xhtml">
+  <ul>
+    <li>Configurable, styleable (CSS), consistent, non-native file JavaFX chooser.</li>
+    <li>Compatible with any JSR 203 filesystem.</li>
+    <li>Directory creation.</li>
+    <li>Configurable, extensible file/directory filtering.</li>
+    <li>Simple case-insensitive directory searching.</li>
+    <li>Written in pure Java 11.</li>
+    <li><a href="https://www.osgi.org/">OSGi</a>-ready</li>
+    <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
+    <li>ISC license</li>
+    <li>High-coverage automated test suite</li>
+  </ul>
+</div>

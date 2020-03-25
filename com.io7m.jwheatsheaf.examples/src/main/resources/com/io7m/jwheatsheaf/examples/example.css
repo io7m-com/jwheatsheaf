@@ -1,0 +1,62 @@
+.root
+{
+  -fx-font-size: 10pt;
+  -fx-font-family: "Sans";
+}
+
+.progress-bar > .track
+{
+  -fx-background-insets: 0 0 0 0;
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-insets: 0 0 0 0;
+  -fx-padding: 0 0 0 0;
+}
+
+.progress-bar > .bar
+{
+  -fx-background-insets: 0 0 0 0;
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-insets: 0 0 0 0;
+  -fx-padding: 0 0 0 0;
+}
+
+.button,
+.check-box,
+.choice-box,
+.color-picker.split-button,
+.combo-box-base,
+.container,
+.control-buttons-tab,
+.menu-button,
+.progress-bar,
+.radio-button,
+.text-area,
+.tab,
+.tab-down-button,
+.tab-header-area,
+.tab-pane,
+.toggle-button
+{
+  -fx-background-radius: 0 0 0 0;
+  -fx-border-radius: 0 0 0 0;
+}
+
+.examplePathsList {
+  -fx-font-size: 11pt;
+  -fx-font-family: "Monospace";
+}
+
+.fileChooserPathMenu {
+  -fx-font-size: 8pt;
+  -fx-font-family: "Monospace";
+}
+
+.fileChooserDirectoryTable {
+  -fx-font-size: 8pt;
+  -fx-font-family: "Monospace";
+}
+
+.fileChooserSourceList {
+  -fx-font-size: 8pt;
+  -fx-font-family: "Monospace";
+}
