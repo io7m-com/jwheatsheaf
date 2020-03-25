@@ -4,12 +4,15 @@ jdk:
   - oraclejdk11
   - openjdk11
 
+dist: trusty
+
 before_install:
   - wget https://archive.apache.org/dist/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.zip
   - unzip -qq apache-maven-3.6.2-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.6.2
   - export PATH=$M2_HOME/bin:$PATH
-  - if [[ "${TRAVIS_OS_NAME}" == linux ]]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 
 install: true
 
