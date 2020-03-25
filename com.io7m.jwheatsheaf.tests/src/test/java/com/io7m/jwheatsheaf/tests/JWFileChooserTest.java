@@ -126,13 +126,15 @@ public final class JWFileChooserTest
       .clickOn("Z:\\");
 
     final TableRow<?> row =
-      robot.lookup(".table-row-cell").nth(1).query();
+      robot.lookup(".table-row-cell")
+        .nth(0)
+        .query();
 
     robot.clickOn(row)
       .clickOn("#fileChooserOKButton");
 
     Assertions.assertEquals(
-      List.of("Z:\\USERS"),
+      List.of("Z:\\"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
