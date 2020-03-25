@@ -17,7 +17,7 @@ before_install:
 install: true
 
 script:
-  - _JAVA_OPTIONS="-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
+  - export _JAVA_OPTIONS="-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
   - mvn --errors clean verify site
   - bash <(curl -s https://codecov.io/bash) -f ./com.io7m.jwheatsheaf.tests/target/site/jacoco-aggregate/jacoco.xml
 
