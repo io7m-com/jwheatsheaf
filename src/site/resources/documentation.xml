@@ -53,7 +53,9 @@ final List<Path> selected = chooser.showAndWait();
   <p>
     A list of file filters can be passed to file choosers via the <tt>fileFilters</tt> configuration
     parameter. File choosers are <i>always</i> equipped with a file filter that displays all files
-    (in other words, does no filtering) even if an empty list is passed in <tt>fileFilters</tt>.
+    (in other words, does no filtering) even if an empty list is passed in <tt>fileFilters</tt>. The
+    list of file filters will appear in the menu at the bottom of file chooser dialogs, allowing the
+    user to select one to filter results.
   </p>
 
   <pre class="code"><![CDATA[final var configuration =
