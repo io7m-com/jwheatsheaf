@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -80,6 +81,8 @@
       <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" VBox.vgrow="NEVER">
          <children>
             <Region prefWidth="16.0" HBox.hgrow="ALWAYS" />
+            <ProgressIndicator id="fileChooserProgress" fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="24.0" />
+            <Region layoutX="658.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
             <Button id="fileChooserCancelButton" fx:id="cancelButton" cancelButton="true" maxHeight="-Infinity" mnemonicParsing="false" onAction="#onCancelSelected" prefHeight="32.0" prefWidth="128.0" text="%ui.cancel" />
             <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
             <Button id="fileChooserOKButton" fx:id="okButton" defaultButton="true" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" mnemonicParsing="false" onAction="#onOKSelected" prefHeight="32.0" prefWidth="128.0" styleClass="fileChooserOKButton" text="%ui.open" />

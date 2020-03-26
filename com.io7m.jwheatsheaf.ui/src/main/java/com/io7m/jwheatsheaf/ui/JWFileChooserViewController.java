@@ -16,6 +16,7 @@
 
 package com.io7m.jwheatsheaf.ui;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
@@ -30,12 +31,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -77,14 +80,15 @@ public final class JWFileChooserViewController
   private static final Logger LOG =
     LoggerFactory.getLogger(JWFileChooserViewController.class);
 
-  private final ChangeListener<Path> listener;
   private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
+  private final ChangeListener<Path> listener;
   private JWFileChooserConfiguration configuration;
   private JWFileChooserFilterType filterAll;
   private JWFileChooserFilterType filterOnlyDirectories;
   private JWFileChoosers choosers;
   private JWFileImageSetType imageSet;
   private JWFileList fileListing;
+  private List<Node> lockableViews;
   private List<Path> result;
   private volatile Path currentDirectory;
 
@@ -110,6 +114,8 @@ public final class JWFileChooserViewController
   private Button okButton;
   @FXML
   private TextField searchField;
+  @FXML
+  private ProgressIndicator progressIndicator;
 
   /**
    * Construct a view controller.
@@ -200,6 +206,22 @@ public final class JWFileChooserViewController
     this.configureTableView();
     this.configureFileTypeMenu();
     this.configureSourceList(fileSystem);
+
+    /*
+     * The list of views that will be "locked" when an I/O operation is
+     * happening.
+     */
+
+    this.lockableViews = List.of(
+      this.directoryTable,
+      this.newDirectoryButton,
+      this.okButton,
+      this.pathMenu,
+      this.searchField,
+      this.selectDirectButton,
+      this.sourcesList,
+      this.upDirectoryButton
+    );
 
     this.setCurrentDirectory(startDirectory);
   }
@@ -335,14 +357,20 @@ public final class JWFileChooserViewController
     final JWFileListingRetrieverType itemRetriever)
   {
     this.directoryTable.setItems(this.fileListing.items());
+    this.ioLockUI();
 
     this.choosers.ioExecutor().execute(() -> {
       try {
         final var items = itemRetriever.onFileItemsRequested();
-        Platform.runLater(() -> this.fileListing.setItems(items));
+        this.applyTestingIODelayIfRequested();
+        Platform.runLater(() -> {
+          this.ioUnlockUI();
+          this.fileListing.setItems(items);
+        });
       } catch (final Exception e) {
         LOG.error("exception during directory listing: ", e);
         Platform.runLater(() -> {
+          this.ioUnlockUI();
           this.fileListing.setItems(List.of());
           try {
             this.eventReceiver.get()
@@ -353,6 +381,45 @@ public final class JWFileChooserViewController
         });
       }
     });
+  }
+
+  private void ioUnlockUI()
+  {
+    Preconditions.checkPreconditionV(
+      Platform.isFxApplicationThread(),
+      "Must be the FX application thread");
+
+    for (final var view : this.lockableViews) {
+      view.setDisable(false);
+    }
+    this.progressIndicator.setVisible(false);
+    this.reconfigureOKButton();
+  }
+
+  private void ioLockUI()
+  {
+    Preconditions.checkPreconditionV(
+      Platform.isFxApplicationThread(),
+      "Must be the FX application thread");
+
+    for (final var view : this.lockableViews) {
+      view.setDisable(true);
+    }
+
+    this.progressIndicator.setVisible(true);
+  }
+
+  private void applyTestingIODelayIfRequested()
+  {
+    this.choosers.testing()
+      .ioDelay()
+      .ifPresent(duration -> {
+        try {
+          Thread.sleep(duration.toMillis());
+        } catch (final InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
+      });
   }
 
   private void onPathMenuItemSelected(

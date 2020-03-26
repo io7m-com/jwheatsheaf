@@ -20,6 +20,7 @@ import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
+import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.scene.Node;
 import javafx.scene.control.TableRow;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+import org.testfx.framework.junit5.Stop;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -58,6 +60,7 @@ public final class JWFileChooserTest
   private JWFileChooserType chooser;
   private List<Path> selected;
   private List<JWFileChooserEventType> events;
+  private JWFileChoosersType choosers;
 
   @Start
   public void start(final Stage stage)
@@ -78,10 +81,17 @@ public final class JWFileChooserTest
         .setFileSystem(this.dosFilesystem)
         .build();
 
-    final var choosers = JWFileChoosers.create();
-    this.chooser = choosers.create(stage, configuration);
+    this.choosers = JWFileChoosers.create();
+    this.chooser = this.choosers.create(stage, configuration);
     this.chooser.setEventListener(event -> this.events.add(event));
     this.chooser.show();
+  }
+
+  @Stop
+  public void stop()
+    throws IOException
+  {
+    this.choosers.close();
   }
 
   /**

@@ -40,16 +40,20 @@ import java.util.concurrent.Executors;
 
 public final class JWFileChoosers implements JWFileChoosersType
 {
+  private final JWFileChoosersTesting testing;
   private final ExecutorService ioExecutor;
   private final JWFileImageDefaultSet imageSet;
   private final JWStrings strings;
 
   private JWFileChoosers(
     final JWStrings inStrings,
+    final JWFileChoosersTesting inTesting,
     final ExecutorService inIoExecutor)
   {
     this.strings =
       Objects.requireNonNull(inStrings, "inStrings");
+    this.testing =
+      Objects.requireNonNull(inTesting, "testing");
     this.ioExecutor =
       Objects.requireNonNull(inIoExecutor, "ioExecutor");
     this.imageSet =
@@ -84,6 +88,25 @@ public final class JWFileChoosers implements JWFileChoosersType
    * Create a new file chooser provider.
    *
    * @param executor An executor used for background I/O operations
+   * @param testing  Testing parameters
+   * @param locale   The locale used for internal string resources
+   *
+   * @return A file chooser provider
+   */
+
+  public static JWFileChoosersType createWithTesting(
+    final ExecutorService executor,
+    final JWFileChoosersTesting testing,
+    final Locale locale)
+  {
+    final var strings = JWStrings.of(JWStrings.getResourceBundle(locale));
+    return new JWFileChoosers(strings, testing, executor);
+  }
+
+  /**
+   * Create a new file chooser provider.
+   *
+   * @param executor An executor used for background I/O operations
    * @param locale   The locale used for internal string resources
    *
    * @return A file chooser provider
@@ -93,8 +116,13 @@ public final class JWFileChoosers implements JWFileChoosersType
     final ExecutorService executor,
     final Locale locale)
   {
-    final var strings = JWStrings.of(JWStrings.getResourceBundle(locale));
-    return new JWFileChoosers(strings, executor);
+    final var strings =
+      JWStrings.of(JWStrings.getResourceBundle(locale));
+    final var testing =
+      JWFileChoosersTesting.builder()
+        .build();
+
+    return new JWFileChoosers(strings, testing, executor);
   }
 
   ExecutorService ioExecutor()
@@ -163,5 +191,10 @@ public final class JWFileChoosers implements JWFileChoosersType
   JWFileImageSetType imageSet()
   {
     return this.imageSet;
+  }
+
+  JWFileChoosersTesting testing()
+  {
+    return this.testing;
   }
 }

@@ -22,12 +22,13 @@ import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.scene.input.KeyCode;
+import com.io7m.jwheatsheaf.ui.JWFileChoosersTesting;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
@@ -36,14 +37,22 @@ import org.testfx.framework.junit5.Stop;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @ExtendWith(ApplicationExtension.class)
-public final class JWFileChooserActionSaveTest
+public final class JWFileChooserSlowIOTest
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(JWFileChooserSlowIOTest.class);
+
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
   private FileSystem brokenFilesystem;
@@ -68,11 +77,19 @@ public final class JWFileChooserActionSaveTest
     final var configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
-        .setAction(JWFileChooserAction.CREATE)
+        .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
         .setFileSystem(this.dosFilesystem)
         .build();
 
-    this.choosers = JWFileChoosers.create();
+    this.choosers =
+      JWFileChoosers.createWithTesting(
+        Executors.newSingleThreadExecutor(),
+        JWFileChoosersTesting.builder()
+          .setIoDelay(Duration.of(1L, ChronoUnit.SECONDS))
+          .build(),
+        Locale.getDefault()
+      );
+
     this.chooser = this.choosers.create(stage, configuration);
     this.chooser.setEventListener(event -> this.events.add(event));
     this.chooser.show();
@@ -86,47 +103,22 @@ public final class JWFileChooserActionSaveTest
   }
 
   /**
-   * In SAVE mode, entering a name unlocks the OK button.
+   * Clicking the first row of the directory table yields a directory, and
+   * clicking the OK button selects it.
    */
 
   @Test
-  public void testActionSaveNamed(final FxRobot robot)
-    throws Exception
+  public void testDirectorySelect(final FxRobot robot)
   {
     robot
-      .clickOn("#fileChooserNameField")
-      .write("GCC.EXE")
-      .type(KeyCode.ENTER)
+      .sleep(2L, TimeUnit.SECONDS)
+      .doubleClickOn("Z:\\")
+      .sleep(2L, TimeUnit.SECONDS)
+      .clickOn("USERS")
       .clickOn("#fileChooserOKButton");
 
     Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\GCC.EXE"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList()));
-    Assertions.assertEquals(0, this.events.size());
-  }
-
-  /**
-   * The enter directly dialog works.
-   */
-
-  @Test
-  public void testDirectorySelectDirect(final FxRobot robot)
-    throws IOException
-  {
-    // Test is fragile when run on Travis CI
-    Assumptions.assumeFalse(JWFileChooserTest.isTravisCI());
-
-    robot
-      .clickOn("#fileChooserSelectDirectButton")
-      .write("Y:\\NEWFILE.TXT")
-      .type(KeyCode.ENTER)
-      .clickOn("#fileChooserOKButton");
-
-    Assertions.assertEquals(
-      List.of("Y:\\NEWFILE.TXT"),
+      List.of("Z:\\USERS"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
