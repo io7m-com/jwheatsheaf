@@ -172,6 +172,10 @@ final List<Path> selected = chooser.showAndWait();
         <td>The button used to create directories.</td>
       </tr>
       <tr>
+        <td><tt>fileChooserSelectDirectButton</tt></td>
+        <td>The button used to enter paths directly.</td>
+      </tr>
+      <tr>
         <td><tt>fileChooserSearchField</tt></td>
         <td>The search field used to filter the directory table.</td>
       </tr>
@@ -198,6 +202,10 @@ final List<Path> selected = chooser.showAndWait();
       <tr>
         <td><tt>fileChooserOKButton</tt></td>
         <td>The confirmation button.</td>
+      </tr>
+      <tr>
+        <td><tt>fileChooserProgress</tt></td>
+        <td>The indeterminate progress indicator shown during I/O operations.</td>
       </tr>
     </tbody>
   </table>

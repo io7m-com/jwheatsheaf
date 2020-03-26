@@ -20,6 +20,7 @@ import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.jwheatsheaf.ui.JWFileChoosersTesting;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,9 +34,14 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public final class ExampleViewController implements Initializable
@@ -55,6 +61,8 @@ public final class ExampleViewController implements Initializable
   private TextArea textArea;
   @FXML
   private CheckBox allowDirectoryCreation;
+  @FXML
+  private CheckBox slowIO;
   @FXML
   private ChoiceBox<JWFileChooserAction> action;
 
@@ -120,7 +128,14 @@ public final class ExampleViewController implements Initializable
   }
 
   @FXML
+  private void onSlowIOChanged()
+  {
+
+  }
+
+  @FXML
   private void onOpenSelected()
+    throws IOException
   {
     final var configuration =
       JWFileChooserConfiguration.builder()
@@ -133,24 +148,35 @@ public final class ExampleViewController implements Initializable
         .addFileFilters(new ExampleFilterXML())
         .build();
 
-    final var choosers = JWFileChoosers.create();
-    final var chooser =
-      choosers.create(this.main.getScene().getWindow(), configuration);
+    final var testingBuilder = JWFileChoosersTesting.builder();
+    if (this.slowIO.isSelected()) {
+      testingBuilder.setIoDelay(Duration.of(2L, ChronoUnit.SECONDS));
+    }
+    final var testing = testingBuilder.build();
 
-    chooser.setEventListener(event -> {
-      if (event instanceof JWFileChooserEventType.JWFileChooserEventErrorType) {
-        final var alert = new Alert(Alert.AlertType.ERROR);
-        final var error = (JWFileChooserEventType.JWFileChooserEventErrorType) event;
-        alert.setContentText(error.path() + ": " + error.exception());
-        alert.show();
-      }
-    });
+    try (var choosers = JWFileChoosers.createWithTesting(
+      Executors.newSingleThreadExecutor(),
+      testing,
+      Locale.getDefault()
+    )) {
+      final var chooser =
+        choosers.create(this.main.getScene().getWindow(), configuration);
 
-    final List<Path> selected = chooser.showAndWait();
-    this.textArea.setText(
-      selected.stream()
-        .map(Path::toString)
-        .collect(Collectors.joining(System.lineSeparator()))
-    );
+      chooser.setEventListener(event -> {
+        if (event instanceof JWFileChooserEventType.JWFileChooserEventErrorType) {
+          final var alert = new Alert(Alert.AlertType.ERROR);
+          final var error = (JWFileChooserEventType.JWFileChooserEventErrorType) event;
+          alert.setContentText(error.path() + ": " + error.exception());
+          alert.show();
+        }
+      });
+
+      final List<Path> selected = chooser.showAndWait();
+      this.textArea.setText(
+        selected.stream()
+          .map(Path::toString)
+          .collect(Collectors.joining(System.lineSeparator()))
+      );
+    }
   }
 }

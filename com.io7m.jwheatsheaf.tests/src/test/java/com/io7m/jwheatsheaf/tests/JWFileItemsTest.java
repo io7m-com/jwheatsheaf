@@ -29,9 +29,6 @@ import java.nio.file.FileSystem;
 
 public final class JWFileItemsTest
 {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(JWFileItemsTest.class);
-
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
   private FileSystem brokenFilesystem;

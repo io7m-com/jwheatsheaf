@@ -29,10 +29,17 @@
       <HBox alignment="CENTER_LEFT" layoutX="18.0" layoutY="58.0">
          <children>
             <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="160.0" />
-            <CheckBox fx:id="allowDirectoryCreation" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAllowDirectoryCreationChanged" prefHeight="32.0" text="Allow directory creation" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="allowDirectoryCreation" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAllowDirectoryCreationChanged" prefHeight="32.0" selected="true" text="Allow directory creation" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="90.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox alignment="CENTER_LEFT" layoutX="18.0" layoutY="98.0">
+         <children>
+            <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="160.0" />
+            <CheckBox fx:id="slowIO" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onSlowIOChanged" prefHeight="32.0" text="Slow I/O" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="18.0" layoutY="130.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox layoutX="18.0" layoutY="58.0">
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="CSS" />
