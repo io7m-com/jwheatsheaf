@@ -1,6 +1,8 @@
 *.iml
 *.ipr
 *.iws
+*.kra~
+*.png~
 .checkstyle
 .classpath
 .fslckout

@@ -29,6 +29,7 @@
     <module>com.io7m.jwheatsheaf.ui</module>
     <module>com.io7m.jwheatsheaf.examples</module>
     <module>com.io7m.jwheatsheaf.tests</module>
+    <module>com.io7m.jwheatsheaf.oxygen</module>
   </modules>
 
   <properties>

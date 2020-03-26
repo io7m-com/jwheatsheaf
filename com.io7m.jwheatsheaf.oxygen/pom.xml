@@ -12,40 +12,40 @@
     <version>0.0.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>com.io7m.jwheatsheaf.examples</artifactId>
+  <artifactId>com.io7m.jwheatsheaf.oxygen</artifactId>
 
-  <name>com.io7m.jwheatsheaf.examples</name>
-  <description>JavaFX File Chooser (Examples)</description>
+  <name>com.io7m.jwheatsheaf.oxygen</name>
+  <description>JavaFX File Chooser (Oxygen Icon Theme)</description>
   <url>http://github.com/io7m/jwheatsheaf</url>
 
-  <properties>
-    <mdep.analyze.skip>true</mdep.analyze.skip>
-  </properties>
+  <licenses>
+    <license>
+      <name>GNU LGPL</name>
+      <url>https://github.com/KDE/oxygen-icons/blob/master/COPYING</url>
+    </license>
+  </licenses>
 
   <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.jwheatsheaf.ui</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.jwheatsheaf.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.jwheatsheaf.oxygen</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.io7m.junreachable</groupId>
+      <artifactId>com.io7m.junreachable.core</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.bundle</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.marschall</groupId>
-      <artifactId>memoryfilesystem</artifactId>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.versioning</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
