@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A source entry representing a list of recent items.
@@ -76,7 +77,12 @@ public final class JWFileSourceEntryRecentItems implements JWFileSourceEntryType
       !Platform.isFxApplicationThread(),
       "Must not be FX application thread");
 
-    final var paths = this.configuration.recentFiles();
+    final var paths =
+      this.configuration.recentFiles()
+        .stream()
+        .sorted()
+        .collect(Collectors.toList());
+
     final var items = new ArrayList<JWFileItem>(paths.size());
     for (final var path : paths) {
       items.add(JWFileItems.resolveFileItem(path));
