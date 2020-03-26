@@ -16,7 +16,7 @@
 
 package com.io7m.jwheatsheaf.examples;
 
-import com.io7m.jwheatsheaf.api.JWFileChooserCardinality;
+import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
@@ -46,8 +46,6 @@ public final class ExampleViewController implements Initializable
   @FXML
   private Pane main;
   @FXML
-  private ChoiceBox<JWFileChooserCardinality> cardinality;
-  @FXML
   private ChoiceBox<String> filesystem;
   @FXML
   private ChoiceBox<String> cssSelection;
@@ -57,6 +55,8 @@ public final class ExampleViewController implements Initializable
   private TextArea textArea;
   @FXML
   private CheckBox allowDirectoryCreation;
+  @FXML
+  private ChoiceBox<JWFileChooserAction> action;
 
   public ExampleViewController()
   {
@@ -79,10 +79,10 @@ public final class ExampleViewController implements Initializable
 
     this.imageSets = ExampleImageSets.create();
 
-    this.cardinality.setItems(
-      FXCollections.observableArrayList(JWFileChooserCardinality.values())
+    this.action.setItems(
+      FXCollections.observableArrayList(JWFileChooserAction.values())
     );
-    this.cardinality.getSelectionModel().select(0);
+    this.action.getSelectionModel().select(0);
 
     this.filesystem.setItems(
       FXCollections.observableList(
@@ -125,10 +125,10 @@ public final class ExampleViewController implements Initializable
     final var configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
-        .setCardinality(this.cardinality.getValue())
         .setFileSystem(this.filesystems.filesystems().get(this.filesystem.getValue()))
         .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
         .setFileImageSet(this.imageSets.imageSets().get(this.imageSetSelection.getValue()))
+        .setAction(this.action.getValue())
         .addFileFilters(new ExampleFilterRejectAll())
         .addFileFilters(new ExampleFilterXML())
         .build();

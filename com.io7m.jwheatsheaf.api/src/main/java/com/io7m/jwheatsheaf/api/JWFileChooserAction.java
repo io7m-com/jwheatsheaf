@@ -17,20 +17,34 @@
 package com.io7m.jwheatsheaf.api;
 
 /**
- * The cardinality of file selection.
+ * A specification of the action the file chooser is performing. This
+ * affects the behaviour of the chooser.
  */
 
-public enum JWFileChooserCardinality
+public enum JWFileChooserAction
 {
   /**
-   * The user must choose exactly one file.
+   * The user is choosing a single existing file. This means that a
+   * file (or directory) must be selected in the directory table for the "OK"
+   * button to be enabled.
    */
 
-  SINGLE,
+  OPEN_EXISTING_SINGLE,
 
   /**
-   * The user must choose at least one file.
+   * The user is choosing a set of existing files. This means that at least one
+   * file (or directory) must be selected in the directory table for the "OK"
+   * button to be enabled.
    */
 
-  MULTIPLE
+  OPEN_EXISTING_MULTIPLE,
+
+  /**
+   * The user is choosing a single file that may be created by the application.
+   * This means that a either name must be specified in the file name field,
+   * or a file must be selected in the directory table for the for the "OK"
+   * button to be enabled.
+   */
+
+  CREATE
 }

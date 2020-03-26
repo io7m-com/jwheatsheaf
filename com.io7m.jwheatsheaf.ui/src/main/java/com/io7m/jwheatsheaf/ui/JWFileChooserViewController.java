@@ -87,6 +87,7 @@ public final class JWFileChooserViewController
   private JWFileList fileListing;
   private List<Path> result;
   private volatile Path currentDirectory;
+
   @FXML
   private Pane mainContent;
   @FXML
@@ -97,6 +98,8 @@ public final class JWFileChooserViewController
   private Button newDirectoryButton;
   @FXML
   private Button upDirectoryButton;
+  @FXML
+  private Button selectDirectButton;
   @FXML
   private ListView<JWFileSourceEntryType> sourcesList;
   @FXML
@@ -180,6 +183,9 @@ public final class JWFileChooserViewController
     this.upDirectoryButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forDirectoryUp())
     );
+    this.selectDirectButton.setGraphic(
+      JWImages.imageView16x16Of(this.imageSet.forSelectDirect())
+    );
 
     final var fileSystem =
       this.configuration.fileSystem();
@@ -190,16 +196,24 @@ public final class JWFileChooserViewController
 
     this.configureButtons();
     this.configureSearch();
+    this.configureFileField();
     this.configureTableView();
     this.configureFileTypeMenu();
     this.configureSourceList(fileSystem);
+
     this.setCurrentDirectory(startDirectory);
   }
 
   private void configureSearch()
   {
-    this.searchField.focusedProperty()
+    this.searchField.textProperty()
       .addListener(observable -> this.onSearchFieldChanged());
+  }
+
+  private void configureFileField()
+  {
+    this.fileName.textProperty()
+      .addListener(observable -> this.onNameFieldChanged());
   }
 
   private void configureSourceList(
@@ -362,6 +376,24 @@ public final class JWFileChooserViewController
   }
 
   @FXML
+  private void onSelectDirectButton()
+  {
+    final var dialog = new TextInputDialog();
+    dialog.setHeaderText(this.choosers.strings().enterPathTitle());
+    dialog.setContentText(this.choosers.strings().enterPath());
+    final var nameOpt = dialog.showAndWait();
+    if (nameOpt.isPresent()) {
+      final var name = nameOpt.get();
+      final var path = this.configuration.fileSystem().getPath(name);
+      final var parent = path.getParent();
+      if (parent != null) {
+        this.setCurrentDirectory(parent);
+      }
+      this.fileName.setText(path.getFileName().toString());
+    }
+  }
+
+  @FXML
   private void onUpDirectoryButton()
   {
     final var parent = this.currentDirectory.getParent();
@@ -398,12 +430,21 @@ public final class JWFileChooserViewController
   @FXML
   private void onOKSelected()
   {
-    this.result =
-      this.directoryTable.getSelectionModel()
-        .getSelectedItems()
-        .stream()
-        .map(JWFileItem::path)
-        .collect(Collectors.toList());
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE:
+        this.result =
+          this.directoryTable.getSelectionModel()
+            .getSelectedItems()
+            .stream()
+            .map(JWFileItem::path)
+            .collect(Collectors.toList());
+        break;
+      case CREATE:
+        this.result =
+          List.of(this.currentDirectory.resolve(this.fileName.getText()));
+        break;
+    }
 
     final var window = this.mainContent.getScene().getWindow();
     window.hide();
@@ -418,8 +459,24 @@ public final class JWFileChooserViewController
     window.hide();
   }
 
+  @FXML
+  private void onNameFieldChanged()
+  {
+    this.reconfigureOKButton();
+  }
+
   private void configureButtons()
   {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE:
+        this.okButton.setText(this.choosers.strings().open());
+        break;
+      case CREATE:
+        this.okButton.setText(this.choosers.strings().save());
+        break;
+    }
+
     this.okButton.setDisable(true);
 
     this.newDirectoryButton.setDisable(
@@ -427,21 +484,20 @@ public final class JWFileChooserViewController
 
     final var selectionModel = this.directoryTable.getSelectionModel();
     selectionModel.selectedItemProperty()
-      .addListener(item -> this.onDirectoryTableSelectedItemChanged());
+      .addListener(item -> this.reconfigureOKButton());
   }
 
   private void configureTableView()
   {
     final var selectionModel = this.directoryTable.getSelectionModel();
-    switch (this.configuration.cardinality()) {
-      case SINGLE: {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_SINGLE:
+      case CREATE:
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
         break;
-      }
-      case MULTIPLE: {
+      case OPEN_EXISTING_MULTIPLE:
         selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
         break;
-      }
     }
 
     this.directoryTable.setPlaceholder(new Label(""));
@@ -589,10 +645,34 @@ public final class JWFileChooserViewController
     throw new UnreachableCodeException();
   }
 
-  private void onDirectoryTableSelectedItemChanged()
+  private void reconfigureOKButton()
   {
-    final var selectionModel = this.directoryTable.getSelectionModel();
-    this.okButton.setDisable(selectionModel.getSelectedItems().size() < 1);
+    boolean enabled = false;
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_MULTIPLE:
+      case OPEN_EXISTING_SINGLE: {
+        enabled = this.atLeastOneItemSelected();
+        break;
+      }
+      case CREATE: {
+        enabled = this.atLeastOneItemSelected() || this.fileNameNotEmpty();
+        break;
+      }
+    }
+
+    this.okButton.setDisable(!enabled);
+  }
+
+  private boolean fileNameNotEmpty()
+  {
+    return !this.fileName.getText().isEmpty();
+  }
+
+  private boolean atLeastOneItemSelected()
+  {
+    return this.directoryTable.getSelectionModel()
+      .getSelectedItems()
+      .size() >= 1;
   }
 
   private void onTableRowClicked(
@@ -624,7 +704,7 @@ public final class JWFileChooserViewController
   {
     if (event.getClickCount() == 2) {
       final var item = this.sourcesList.getSelectionModel().getSelectedItem();
-      item.path().ifPresent(this::rebuildPathMenu);
+      item.path().ifPresent(this::setCurrentDirectory);
       this.populateDirectoryTableWith(item);
     }
   }

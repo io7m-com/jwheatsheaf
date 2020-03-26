@@ -53,7 +53,9 @@ final List<Path> selected = chooser.showAndWait();
   <p>
     A list of file filters can be passed to file choosers via the <tt>fileFilters</tt> configuration
     parameter. File choosers are <i>always</i> equipped with a file filter that displays all files
-    (in other words, does no filtering) even if an empty list is passed in <tt>fileFilters</tt>.
+    (in other words, does no filtering) even if an empty list is passed in <tt>fileFilters</tt>. The
+    list of file filters will appear in the menu at the bottom of file chooser dialogs, allowing the
+    user to select one to filter results.
   </p>
 
   <pre class="code"><![CDATA[final var configuration =
@@ -64,17 +66,18 @@ final List<Path> selected = chooser.showAndWait();
     .build();
 ]]></pre>
 
-  <h5>Cardinality</h5>
+  <h5>Action</h5>
 
   <p>
-    By default, file choosers are configured to allow the selection of at most one file. This can
-    be changed by specifying the <i>cardinality</i> of the chooser.
+    By default, file choosers are configured to allow the selection of at most one file. The "OK"
+    button cannot be clicked until one file is selected. Other behaviours can be specified by
+    setting the <i>action</i> for the chooser:
   </p>
 
   <pre class="code"><![CDATA[final var configuration =
   JWFileChooserConfiguration.builder()
     .setFileSystem(FileSystems.getDefault())
-    .setCardinality(MULTIPLE)
+    .setAction(OPEN_EXISTING_MULTIPLE)
     .build();
 ]]></pre>
 

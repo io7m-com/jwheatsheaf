@@ -14,23 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.examples;
+package com.io7m.jwheatsheaf.oxygen;
 
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
-import com.io7m.jwheatsheaf.ui.JWFileImageDefaultSet;
 
 import java.net.URL;
 import java.util.Optional;
 
-public final class ExampleInverseIconSet implements JWFileImageSetType
+public final class JWOxygenIconSet implements JWFileImageSetType
 {
   /**
    * Construct a set of images.
    */
 
-  public ExampleInverseIconSet()
+  public JWOxygenIconSet()
   {
 
   }
@@ -39,8 +38,8 @@ public final class ExampleInverseIconSet implements JWFileImageSetType
     final String name)
   {
     return Optional.of(
-      JWFileImageDefaultSet.class.getResource(
-        String.format("/com/io7m/jwheatsheaf/examples/%s", name)
+      JWOxygenIconSet.class.getResource(
+        String.format("/com/io7m/jwheatsheaf/oxygen/%s", name)
       )
     );
   }
@@ -48,31 +47,31 @@ public final class ExampleInverseIconSet implements JWFileImageSetType
   @Override
   public URL forSelectDirect()
   {
-    return forName("targetDirect.png").orElseThrow();
+    return forName("go-bottom.png").orElseThrow();
   }
 
   @Override
   public URL forDirectoryCreate()
   {
-    return forName("directoryCreate.png").orElseThrow();
+    return forName("folder-new.png").orElseThrow();
   }
 
   @Override
   public URL forDirectoryUp()
   {
-    return forName("goUp.png").orElseThrow();
+    return forName("go-up.png").orElseThrow();
   }
 
   @Override
   public URL forRecentItems()
   {
-    return forName("recentItems.png").orElseThrow();
+    return forName("chronometer-lap.png").orElseThrow();
   }
 
   @Override
   public URL forFileSystem()
   {
-    return forName("filesystem.png").orElseThrow();
+    return forName("drive-harddisk.png").orElseThrow();
   }
 
   @Override
@@ -81,11 +80,11 @@ public final class ExampleInverseIconSet implements JWFileImageSetType
   {
     switch (kind) {
       case REGULAR_FILE:
-        return forName("file.png");
+        return forName("unknown.png");
       case DIRECTORY:
-        return forName("directory.png");
+        return forName("inode-directory.png");
       case SYMBOLIC_LINK:
-        return forName("link.png");
+        return forName("emblem-symbolic-link.png");
       case UNKNOWN:
         return Optional.empty();
     }
