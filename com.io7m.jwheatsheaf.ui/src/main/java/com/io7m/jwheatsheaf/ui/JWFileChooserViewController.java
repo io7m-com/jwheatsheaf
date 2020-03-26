@@ -379,7 +379,8 @@ public final class JWFileChooserViewController
   private void onSelectDirectButton()
   {
     final var dialog = new TextInputDialog();
-    dialog.setHeaderText(this.choosers.strings().enterPathTitle());
+    dialog.setTitle(this.choosers.strings().enterPathTitle());
+    dialog.setHeaderText(null);
     dialog.setContentText(this.choosers.strings().enterPath());
     final var nameOpt = dialog.showAndWait();
     if (nameOpt.isPresent()) {
@@ -406,7 +407,8 @@ public final class JWFileChooserViewController
   private void onCreateDirectoryButton()
   {
     final var dialog = new TextInputDialog();
-    dialog.setHeaderText(this.choosers.strings().createDirectoryTitle());
+    dialog.setTitle(this.choosers.strings().createDirectoryTitle());
+    dialog.setHeaderText(null);
     dialog.setContentText(this.choosers.strings().enterDirectoryName());
     final var nameOpt = dialog.showAndWait();
     if (nameOpt.isPresent()) {
