@@ -66,14 +66,26 @@
       <Region layoutX="10.0" layoutY="42.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
       <HBox VBox.vgrow="NEVER">
          <children>
-            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileName" HBox.hgrow="NEVER" />
+            <Label alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileName" HBox.hgrow="NEVER">
+               <padding>
+                  <Insets right="16.0" />
+               </padding></Label>
             <TextField id="fileChooserNameField" fx:id="fileName" maxHeight="-Infinity" minHeight="-Infinity" onAction="#onNameFieldChanged" onKeyTyped="#onNameFieldChanged" prefHeight="32.0" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <Region layoutX="10.0" layoutY="150.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" VBox.vgrow="NEVER" />
       <HBox layoutX="10.0" layoutY="158.0" VBox.vgrow="NEVER">
          <children>
-            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileType" HBox.hgrow="NEVER" />
+            <Label alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="168.0" text="%ui.fileType" HBox.hgrow="NEVER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="16.0" />
+               </padding></Label>
             <ComboBox id="fileChooserFilterMenu" fx:id="fileTypeMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#onFileFilterSelected" prefHeight="32.0" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
