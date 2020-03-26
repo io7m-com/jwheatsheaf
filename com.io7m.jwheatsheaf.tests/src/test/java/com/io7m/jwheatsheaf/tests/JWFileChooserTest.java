@@ -151,7 +151,7 @@ public final class JWFileChooserTest
     Assertions.assertEquals(0, this.events.size());
   }
 
-  private static boolean isTravisCI()
+  static boolean isTravisCI()
   {
     return Objects.equals(System.getenv("TRAVIS"), "true")
       && Objects.equals(System.getenv("CI"), "true");
@@ -219,6 +219,9 @@ public final class JWFileChooserTest
   public void testDirectoryCreate(final FxRobot robot)
     throws IOException
   {
+    // Test is fragile when run on Travis CI
+    Assumptions.assumeFalse(isTravisCI());
+
     robot
       .doubleClickOn("X:\\")
       .clickOn("#fileChooserCreateDirectoryButton")

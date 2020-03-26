@@ -24,6 +24,7 @@ import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -105,6 +106,9 @@ public final class JWFileChooserActionSaveTest
   public void testDirectorySelectDirect(final FxRobot robot)
     throws IOException
   {
+    // Test is fragile when run on Travis CI
+    Assumptions.assumeFalse(JWFileChooserTest.isTravisCI());
+
     robot
       .clickOn("#fileChooserSelectDirectButton")
       .write("Y:\\NEWFILE.TXT")
