@@ -30,6 +30,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
+import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -89,6 +90,29 @@ public final class JWFileChooserActionSaveTest
 
     Assertions.assertEquals(
       List.of("Z:\\USERS\\GROUCH\\GCC.EXE"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList()));
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * The enter directly dialog works.
+   */
+
+  @Test
+  public void testDirectorySelectDirect(final FxRobot robot)
+    throws IOException
+  {
+    robot
+      .clickOn("#fileChooserSelectDirectButton")
+      .write("Y:\\NEWFILE.TXT")
+      .type(KeyCode.ENTER)
+      .clickOn("#fileChooserOKButton");
+
+    Assertions.assertEquals(
+      List.of("Y:\\NEWFILE.TXT"),
       this.chooser.result()
         .stream()
         .map(Path::toString)

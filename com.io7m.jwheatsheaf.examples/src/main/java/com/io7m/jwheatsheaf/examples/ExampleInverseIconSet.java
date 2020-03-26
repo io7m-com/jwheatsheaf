@@ -46,6 +46,12 @@ public final class ExampleInverseIconSet implements JWFileImageSetType
   }
 
   @Override
+  public URL forSelectDirect()
+  {
+    return forName("targetDirect.png").orElseThrow();
+  }
+
+  @Override
   public URL forDirectoryCreate()
   {
     return forName("directoryCreate.png").orElseThrow();

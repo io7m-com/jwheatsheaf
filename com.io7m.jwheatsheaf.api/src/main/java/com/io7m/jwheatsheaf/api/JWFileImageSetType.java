@@ -26,6 +26,12 @@ import java.util.Optional;
 public interface JWFileImageSetType
 {
   /**
+   * @return An icon for the "select direct" button
+   */
+
+  URL forSelectDirect();
+
+  /**
    * @return An icon for the "create directory" button
    */
 

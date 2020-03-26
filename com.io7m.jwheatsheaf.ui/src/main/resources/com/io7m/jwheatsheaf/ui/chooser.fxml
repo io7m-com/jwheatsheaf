@@ -20,6 +20,12 @@
          <children>
             <ChoiceBox id="fileChooserPathMenu" fx:id="pathMenu" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="32.0" styleClass="fileChooserPathMenu" HBox.hgrow="ALWAYS" />
             <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+            <Button id="fileChooserSelectDirectButton" fx:id="selectDirectButton" layoutX="722.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectDirectButton" prefHeight="32.0" prefWidth="32.0">
+               <tooltip>
+                  <Tooltip text="%ui.tooltip.enterDirectly" />
+               </tooltip>
+            </Button>
+            <Region layoutX="754.0" layoutY="10.0" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
             <Button id="fileChooserUpButton" fx:id="upDirectoryButton" layoutX="762.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onUpDirectoryButton" prefHeight="32.0" prefWidth="32.0">
                <tooltip>
                   <Tooltip text="%ui.tooltip.goParentDirectory" />

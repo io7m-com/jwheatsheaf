@@ -99,6 +99,8 @@ public final class JWFileChooserViewController
   @FXML
   private Button upDirectoryButton;
   @FXML
+  private Button selectDirectButton;
+  @FXML
   private ListView<JWFileSourceEntryType> sourcesList;
   @FXML
   private ComboBox<JWFileChooserFilterType> fileTypeMenu;
@@ -181,6 +183,9 @@ public final class JWFileChooserViewController
     this.upDirectoryButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forDirectoryUp())
     );
+    this.selectDirectButton.setGraphic(
+      JWImages.imageView16x16Of(this.imageSet.forSelectDirect())
+    );
 
     final var fileSystem =
       this.configuration.fileSystem();
@@ -191,9 +196,11 @@ public final class JWFileChooserViewController
 
     this.configureButtons();
     this.configureSearch();
+    this.configureFileField();
     this.configureTableView();
     this.configureFileTypeMenu();
     this.configureSourceList(fileSystem);
+
     this.setCurrentDirectory(startDirectory);
   }
 
@@ -201,6 +208,12 @@ public final class JWFileChooserViewController
   {
     this.searchField.textProperty()
       .addListener(observable -> this.onSearchFieldChanged());
+  }
+
+  private void configureFileField()
+  {
+    this.fileName.textProperty()
+      .addListener(observable -> this.onNameFieldChanged());
   }
 
   private void configureSourceList(
@@ -360,6 +373,24 @@ public final class JWFileChooserViewController
   private void onSearchFieldChanged()
   {
     this.fileListing.setSearch(this.searchField.getText().trim());
+  }
+
+  @FXML
+  private void onSelectDirectButton()
+  {
+    final var dialog = new TextInputDialog();
+    dialog.setHeaderText(this.choosers.strings().enterPathTitle());
+    dialog.setContentText(this.choosers.strings().enterPath());
+    final var nameOpt = dialog.showAndWait();
+    if (nameOpt.isPresent()) {
+      final var name = nameOpt.get();
+      final var path = this.configuration.fileSystem().getPath(name);
+      final var parent = path.getParent();
+      if (parent != null) {
+        this.setCurrentDirectory(parent);
+      }
+      this.fileName.setText(path.getFileName().toString());
+    }
   }
 
   @FXML
