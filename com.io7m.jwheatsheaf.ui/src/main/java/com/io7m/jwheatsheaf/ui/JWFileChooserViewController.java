@@ -87,6 +87,7 @@ public final class JWFileChooserViewController
   private JWFileList fileListing;
   private List<Path> result;
   private volatile Path currentDirectory;
+
   @FXML
   private Pane mainContent;
   @FXML
@@ -198,7 +199,7 @@ public final class JWFileChooserViewController
 
   private void configureSearch()
   {
-    this.searchField.focusedProperty()
+    this.searchField.textProperty()
       .addListener(observable -> this.onSearchFieldChanged());
   }
 
@@ -672,7 +673,7 @@ public final class JWFileChooserViewController
   {
     if (event.getClickCount() == 2) {
       final var item = this.sourcesList.getSelectionModel().getSelectedItem();
-      item.path().ifPresent(this::rebuildPathMenu);
+      item.path().ifPresent(this::setCurrentDirectory);
       this.populateDirectoryTableWith(item);
     }
   }
