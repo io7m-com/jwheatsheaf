@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.oxygen</artifactId>
