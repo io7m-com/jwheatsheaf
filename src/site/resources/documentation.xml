@@ -210,4 +210,10 @@ final List<Path> selected = chooser.showAndWait();
     </tbody>
   </table>
 
+  <h4>JavaDoc</h4>
+
+  <p>
+    See the <a href="documentation/apidocs/index.html">JavaDoc</a> for more information.
+  </p>
+
 </div>

@@ -15,7 +15,7 @@
 
   <groupId>com.io7m.jwheatsheaf</groupId>
   <artifactId>com.io7m.jwheatsheaf</artifactId>
-  <version>0.0.3</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
 
   <name>com.io7m.jwheatsheaf</name>
@@ -26,10 +26,11 @@
 
   <modules>
     <module>com.io7m.jwheatsheaf.api</module>
-    <module>com.io7m.jwheatsheaf.ui</module>
+    <module>com.io7m.jwheatsheaf.documentation</module>
     <module>com.io7m.jwheatsheaf.examples</module>
-    <module>com.io7m.jwheatsheaf.tests</module>
     <module>com.io7m.jwheatsheaf.oxygen</module>
+    <module>com.io7m.jwheatsheaf.tests</module>
+    <module>com.io7m.jwheatsheaf.ui</module>
   </modules>
 
   <properties>
@@ -189,6 +190,11 @@
         <groupId>org.testfx</groupId>
         <artifactId>testfx-core</artifactId>
         <version>${testfx.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.primogenitor</groupId>
+        <artifactId>com.io7m.primogenitor.support</artifactId>
+        <version>3.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
