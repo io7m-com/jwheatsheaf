@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <c:changelog project="com.io7m.jwheatsheaf" xmlns:c="urn:com.io7m.changelog:4.0">
   <c:releases>
-    <c:release date="2020-03-28T11:31:06+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.0">
+    <c:release date="2020-03-28T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.0">
       <c:changes>
-        <c:change date="2020-03-28T11:31:06+00:00" summary="Initial public release"/>
+        <c:change date="2020-03-28T00:00:00+00:00" summary="Initial public release"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-03-28T12:09:49+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.1">
+      <c:changes>
+        <c:change date="2020-03-28T12:09:49+00:00" summary="Add missing package exports to module descriptors"/>
       </c:changes>
     </c:release>
   </c:releases>

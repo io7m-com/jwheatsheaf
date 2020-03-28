@@ -33,4 +33,6 @@ module com.io7m.jwheatsheaf.ui
 
   requires transitive com.io7m.jwheatsheaf.api;
   requires transitive javafx.graphics;
+
+  exports com.io7m.jwheatsheaf.ui;
 }

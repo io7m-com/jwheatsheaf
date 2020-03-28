@@ -26,4 +26,6 @@ module com.io7m.jwheatsheaf.oxygen
   requires com.io7m.junreachable.core;
 
   requires transitive com.io7m.jwheatsheaf.api;
+
+  exports com.io7m.jwheatsheaf.oxygen;
 }
