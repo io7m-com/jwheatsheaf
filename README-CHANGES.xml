@@ -6,9 +6,18 @@
         <c:change date="2020-03-28T00:00:00+00:00" summary="Initial public release"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-03-28T12:09:49+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.1">
+    <c:release date="2020-03-28T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.1">
       <c:changes>
-        <c:change date="2020-03-28T12:09:49+00:00" summary="Add missing package exports to module descriptors"/>
+        <c:change date="2020-03-28T00:00:00+00:00" summary="Add missing package exports to module descriptors"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-03-28T12:51:49+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.2">
+      <c:changes>
+        <c:change date="2020-03-28T12:51:49+00:00" summary="Ensure CSS stylesheets are passed to any dialogs opened by the chooser">
+          <c:tickets>
+            <c:ticket id="4"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>
