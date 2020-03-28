@@ -449,6 +449,13 @@ public final class JWFileChooserViewController
     dialog.setTitle(this.choosers.strings().enterPathTitle());
     dialog.setHeaderText(null);
     dialog.setContentText(this.choosers.strings().enterPath());
+
+    this.configuration.cssStylesheet().ifPresent(css -> {
+      dialog.getDialogPane()
+        .getStylesheets()
+        .add(css.toExternalForm());
+    });
+
     final var nameOpt = dialog.showAndWait();
     if (nameOpt.isPresent()) {
       final var name = nameOpt.get();
@@ -477,6 +484,13 @@ public final class JWFileChooserViewController
     dialog.setTitle(this.choosers.strings().createDirectoryTitle());
     dialog.setHeaderText(null);
     dialog.setContentText(this.choosers.strings().enterDirectoryName());
+
+    this.configuration.cssStylesheet().ifPresent(css -> {
+      dialog.getDialogPane()
+        .getStylesheets()
+        .add(css.toExternalForm());
+    });
+
     final var nameOpt = dialog.showAndWait();
     if (nameOpt.isPresent()) {
       final var name = nameOpt.get();
