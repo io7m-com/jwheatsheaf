@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public final class ExampleViewController implements Initializable
@@ -137,15 +136,30 @@ public final class ExampleViewController implements Initializable
   private void onOpenSelected()
     throws IOException
   {
+    final var fileSystem =
+      this.filesystems.filesystems()
+        .get(this.filesystem.getValue());
+    final var imageSet =
+      this.imageSets.imageSets()
+        .get(this.imageSetSelection.getValue());
+
+    final var recents =
+      List.of(
+        fileSystem.getPath("A", "B", "C"),
+        fileSystem.getPath("D", "E", "F"),
+        fileSystem.getPath("G", "H", "I")
+      );
+
     final var configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
-        .setFileSystem(this.filesystems.filesystems().get(this.filesystem.getValue()))
+        .setFileSystem(fileSystem)
         .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
-        .setFileImageSet(this.imageSets.imageSets().get(this.imageSetSelection.getValue()))
+        .setFileImageSet(imageSet)
         .setAction(this.action.getValue())
         .addFileFilters(new ExampleFilterRejectAll())
         .addFileFilters(new ExampleFilterXML())
+        .addAllRecentFiles(recents)
         .build();
 
     final var testingBuilder = JWFileChoosersTesting.builder();
