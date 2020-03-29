@@ -586,8 +586,8 @@ public final class JWFileChooserViewController
     this.directoryTable.setPlaceholder(new Label(""));
 
     final var tableColumns = this.directoryTable.getColumns();
-    final TableColumn<JWFileItem, JWFileKind> tableTypeColumn =
-      (TableColumn<JWFileItem, JWFileKind>) tableColumns.get(0);
+    final TableColumn<JWFileItem, JWFileItem> tableTypeColumn =
+      (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(0);
     final TableColumn<JWFileItem, JWFileItem> tableNameColumn =
       (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(1);
     final TableColumn<JWFileItem, Long> tableSizeColumn =
@@ -598,11 +598,11 @@ public final class JWFileChooserViewController
     tableTypeColumn.setSortable(false);
     tableTypeColumn.setReorderable(false);
     tableTypeColumn.setCellFactory(column -> {
-      final TableCell<JWFileItem, JWFileKind> cell = new TableCell<>()
+      final TableCell<JWFileItem, JWFileItem> cell = new TableCell<>()
       {
         @Override
         protected void updateItem(
-          final JWFileKind item,
+          final JWFileItem item,
           final boolean empty)
         {
           super.updateItem(item, empty);
@@ -614,9 +614,11 @@ public final class JWFileChooserViewController
             return;
           }
 
-          this.setGraphic(JWFileChooserViewController.this.imageOfKind(item));
+          this.setGraphic(
+            JWFileChooserViewController.this.imageOfKind(item.kind()));
           this.setText(null);
-          this.setTooltip(JWFileChooserViewController.this.tooltipOf(item));
+          this.setTooltip(
+            JWFileChooserViewController.this.tooltipOf(item));
         }
       };
 
@@ -645,7 +647,7 @@ public final class JWFileChooserViewController
 
           this.setGraphic(null);
           this.setText(item.name());
-          this.setTooltip(JWFileChooserViewController.this.tooltipOf(item.kind()));
+          this.setTooltip(JWFileChooserViewController.this.tooltipOf(item));
         }
       };
       cell.setOnMouseClicked(this::onTableRowClicked);
@@ -705,7 +707,7 @@ public final class JWFileChooserViewController
     });
 
     tableTypeColumn.setCellValueFactory(
-      param -> new ReadOnlyObjectWrapper<>(param.getValue().kind()));
+      param -> new ReadOnlyObjectWrapper<>(param.getValue()));
     tableNameColumn.setCellValueFactory(
       param -> new ReadOnlyObjectWrapper<>(param.getValue()));
     tableSizeColumn.setCellValueFactory(
@@ -715,15 +717,21 @@ public final class JWFileChooserViewController
   }
 
   private Tooltip tooltipOf(
-    final JWFileKind kind)
+    final JWFileItem item)
   {
-    switch (kind) {
+    switch (item.kind()) {
       case REGULAR_FILE:
       case SYMBOLIC_LINK:
       case UNKNOWN:
-        return null;
+        return new Tooltip(
+          this.choosers.strings()
+            .tooltipFile(item.path())
+        );
       case DIRECTORY:
-        return new Tooltip(this.choosers.strings().tooltipNavigateDirectory());
+        return new Tooltip(
+          this.choosers.strings()
+            .tooltipDirectory(item.path())
+        );
     }
     throw new UnreachableCodeException();
   }

@@ -16,6 +16,8 @@
 
 package com.io7m.jwheatsheaf.ui;
 
+import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -74,6 +76,13 @@ public final class JWStrings
     return new JWStrings(bundle);
   }
 
+  private String format(
+    final String idId,
+    final Object... inArgs)
+  {
+    return MessageFormat.format(this.resourceBundle.getString(idId), inArgs);
+  }
+
   public String createDirectoryTitle()
   {
     return this.resourceBundle.getString("ui.directoryCreateTitle");
@@ -97,11 +106,6 @@ public final class JWStrings
   public String enterDirectoryName()
   {
     return this.resourceBundle.getString("ui.directoryName");
-  }
-
-  public String tooltipNavigateDirectory()
-  {
-    return this.resourceBundle.getString("ui.tooltip.directory");
   }
 
   public String fileSelect()
@@ -132,5 +136,15 @@ public final class JWStrings
   public String enterPath()
   {
     return this.resourceBundle.getString("ui.enterPath");
+  }
+
+  public String tooltipDirectory(final Path path)
+  {
+    return this.format("ui.tooltip.directory", path.toAbsolutePath());
+  }
+
+  public String tooltipFile(final Path path)
+  {
+    return this.format("ui.tooltip.file", path.toAbsolutePath());
   }
 }
