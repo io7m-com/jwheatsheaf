@@ -25,8 +25,6 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
 import com.io7m.jwheatsheaf.api.JWFileListingFailed;
-import com.io7m.jwheatsheaf.ui.JWFileChooserFilterAllFiles;
-import com.io7m.jwheatsheaf.ui.JWFileChooserFilterOnlyDirectories;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
