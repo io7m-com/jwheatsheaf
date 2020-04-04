@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
@@ -43,7 +43,7 @@ public final class JWFileImageDefaultSet implements JWFileImageSetType
   {
     return Optional.of(
       JWFileImageDefaultSet.class.getResource(
-        String.format("/com/io7m/jwheatsheaf/ui/%s", name)
+        String.format("/com/io7m/jwheatsheaf/ui/internal/%s", name)
       )
     );
   }

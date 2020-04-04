@@ -14,37 +14,45 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import javafx.scene.control.ListCell;
+import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Objects;
 
 /**
- * A source entry.
+ * A filter that trivially accepts all files.
  */
 
-public interface JWFileSourceEntryType extends JWFileListingRetrieverType
+public final class JWFileChooserFilterAllFiles implements
+  JWFileChooserFilterType
 {
-  /**
-   * Configure the given list cell to show this item.
-   *
-   * @param images  The image resolver
-   * @param strings The string resources
-   * @param cell    The list cell
-   */
+  private final String description;
 
-  void onListCell(
-    JWFileImageSetType images,
-    JWStrings strings,
-    ListCell<JWFileSourceEntryType> cell
-  );
+  private JWFileChooserFilterAllFiles(
+    final String inDescription)
+  {
+    this.description =
+      Objects.requireNonNull(inDescription, "inDescription");
+  }
 
-  /**
-   * @return The path associated with this source entry, if any
-   */
+  public static JWFileChooserFilterType create(
+    final JWStrings strings)
+  {
+    return new JWFileChooserFilterAllFiles(
+      strings.filterAllFilesDescription());
+  }
 
-  Optional<Path> path();
+  @Override
+  public String description()
+  {
+    return this.description;
+  }
+
+  @Override
+  public boolean isAllowed(final Path path)
+  {
+    return true;
+  }
 }

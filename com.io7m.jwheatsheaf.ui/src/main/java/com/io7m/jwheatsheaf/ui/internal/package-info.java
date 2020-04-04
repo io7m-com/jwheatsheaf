@@ -14,45 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
-
-import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
-
-import java.nio.file.Path;
-import java.util.Objects;
-
 /**
- * A filter that trivially accepts all files.
+ * JavaFX file chooser (UI internal classes)
  */
 
-public final class JWFileChooserFilterAllFiles implements
-  JWFileChooserFilterType
-{
-  private final String description;
+package com.io7m.jwheatsheaf.ui.internal;
 
-  private JWFileChooserFilterAllFiles(
-    final String inDescription)
-  {
-    this.description =
-      Objects.requireNonNull(inDescription, "inDescription");
-  }
-
-  public static JWFileChooserFilterType create(
-    final JWStrings strings)
-  {
-    return new JWFileChooserFilterAllFiles(
-      strings.filterAllFilesDescription());
-  }
-
-  @Override
-  public String description()
-  {
-    return this.description;
-  }
-
-  @Override
-  public boolean isAllowed(final Path path)
-  {
-    return true;
-  }
-}

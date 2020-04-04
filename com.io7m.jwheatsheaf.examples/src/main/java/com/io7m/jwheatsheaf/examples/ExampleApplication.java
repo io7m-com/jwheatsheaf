@@ -16,7 +16,7 @@
 
 package com.io7m.jwheatsheaf.examples;
 
-import com.io7m.jwheatsheaf.ui.JWStrings;
+import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

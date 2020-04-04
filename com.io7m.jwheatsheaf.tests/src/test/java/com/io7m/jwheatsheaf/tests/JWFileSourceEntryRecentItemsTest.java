@@ -17,7 +17,7 @@
 package com.io7m.jwheatsheaf.tests;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
-import com.io7m.jwheatsheaf.ui.JWFileSourceEntryRecentItems;
+import com.io7m.jwheatsheaf.ui.internal.JWFileSourceEntryRecentItems;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

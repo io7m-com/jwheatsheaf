@@ -14,25 +14,42 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import com.io7m.immutables.styles.ImmutablesStyleType;
-import org.immutables.value.Value;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-import java.time.Duration;
-import java.util.Optional;
+import java.net.URL;
+import java.util.Objects;
 
 /**
- * Configuration parameters useful for testing this chooser implementation.
+ * Functions to deal with images.
  */
 
-@ImmutablesStyleType
-@Value.Immutable
-public interface JWFileChoosersTestingType
+public final class JWImages
 {
+  private JWImages()
+  {
+
+  }
+
   /**
-   * @return A delay added to I/O operations to test how the UI responds to slow I/O.
+   * Construct a 16x16 image view for the given URL.
+   *
+   * @param url The URL
+   *
+   * @return An image view
    */
 
-  Optional<Duration> ioDelay();
+  public static ImageView imageView16x16Of(
+    final URL url)
+  {
+    Objects.requireNonNull(url, "url");
+
+    final var imageView = new ImageView();
+    imageView.setFitWidth(16.0);
+    imageView.setFitHeight(16.0);
+    imageView.setImage(new Image(url.toString()));
+    return imageView;
+  }
 }

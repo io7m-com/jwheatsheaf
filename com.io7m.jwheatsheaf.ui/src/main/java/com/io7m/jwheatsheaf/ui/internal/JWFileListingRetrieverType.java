@@ -14,42 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import java.net.URL;
-import java.util.Objects;
+import java.util.List;
 
 /**
- * Functions to deal with images.
+ * A function that, on evaluation, returns a list of file items.
  */
 
-public final class JWImages
+public interface JWFileListingRetrieverType
 {
-  private JWImages()
-  {
-
-  }
-
   /**
-   * Construct a 16x16 image view for the given URL.
+   * @return The file items
    *
-   * @param url The URL
-   *
-   * @return An image view
+   * @throws Exception On errors
    */
 
-  public static ImageView imageView16x16Of(
-    final URL url)
-  {
-    Objects.requireNonNull(url, "url");
-
-    final var imageView = new ImageView();
-    imageView.setFitWidth(16.0);
-    imageView.setFitHeight(16.0);
-    imageView.setImage(new Image(url.toString()));
-    return imageView;
-  }
+  List<JWFileItem> onFileItemsRequested()
+    throws Exception;
 }

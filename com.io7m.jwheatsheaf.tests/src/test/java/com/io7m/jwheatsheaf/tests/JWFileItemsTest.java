@@ -17,12 +17,10 @@
 package com.io7m.jwheatsheaf.tests;
 
 import com.io7m.jwheatsheaf.api.JWFileKind;
-import com.io7m.jwheatsheaf.ui.JWFileItems;
+import com.io7m.jwheatsheaf.ui.internal.JWFileItems;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
