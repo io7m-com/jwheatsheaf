@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.junreachable.UnreachableCodeException;
@@ -25,10 +25,7 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
 import com.io7m.jwheatsheaf.api.JWFileListingFailed;
-import com.io7m.jwheatsheaf.ui.internal.JWFileSourceEntryFilesystemRoot;
-import com.io7m.jwheatsheaf.ui.internal.JWFileSourceEntryRecentItems;
-import com.io7m.jwheatsheaf.ui.internal.JWFileSourceEntryType;
-import com.io7m.jwheatsheaf.ui.internal.JWImages;
+import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -68,6 +65,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -75,8 +73,7 @@ import java.util.stream.Collectors;
 /**
  * The file chooser view controller.
  *
- * The {@link #setConfiguration(JWFileChoosers, JWFileChooserConfiguration)} method
- * must be called after creation.
+ * The {@code setConfiguration} method must be called after creation.
  */
 
 public final class JWFileChooserViewController
@@ -120,6 +117,10 @@ public final class JWFileChooserViewController
   private TextField searchField;
   @FXML
   private ProgressIndicator progressIndicator;
+
+  private JWStrings strings;
+  private ExecutorService ioExecutor;
+  private JWFileChoosersTesting testing;
 
   /**
    * Construct a view controller.
@@ -169,23 +170,35 @@ public final class JWFileChooserViewController
 
   public void setConfiguration(
     final JWFileChoosers inChoosers,
+    final ExecutorService inIoExecutor,
+    final JWFileChoosersTesting inTesting,
+    final JWStrings inStrings,
+    final JWFileImageSetType inDefaultImageSet,
     final JWFileChooserConfiguration inConfiguration)
   {
     this.choosers =
       Objects.requireNonNull(inChoosers, "inChoosers");
     this.configuration =
       Objects.requireNonNull(inConfiguration, "configuration");
+    this.testing =
+      Objects.requireNonNull(inTesting, "inTesting");
+    this.strings =
+      Objects.requireNonNull(inStrings, "inStrings");
+    this.ioExecutor =
+      Objects.requireNonNull(inIoExecutor, "inIoExecutor");
+
+    Objects.requireNonNull(inDefaultImageSet, "inDefaultImageSet");
 
     this.filterAll =
-      JWFileChooserFilterAllFiles.create(this.choosers.strings());
+      JWFileChooserFilterAllFiles.create(this.strings);
     this.filterOnlyDirectories =
-      JWFileChooserFilterOnlyDirectories.create(this.choosers.strings());
+      JWFileChooserFilterOnlyDirectories.create(this.strings);
     this.fileListing =
       new JWFileList(this.filterAll);
 
     this.imageSet =
       this.configuration.fileImageSet()
-        .orElse(this.choosers.imageSet());
+        .orElse(inDefaultImageSet);
 
     this.newDirectoryButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forDirectoryCreate())
@@ -276,7 +289,7 @@ public final class JWFileChooserViewController
 
           item.onListCell(
             JWFileChooserViewController.this.imageSet,
-            JWFileChooserViewController.this.choosers.strings(),
+            JWFileChooserViewController.this.strings,
             this
           );
         }
@@ -363,7 +376,7 @@ public final class JWFileChooserViewController
     this.directoryTable.setItems(this.fileListing.items());
     this.ioLockUI();
 
-    this.choosers.ioExecutor().execute(() -> {
+    this.ioExecutor.execute(() -> {
       try {
         final var items = itemRetriever.onFileItemsRequested();
         this.applyTestingIODelayIfRequested();
@@ -415,7 +428,7 @@ public final class JWFileChooserViewController
 
   private void applyTestingIODelayIfRequested()
   {
-    this.choosers.testing()
+    this.testing
       .ioDelay()
       .ifPresent(duration -> {
         try {
@@ -450,9 +463,9 @@ public final class JWFileChooserViewController
   private void onSelectDirectButton()
   {
     final var dialog = new TextInputDialog();
-    dialog.setTitle(this.choosers.strings().enterPathTitle());
+    dialog.setTitle(this.strings.enterPathTitle());
     dialog.setHeaderText(null);
-    dialog.setContentText(this.choosers.strings().enterPath());
+    dialog.setContentText(this.strings.enterPath());
 
     this.configuration.cssStylesheet().ifPresent(css -> {
       dialog.getDialogPane()
@@ -485,9 +498,9 @@ public final class JWFileChooserViewController
   private void onCreateDirectoryButton()
   {
     final var dialog = new TextInputDialog();
-    dialog.setTitle(this.choosers.strings().createDirectoryTitle());
+    dialog.setTitle(this.strings.createDirectoryTitle());
     dialog.setHeaderText(null);
-    dialog.setContentText(this.choosers.strings().enterDirectoryName());
+    dialog.setContentText(this.strings.enterDirectoryName());
 
     this.configuration.cssStylesheet().ifPresent(css -> {
       dialog.getDialogPane()
@@ -557,10 +570,10 @@ public final class JWFileChooserViewController
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
-        this.okButton.setText(this.choosers.strings().open());
+        this.okButton.setText(this.strings.open());
         break;
       case CREATE:
-        this.okButton.setText(this.choosers.strings().save());
+        this.okButton.setText(this.strings.save());
         break;
     }
 
@@ -727,15 +740,9 @@ public final class JWFileChooserViewController
       case REGULAR_FILE:
       case SYMBOLIC_LINK:
       case UNKNOWN:
-        return new Tooltip(
-          this.choosers.strings()
-            .tooltipFile(item.path())
-        );
+        return new Tooltip(this.strings.tooltipFile(item.path()));
       case DIRECTORY:
-        return new Tooltip(
-          this.choosers.strings()
-            .tooltipDirectory(item.path())
-        );
+        return new Tooltip(this.strings.tooltipDirectory(item.path()));
     }
     throw new UnreachableCodeException();
   }

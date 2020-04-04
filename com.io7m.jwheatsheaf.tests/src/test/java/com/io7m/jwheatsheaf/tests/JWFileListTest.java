@@ -18,10 +18,10 @@ package com.io7m.jwheatsheaf.tests;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
-import com.io7m.jwheatsheaf.ui.JWFileChooserFilterAllFiles;
-import com.io7m.jwheatsheaf.ui.JWFileChooserFilterOnlyDirectories;
-import com.io7m.jwheatsheaf.ui.JWFileItem;
-import com.io7m.jwheatsheaf.ui.JWFileList;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterAllFiles;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterOnlyDirectories;
+import com.io7m.jwheatsheaf.ui.internal.JWFileItem;
+import com.io7m.jwheatsheaf.ui.internal.JWFileList;
 import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

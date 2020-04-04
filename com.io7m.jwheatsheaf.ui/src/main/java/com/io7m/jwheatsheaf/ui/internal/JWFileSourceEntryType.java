@@ -17,7 +17,6 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import com.io7m.jwheatsheaf.ui.JWFileListingRetrieverType;
 import javafx.scene.control.ListCell;
 
 import java.nio.file.Path;

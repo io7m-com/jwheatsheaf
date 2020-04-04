@@ -22,7 +22,7 @@ import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import com.io7m.jwheatsheaf.ui.JWFileChoosersTesting;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

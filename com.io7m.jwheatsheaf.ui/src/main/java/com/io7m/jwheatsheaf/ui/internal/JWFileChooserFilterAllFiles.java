@@ -14,10 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
-import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 
 import java.nio.file.Path;
 import java.util.Objects;

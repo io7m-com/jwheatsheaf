@@ -14,25 +14,61 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
+import com.io7m.jwheatsheaf.api.JWFileKind;
 import org.immutables.value.Value;
 
-import java.time.Duration;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 
 /**
- * Configuration parameters useful for testing this chooser implementation.
+ * A resolved file item.
  */
 
 @ImmutablesStyleType
 @Value.Immutable
-public interface JWFileChoosersTestingType
+public interface JWFileItemType
 {
   /**
-   * @return A delay added to I/O operations to test how the UI responds to slow I/O.
+   * @return The file kind
    */
 
-  Optional<Duration> ioDelay();
+  JWFileKind kind();
+
+  /**
+   * @return The file path
+   */
+
+  Path path();
+
+  /**
+   * @return The file size
+   */
+
+  long size();
+
+  /**
+   * @return The file modification time
+   */
+
+  FileTime modifiedTime();
+
+  /**
+   * @return The file display name override, if any
+   */
+
+  Optional<String> displayName();
+
+  /**
+   * @return The display name, taking into account any present override
+   */
+
+  default String name()
+  {
+    final var displayNameOpt = this.displayName();
+    return displayNameOpt.orElseGet(() -> this.path().getFileName().toString());
+  }
 }
