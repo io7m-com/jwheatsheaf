@@ -19,7 +19,7 @@ package com.io7m.jwheatsheaf.examples;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
-import com.io7m.jwheatsheaf.ui.JWFileImageDefaultSet;
+import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 
 import java.net.URL;
 import java.util.Optional;

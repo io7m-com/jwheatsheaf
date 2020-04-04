@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -47,7 +47,7 @@ public final class JWStrings
     final Locale locale)
   {
     return ResourceBundle.getBundle(
-      "com.io7m.jwheatsheaf.ui.Strings",
+      "com.io7m.jwheatsheaf.ui.internal.Strings",
       locale);
   }
 

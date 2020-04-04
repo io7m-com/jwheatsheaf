@@ -14,37 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
-
-import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import javafx.scene.control.ListCell;
-
-import java.nio.file.Path;
-import java.util.Optional;
-
 /**
- * A source entry.
+ * JavaFX file chooser (UI internal classes)
  */
 
-public interface JWFileSourceEntryType extends JWFileListingRetrieverType
-{
-  /**
-   * Configure the given list cell to show this item.
-   *
-   * @param images  The image resolver
-   * @param strings The string resources
-   * @param cell    The list cell
-   */
+package com.io7m.jwheatsheaf.ui.internal;
 
-  void onListCell(
-    JWFileImageSetType images,
-    JWStrings strings,
-    ListCell<JWFileSourceEntryType> cell
-  );
-
-  /**
-   * @return The path associated with this source entry, if any
-   */
-
-  Optional<Path> path();
-}

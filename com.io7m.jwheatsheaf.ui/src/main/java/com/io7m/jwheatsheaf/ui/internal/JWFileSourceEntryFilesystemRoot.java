@@ -14,10 +14,12 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.ui.JWFileItem;
+import com.io7m.jwheatsheaf.ui.JWFileItems;
 import javafx.application.Platform;
 import javafx.scene.control.ListCell;
 

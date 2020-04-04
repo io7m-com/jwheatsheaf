@@ -14,42 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.ui;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.ui.JWFileListingRetrieverType;
+import javafx.scene.control.ListCell;
 
-import java.net.URL;
-import java.util.Objects;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
- * Functions to deal with images.
+ * A source entry.
  */
 
-public final class JWImages
+public interface JWFileSourceEntryType extends JWFileListingRetrieverType
 {
-  private JWImages()
-  {
-
-  }
-
   /**
-   * Construct a 16x16 image view for the given URL.
+   * Configure the given list cell to show this item.
    *
-   * @param url The URL
-   *
-   * @return An image view
+   * @param images  The image resolver
+   * @param strings The string resources
+   * @param cell    The list cell
    */
 
-  public static ImageView imageView16x16Of(
-    final URL url)
-  {
-    Objects.requireNonNull(url, "url");
+  void onListCell(
+    JWFileImageSetType images,
+    JWStrings strings,
+    ListCell<JWFileSourceEntryType> cell
+  );
 
-    final var imageView = new ImageView();
-    imageView.setFitWidth(16.0);
-    imageView.setFitHeight(16.0);
-    imageView.setImage(new Image(url.toString()));
-    return imageView;
-  }
+  /**
+   * @return The path associated with this source entry, if any
+   */
+
+  Optional<Path> path();
 }

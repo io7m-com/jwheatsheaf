@@ -22,7 +22,7 @@ import com.io7m.jwheatsheaf.ui.JWFileChooserFilterAllFiles;
 import com.io7m.jwheatsheaf.ui.JWFileChooserFilterOnlyDirectories;
 import com.io7m.jwheatsheaf.ui.JWFileItem;
 import com.io7m.jwheatsheaf.ui.JWFileList;
-import com.io7m.jwheatsheaf.ui.JWStrings;
+import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

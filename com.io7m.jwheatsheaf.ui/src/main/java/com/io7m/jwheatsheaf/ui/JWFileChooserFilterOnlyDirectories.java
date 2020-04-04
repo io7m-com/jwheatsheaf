@@ -17,6 +17,7 @@
 package com.io7m.jwheatsheaf.ui;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
+import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -14,13 +14,42 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.jwheatsheaf.ui.internal;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.net.URL;
+import java.util.Objects;
+
 /**
- * JavaFX file chooser (UI)
+ * Functions to deal with images.
  */
 
-@Export
-@Version("2.0.0")
-package com.io7m.jwheatsheaf.ui;
+public final class JWImages
+{
+  private JWImages()
+  {
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+  }
+
+  /**
+   * Construct a 16x16 image view for the given URL.
+   *
+   * @param url The URL
+   *
+   * @return An image view
+   */
+
+  public static ImageView imageView16x16Of(
+    final URL url)
+  {
+    Objects.requireNonNull(url, "url");
+
+    final var imageView = new ImageView();
+    imageView.setFitWidth(16.0);
+    imageView.setFitHeight(16.0);
+    imageView.setImage(new Image(url.toString()));
+    return imageView;
+  }
+}

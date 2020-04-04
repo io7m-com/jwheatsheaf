@@ -18,7 +18,8 @@ package com.io7m.jwheatsheaf.examples;
 
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
 import com.io7m.jwheatsheaf.oxygen.JWOxygenIconSet;
-import com.io7m.jwheatsheaf.ui.JWFileImageDefaultSet;
+import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 
 import java.util.Map;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public final class ExampleImageSets
   {
     return new ExampleImageSets(
       Map.ofEntries(
-        Map.entry("Default", new JWFileImageDefaultSet()),
+        Map.entry("Default", JWFileChoosers.createDefaultIcons()),
         Map.entry("Inverse", new ExampleInverseIconSet()),
         Map.entry("Oxygen", new JWOxygenIconSet())
       )
