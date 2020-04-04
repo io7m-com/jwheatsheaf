@@ -18,6 +18,7 @@ package com.io7m.jwheatsheaf.ui;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserViewController;
 import javafx.stage.Stage;
 
 import java.nio.file.Path;

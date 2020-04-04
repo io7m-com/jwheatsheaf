@@ -20,13 +20,18 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-03-29T10:44:47+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.3">
+    <c:release date="2020-03-29T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.3">
       <c:changes>
-        <c:change date="2020-03-29T10:44:47+00:00" summary="Show the full paths of files/directories in tooltips">
+        <c:change date="2020-03-29T00:00:00+00:00" summary="Show the full paths of files/directories in tooltips">
           <c:tickets>
             <c:ticket id="5"/>
           </c:tickets>
         </c:change>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-04-04T14:29:42+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.0">
+      <c:changes>
+        <c:change compatible="false" date="2020-04-04T14:29:42+00:00" summary="Move implementation classes in the ui module into an internal non-exported package"/>
       </c:changes>
     </c:release>
   </c:releases>

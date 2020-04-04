@@ -20,7 +20,7 @@ import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import com.io7m.jwheatsheaf.ui.JWFileChoosersTesting;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

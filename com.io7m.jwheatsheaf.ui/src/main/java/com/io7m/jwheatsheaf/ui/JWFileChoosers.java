@@ -20,6 +20,8 @@ import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserViewController;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 import javafx.fxml.FXMLLoader;
@@ -136,16 +138,6 @@ public final class JWFileChoosers implements JWFileChoosersType
     return new JWFileChoosers(strings, testing, executor);
   }
 
-  ExecutorService ioExecutor()
-  {
-    return this.ioExecutor;
-  }
-
-  JWStrings strings()
-  {
-    return this.strings;
-  }
-
   @Override
   public JWFileChooserType create(
     final Window window,
@@ -156,7 +148,8 @@ public final class JWFileChoosers implements JWFileChoosersType
 
     try {
       final var chooserXML =
-        JWFileChooser.class.getResource("/com/io7m/jwheatsheaf/ui/internal/chooser.fxml");
+        JWFileChooser.class.getResource(
+          "/com/io7m/jwheatsheaf/ui/internal/chooser.fxml");
       Objects.requireNonNull(chooserXML, "chooserXML");
 
       final var resources = JWStrings.getResourceBundle();
@@ -170,6 +163,10 @@ public final class JWFileChoosers implements JWFileChoosersType
         (JWFileChooserViewController) loader.getController();
       viewController.setConfiguration(
         this,
+        this.ioExecutor,
+        this.testing,
+        this.strings,
+        this.imageSet,
         configuration
       );
 
@@ -197,15 +194,5 @@ public final class JWFileChoosers implements JWFileChoosersType
   public void close()
   {
     this.ioExecutor.shutdown();
-  }
-
-  JWFileImageSetType imageSet()
-  {
-    return this.imageSet;
-  }
-
-  JWFileChoosersTesting testing()
-  {
-    return this.testing;
   }
 }
