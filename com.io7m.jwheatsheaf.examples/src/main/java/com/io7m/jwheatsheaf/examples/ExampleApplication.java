@@ -30,6 +30,15 @@ public final class ExampleApplication extends Application
   private static final Logger LOG =
     LoggerFactory.getLogger(ExampleApplication.class);
 
+  /**
+   * Construct an application.
+   */
+
+  public ExampleApplication()
+  {
+
+  }
+
   @Override
   public void start(final Stage stage)
     throws Exception

@@ -14,28 +14,11 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * JavaFX file chooser (UI)
- */
+package com.io7m.jwheatsheaf.ui.internal;
 
-module com.io7m.jwheatsheaf.ui
+import java.nio.file.attribute.FileTime;
+
+public interface JWFileTimeFormatterType
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
-
-  requires com.io7m.jaffirm.core;
-  requires com.io7m.junreachable.core;
-  requires javafx.controls;
-  requires javafx.fxml;
-  requires org.slf4j;
-
-  requires transitive com.io7m.jwheatsheaf.api;
-  requires transitive javafx.graphics;
-
-  opens com.io7m.jwheatsheaf.ui to javafx.fxml;
-  opens com.io7m.jwheatsheaf.ui.internal to javafx.fxml;
-
-  exports com.io7m.jwheatsheaf.ui;
+  String formatTime(FileTime time);
 }

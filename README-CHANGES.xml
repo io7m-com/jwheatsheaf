@@ -29,9 +29,14 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-04-04T14:29:42+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.0">
+    <c:release date="2020-04-04T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.0">
       <c:changes>
-        <c:change compatible="false" date="2020-04-04T14:29:42+00:00" summary="Move implementation classes in the ui module into an internal non-exported package"/>
+        <c:change compatible="false" date="2020-04-04T00:00:00+00:00" summary="Move implementation classes in the ui module into an internal non-exported package"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2020-04-10T14:35:31+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.1">
+      <c:changes>
+        <c:change date="2020-04-10T14:35:31+00:00" summary="Enable CheckStyle to enforce code style"/>
       </c:changes>
     </c:release>
   </c:releases>

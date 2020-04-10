@@ -65,9 +65,9 @@ public final class JWFileList
   }
 
   public void setItems(
-    final List<JWFileItem> items)
+    final List<JWFileItem> newItems)
   {
-    this.items.setAll(items);
+    this.items.setAll(newItems);
   }
 
   public void setSearch(

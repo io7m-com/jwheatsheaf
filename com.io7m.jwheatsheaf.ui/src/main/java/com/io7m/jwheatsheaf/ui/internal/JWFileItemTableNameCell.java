@@ -14,38 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.examples;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import com.io7m.jwheatsheaf.oxygen.JWOxygenIconSet;
-import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import javafx.scene.control.TableCell;
 
-import java.util.Map;
 import java.util.Objects;
 
-public final class ExampleImageSets
+final class JWFileItemTableNameCell extends TableCell<JWFileItem, JWFileItem>
 {
-  private final Map<String, JWFileImageSetType> imageSets;
+  private final JWToolTips toolTips;
 
-  public ExampleImageSets(
-    final Map<String, JWFileImageSetType> inImageSets)
+  JWFileItemTableNameCell(
+    final JWToolTips inToolTips)
   {
-    this.imageSets = Objects.requireNonNull(inImageSets, "imageSets");
+    this.toolTips = Objects.requireNonNull(inToolTips, "inToolTips");
   }
 
-  public static ExampleImageSets create()
+  @Override
+  protected void updateItem(
+    final JWFileItem item,
+    final boolean empty)
   {
-    return new ExampleImageSets(
-      Map.ofEntries(
-        Map.entry("Default", JWFileChoosers.createDefaultIcons()),
-        Map.entry("Inverse", new ExampleInverseIconSet()),
-        Map.entry("Oxygen", new JWOxygenIconSet())
-      )
-    );
-  }
+    super.updateItem(item, empty);
 
-  public Map<String, JWFileImageSetType> imageSets()
-  {
-    return this.imageSets;
+    if (empty || item == null) {
+      this.setGraphic(null);
+      this.setText(null);
+      this.setTooltip(null);
+      return;
+    }
+
+    this.setGraphic(null);
+    this.setText(item.name());
+    this.setTooltip(this.toolTips.tooltipOf(item));
   }
 }
