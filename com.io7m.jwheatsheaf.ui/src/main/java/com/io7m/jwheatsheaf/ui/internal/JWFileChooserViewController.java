@@ -17,13 +17,11 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
-import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import com.io7m.jwheatsheaf.api.JWFileKind;
 import com.io7m.jwheatsheaf.api.JWFileListingFailed;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.application.Platform;
@@ -46,9 +44,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
@@ -60,8 +55,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,34 +86,23 @@ public final class JWFileChooserViewController
   private List<Path> result;
   private volatile Path currentDirectory;
 
-  @FXML
-  private Pane mainContent;
-  @FXML
-  private ChoiceBox<Path> pathMenu;
-  @FXML
-  private TableView<JWFileItem> directoryTable;
-  @FXML
-  private Button newDirectoryButton;
-  @FXML
-  private Button upDirectoryButton;
-  @FXML
-  private Button selectDirectButton;
-  @FXML
-  private ListView<JWFileSourceEntryType> sourcesList;
-  @FXML
-  private ComboBox<JWFileChooserFilterType> fileTypeMenu;
-  @FXML
-  private TextField fileName;
-  @FXML
-  private Button okButton;
-  @FXML
-  private TextField searchField;
-  @FXML
-  private ProgressIndicator progressIndicator;
+  @FXML private Button newDirectoryButton;
+  @FXML private Button okButton;
+  @FXML private Button selectDirectButton;
+  @FXML private Button upDirectoryButton;
+  @FXML private ChoiceBox<Path> pathMenu;
+  @FXML private ComboBox<JWFileChooserFilterType> fileTypeMenu;
+  @FXML private ListView<JWFileSourceEntryType> sourcesList;
+  @FXML private Pane mainContent;
+  @FXML private ProgressIndicator progressIndicator;
+  @FXML private TableView<JWFileItem> directoryTable;
+  @FXML private TextField fileName;
+  @FXML private TextField searchField;
 
-  private JWStrings strings;
   private ExecutorService ioExecutor;
   private JWFileChoosersTesting testing;
+  private JWStrings strings;
+  private JWToolTips toolTips;
 
   /**
    * Construct a view controller.
@@ -154,18 +136,22 @@ public final class JWFileChooserViewController
   }
 
   public void setEventReceiver(
-    final Consumer<JWFileChooserEventType> eventReceiver)
+    final Consumer<JWFileChooserEventType> newEventReceiver)
   {
     this.eventReceiver.set(
-      Objects.requireNonNullElse(eventReceiver, event -> {
+      Objects.requireNonNullElse(newEventReceiver, event -> {
       }));
   }
 
   /**
    * Set the file chooser provider and configuration.
    *
-   * @param inChoosers      The provider
-   * @param inConfiguration The configuration
+   * @param inChoosers        The provider
+   * @param inIoExecutor      An executor for background I/O operations
+   * @param inTesting         An internal testing interface
+   * @param inStrings         UI strings
+   * @param inDefaultImageSet The default image set
+   * @param inConfiguration   The configuration
    */
 
   public void setConfiguration(
@@ -188,6 +174,9 @@ public final class JWFileChooserViewController
       Objects.requireNonNull(inIoExecutor, "inIoExecutor");
 
     Objects.requireNonNull(inDefaultImageSet, "inDefaultImageSet");
+
+    this.toolTips =
+      new JWToolTips(this.strings);
 
     this.filterAll =
       JWFileChooserFilterAllFiles.create(this.strings);
@@ -271,33 +260,7 @@ public final class JWFileChooserViewController
     }
 
     this.sourcesList.setItems(FXCollections.observableList(sources));
-    this.sourcesList.setCellFactory(param -> {
-      final ListCell<JWFileSourceEntryType> cell = new ListCell<>()
-      {
-        @Override
-        protected void updateItem(
-          final JWFileSourceEntryType item,
-          final boolean empty)
-        {
-          super.updateItem(item, empty);
-
-          if (empty || item == null) {
-            this.setGraphic(null);
-            this.setText(null);
-            return;
-          }
-
-          item.onListCell(
-            JWFileChooserViewController.this.imageSet,
-            JWFileChooserViewController.this.strings,
-            this
-          );
-        }
-      };
-
-      cell.setOnMouseClicked(this::onSourceItemDoubleClicked);
-      return cell;
-    });
+    this.sourcesList.setCellFactory(new SourceListCellFactory());
   }
 
   private void configureFileTypeMenu()
@@ -615,30 +578,8 @@ public final class JWFileChooserViewController
     tableTypeColumn.setSortable(false);
     tableTypeColumn.setReorderable(false);
     tableTypeColumn.setCellFactory(column -> {
-      final TableCell<JWFileItem, JWFileItem> cell = new TableCell<>()
-      {
-        @Override
-        protected void updateItem(
-          final JWFileItem item,
-          final boolean empty)
-        {
-          super.updateItem(item, empty);
-
-          if (empty || item == null) {
-            this.setGraphic(null);
-            this.setText(null);
-            this.setTooltip(null);
-            return;
-          }
-
-          this.setGraphic(
-            JWFileChooserViewController.this.imageOfKind(item.kind()));
-          this.setText(null);
-          this.setTooltip(
-            JWFileChooserViewController.this.tooltipOf(item));
-        }
-      };
-
+      final TableCell<JWFileItem, JWFileItem> cell =
+        new JWFileItemTableTypeCell(this.imageSet, this.toolTips);
       cell.setOnMouseClicked(this::onTableRowClicked);
       return cell;
     });
@@ -646,27 +587,8 @@ public final class JWFileChooserViewController
     tableNameColumn.setSortable(true);
     tableNameColumn.setReorderable(false);
     tableNameColumn.setCellFactory(column -> {
-      final TableCell<JWFileItem, JWFileItem> cell = new TableCell<>()
-      {
-        @Override
-        protected void updateItem(
-          final JWFileItem item,
-          final boolean empty)
-        {
-          super.updateItem(item, empty);
-
-          if (empty || item == null) {
-            this.setGraphic(null);
-            this.setText(null);
-            this.setTooltip(null);
-            return;
-          }
-
-          this.setGraphic(null);
-          this.setText(item.name());
-          this.setTooltip(JWFileChooserViewController.this.tooltipOf(item));
-        }
-      };
+      final TableCell<JWFileItem, JWFileItem> cell =
+        new JWFileItemTableNameCell(this.toolTips);
       cell.setOnMouseClicked(this::onTableRowClicked);
       return cell;
     });
@@ -674,25 +596,8 @@ public final class JWFileChooserViewController
     tableSizeColumn.setSortable(true);
     tableSizeColumn.setReorderable(false);
     tableSizeColumn.setCellFactory(column -> {
-      final TableCell<JWFileItem, Long> cell = new TableCell<>()
-      {
-        @Override
-        protected void updateItem(
-          final Long item,
-          final boolean empty)
-        {
-          super.updateItem(item, empty);
-
-          if (empty || item == null) {
-            this.setGraphic(null);
-            this.setText(null);
-            return;
-          }
-
-          this.setText(JWFileChooserViewController.this.formatSize(item.longValue()));
-          this.setGraphic(null);
-        }
-      };
+      final TableCell<JWFileItem, Long> cell =
+        new JWFileItemTableSizeCell(this::formatSize);
       cell.setOnMouseClicked(this::onTableRowClicked);
       return cell;
     });
@@ -700,25 +605,8 @@ public final class JWFileChooserViewController
     tableTimeColumn.setSortable(true);
     tableTimeColumn.setReorderable(false);
     tableTimeColumn.setCellFactory(column -> {
-      final TableCell<JWFileItem, FileTime> cell = new TableCell<>()
-      {
-        @Override
-        protected void updateItem(
-          final FileTime item,
-          final boolean empty)
-        {
-          super.updateItem(item, empty);
-
-          if (empty || item == null) {
-            this.setGraphic(null);
-            this.setText(null);
-            return;
-          }
-
-          this.setText(JWFileChooserViewController.this.formatTime(item));
-          this.setGraphic(null);
-        }
-      };
+      final TableCell<JWFileItem, FileTime> cell =
+        new JWFileItemTableTimeCell(this.configuration.fileTimeFormatter());
       cell.setOnMouseClicked(this::onTableRowClicked);
       return cell;
     });
@@ -731,20 +619,6 @@ public final class JWFileChooserViewController
       param -> new ReadOnlyObjectWrapper<>(Long.valueOf(param.getValue().size())));
     tableTimeColumn.setCellValueFactory(
       param -> new ReadOnlyObjectWrapper<>(param.getValue().modifiedTime()));
-  }
-
-  private Tooltip tooltipOf(
-    final JWFileItem item)
-  {
-    switch (item.kind()) {
-      case REGULAR_FILE:
-      case SYMBOLIC_LINK:
-      case UNKNOWN:
-        return new Tooltip(this.strings.tooltipFile(item.path()));
-      case DIRECTORY:
-        return new Tooltip(this.strings.tooltipDirectory(item.path()));
-    }
-    throw new UnreachableCodeException();
   }
 
   private void reconfigureOKButton()
@@ -811,28 +685,6 @@ public final class JWFileChooserViewController
     }
   }
 
-  private ImageView imageOfKind(
-    final JWFileKind kind)
-  {
-    final var imageOpt = this.imageSet.forFileKind(kind);
-    if (imageOpt.isPresent()) {
-      final var imageView = new ImageView();
-      imageView.setFitWidth(16.0);
-      imageView.setFitHeight(16.0);
-      imageView.setImage(new Image(imageOpt.get().toString()));
-      return imageView;
-    }
-    return null;
-  }
-
-  private String formatTime(
-    final FileTime item)
-  {
-    final var instant = item.toInstant();
-    final var time = OffsetDateTime.ofInstant(instant, ZoneId.of("UTC"));
-    return this.configuration.fileTimeFormatter().format(time);
-  }
-
   /**
    * @return The list of selected files, if any
    */
@@ -841,4 +693,54 @@ public final class JWFileChooserViewController
   {
     return this.result;
   }
+
+  private final class SourceListCellFactory
+    implements Callback<ListView<JWFileSourceEntryType>, ListCell<JWFileSourceEntryType>>
+  {
+    SourceListCellFactory()
+    {
+
+    }
+
+    @Override
+    public ListCell<JWFileSourceEntryType> call(
+      final ListView<JWFileSourceEntryType> param)
+    {
+      final ListCell<JWFileSourceEntryType> cell =
+        new JWFileSourceEntryTypeListCell();
+      cell.setOnMouseClicked(
+        JWFileChooserViewController.this::onSourceItemDoubleClicked);
+      return cell;
+    }
+  }
+
+  private final class JWFileSourceEntryTypeListCell
+    extends ListCell<JWFileSourceEntryType>
+  {
+    JWFileSourceEntryTypeListCell()
+    {
+
+    }
+
+    @Override
+    protected void updateItem(
+      final JWFileSourceEntryType item,
+      final boolean empty)
+    {
+      super.updateItem(item, empty);
+
+      if (empty || item == null) {
+        this.setGraphic(null);
+        this.setText(null);
+        return;
+      }
+
+      item.onListCell(
+        JWFileChooserViewController.this.imageSet,
+        JWFileChooserViewController.this.strings,
+        this
+      );
+    }
+  }
+
 }

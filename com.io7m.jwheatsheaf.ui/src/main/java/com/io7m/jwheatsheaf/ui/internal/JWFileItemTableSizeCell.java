@@ -14,38 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.examples;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import com.io7m.jwheatsheaf.oxygen.JWOxygenIconSet;
-import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.jwheatsheaf.api.JWFileSizeFormatterType;
+import javafx.scene.control.TableCell;
 
-import java.util.Map;
 import java.util.Objects;
 
-public final class ExampleImageSets
+final class JWFileItemTableSizeCell extends TableCell<JWFileItem, Long>
 {
-  private final Map<String, JWFileImageSetType> imageSets;
+  private final JWFileSizeFormatterType sizeFormatter;
 
-  public ExampleImageSets(
-    final Map<String, JWFileImageSetType> inImageSets)
+  JWFileItemTableSizeCell(
+    final JWFileSizeFormatterType inSizeFormatter)
   {
-    this.imageSets = Objects.requireNonNull(inImageSets, "imageSets");
+    this.sizeFormatter =
+      Objects.requireNonNull(inSizeFormatter, "inSizeFormatter");
   }
 
-  public static ExampleImageSets create()
+  @Override
+  protected void updateItem(
+    final Long item,
+    final boolean empty)
   {
-    return new ExampleImageSets(
-      Map.ofEntries(
-        Map.entry("Default", JWFileChoosers.createDefaultIcons()),
-        Map.entry("Inverse", new ExampleInverseIconSet()),
-        Map.entry("Oxygen", new JWOxygenIconSet())
-      )
-    );
-  }
+    super.updateItem(item, empty);
 
-  public Map<String, JWFileImageSetType> imageSets()
-  {
-    return this.imageSets;
+    if (empty || item == null) {
+      this.setGraphic(null);
+      this.setText(null);
+      return;
+    }
+
+    this.setText(this.sizeFormatter.formatSize(item.longValue()));
+    this.setGraphic(null);
   }
 }

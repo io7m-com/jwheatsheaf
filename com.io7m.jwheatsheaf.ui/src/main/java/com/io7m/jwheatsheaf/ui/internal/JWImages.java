@@ -16,6 +16,8 @@
 
 package com.io7m.jwheatsheaf.ui.internal;
 
+import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.api.JWFileKind;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -51,5 +53,20 @@ public final class JWImages
     imageView.setFitHeight(16.0);
     imageView.setImage(new Image(url.toString()));
     return imageView;
+  }
+
+  public static ImageView imageOfKind(
+    final JWFileImageSetType images,
+    final JWFileKind kind)
+  {
+    final var imageOpt = images.forFileKind(kind);
+    if (imageOpt.isPresent()) {
+      final var imageView = new ImageView();
+      imageView.setFitWidth(16.0);
+      imageView.setFitHeight(16.0);
+      imageView.setImage(new Image(imageOpt.get().toString()));
+      return imageView;
+    }
+    return null;
   }
 }

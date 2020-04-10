@@ -14,38 +14,36 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jwheatsheaf.examples;
+package com.io7m.jwheatsheaf.ui.internal;
 
-import com.io7m.jwheatsheaf.api.JWFileImageSetType;
-import com.io7m.jwheatsheaf.oxygen.JWOxygenIconSet;
-import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.junreachable.UnreachableCodeException;
+import javafx.scene.control.Tooltip;
 
-import java.util.Map;
 import java.util.Objects;
 
-public final class ExampleImageSets
+public final class JWToolTips
 {
-  private final Map<String, JWFileImageSetType> imageSets;
+  private final JWStrings strings;
 
-  public ExampleImageSets(
-    final Map<String, JWFileImageSetType> inImageSets)
+  JWToolTips(
+    final JWStrings inStrings)
   {
-    this.imageSets = Objects.requireNonNull(inImageSets, "imageSets");
+    this.strings = Objects.requireNonNull(inStrings, "strings");
   }
 
-  public static ExampleImageSets create()
+  public Tooltip tooltipOf(
+    final JWFileItem item)
   {
-    return new ExampleImageSets(
-      Map.ofEntries(
-        Map.entry("Default", JWFileChoosers.createDefaultIcons()),
-        Map.entry("Inverse", new ExampleInverseIconSet()),
-        Map.entry("Oxygen", new JWOxygenIconSet())
-      )
-    );
-  }
+    Objects.requireNonNull(item, "item");
 
-  public Map<String, JWFileImageSetType> imageSets()
-  {
-    return this.imageSets;
+    switch (item.kind()) {
+      case REGULAR_FILE:
+      case SYMBOLIC_LINK:
+      case UNKNOWN:
+        return new Tooltip(this.strings.tooltipFile(item.path()));
+      case DIRECTORY:
+        return new Tooltip(this.strings.tooltipDirectory(item.path()));
+    }
+    throw new UnreachableCodeException();
   }
 }
