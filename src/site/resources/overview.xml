@@ -8,10 +8,6 @@
          <img src="https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.png?style=flat-square"
               alt="Maven Central"/>
       </a>
-      <a href="https://www.codacy.com/app/github_79/jwheatsheaf">
-         <img src="https://img.shields.io/codacy/grade/b0ab224c1aa641afbe9d0d34b1f60f1d.png?style=flat-square"
-              alt="Codacy"/>
-      </a>
       <a href="https://codecov.io/gh/io7m/jwheatsheaf">
          <img src="https://img.shields.io/codecov/c/github/io7m/jwheatsheaf.png?style=flat-square"
               alt="Codecov"/>
