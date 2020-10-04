@@ -1,9 +1,9 @@
 <div xmlns="http://www.w3.org/1999/xhtml">
   <p class="shields">
-      <a href="https://travis-ci.com/io7m/jwheatsheaf">
-         <img src="https://img.shields.io/travis/com/io7m/jwheatsheaf?style=flat-square"
-              alt="Build status"/>
-      </a>
+    <a href="https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_lts-linux">
+      <img src="https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_lts-linux"
+           alt="Build status"/>
+    </a>
       <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jwheatsheaf%22">
          <img src="https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.png?style=flat-square"
               alt="Maven Central"/>
