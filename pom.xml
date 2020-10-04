@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>5.0.0</version>
+    <version>6.0.0-beta0004</version>
   </parent>
 
   <groupId>com.io7m.jwheatsheaf</groupId>
@@ -85,8 +85,8 @@
   </distributionManagement>
 
   <ciManagement>
-    <system>Travis CI</system>
-    <url>https://travis-ci.org/io7m/jwheatsheaf</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/jwheatsheaf/actions</url>
   </ciManagement>
 
   <dependencyManagement>
@@ -194,7 +194,7 @@
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>4.0.1</version>
+        <version>6.0.0-beta0004</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
