@@ -469,4 +469,31 @@ public final class JWFileChooserTest
     );
     Assertions.assertEquals(0, this.events.size());
   }
+
+  /**
+   * Pressing escape closes the dialog without selecting a file.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testEscapeCloses(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var rootItem =
+      robot.lookup(".fileChooserSourceList")
+        .query();
+
+    robot.clickOn(rootItem);
+    robot.type(KeyCode.ESCAPE);
+
+    Assertions.assertEquals(
+      List.of(),
+      this.chooser.result()
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
 }

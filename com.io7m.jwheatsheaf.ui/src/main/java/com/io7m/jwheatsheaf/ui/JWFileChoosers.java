@@ -26,6 +26,8 @@ import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 import com.io7m.jwheatsheaf.ui.internal.JWStrings;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -185,6 +187,16 @@ public final class JWFileChoosers implements JWFileChoosersType
           dialog.setTitle(this.strings.filesSelect());
           break;
       }
+
+      /*
+       * Close the dialog when escape is pressed.
+       */
+
+      dialog.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
+        if (KeyCode.ESCAPE == event.getCode()) {
+          dialog.close();
+        }
+      });
 
       return new JWFileChooser(dialog, viewController);
     } catch (final IOException e) {
