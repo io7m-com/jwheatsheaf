@@ -37,7 +37,7 @@
     <com.codacy.id>b0ab224c1aa641afbe9d0d34b1f60f1d</com.codacy.id>
     <com.io7m.immutables.version>2.8.3</com.io7m.immutables.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
-    <javafx.version>13.0.2</javafx.version>
+    <javafx.version>16</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
   </properties>
 
@@ -127,6 +127,11 @@
         <version>${javafx.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-swing</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.annotation.bundle</artifactId>
         <version>1.0.0</version>
@@ -190,6 +195,11 @@
         <groupId>org.testfx</groupId>
         <artifactId>testfx-core</artifactId>
         <version>${testfx.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testfx</groupId>
+        <artifactId>openjfx-monocle</artifactId>
+        <version>jdk-11+26</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>

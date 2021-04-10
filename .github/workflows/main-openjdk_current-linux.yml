@@ -16,4 +16,16 @@ jobs:
         with:
           java-version: 15
       - name: Build
-        run: mvn --errors clean verify site
+        run: ./.github/workflows/run-with-xvfb.sh mvn --errors clean verify site
+      - name: Upload video
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test-video
+          path: test-suite.mkv
+      - name: Upload test logs
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test-logs
+          path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports

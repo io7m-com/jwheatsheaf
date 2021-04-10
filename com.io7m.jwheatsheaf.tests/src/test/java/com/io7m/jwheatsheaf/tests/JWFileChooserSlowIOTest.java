@@ -26,13 +26,16 @@ import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
+import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -44,8 +47,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.testfx.util.WaitForAsyncUtils.waitFor;
 
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserSlowIOTest
@@ -105,24 +111,52 @@ public final class JWFileChooserSlowIOTest
   /**
    * Clicking the first row of the directory table yields a directory, and
    * clicking the OK button selects it.
+   *
+   * @param robot The FX test robot
    */
 
   @Test
-  public void testDirectorySelect(final FxRobot robot)
+  public void testDirectorySelect(
+    final FxRobot robot,
+    final TestInfo info)
+    throws TimeoutException
   {
-    robot
-      .sleep(2L, TimeUnit.SECONDS)
-      .doubleClickOn("Z:\\")
-      .sleep(2L, TimeUnit.SECONDS)
-      .clickOn("USERS")
-      .clickOn("#fileChooserOKButton");
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var root =
+      robot.lookup(".fileChooserSourceList")
+        .query();
+
+    final var directoryTable =
+      robot.lookup(".fileChooserDirectoryTable")
+        .query();
+
+    waitFor(10L, SECONDS, () -> Boolean.valueOf(!root.isDisabled()));
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+
+    robot.doubleClickOn("Z:\\");
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+
+    waitFor(10L, SECONDS, () -> Boolean.valueOf(!root.isDisabled()));
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(directoryTable);
+    robot.sleep(1L, SECONDS);
+    robot.clickOn("USERS");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
 
     Assertions.assertEquals(
       List.of("Z:\\USERS"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList())
+    );
     Assertions.assertEquals(0, this.events.size());
   }
 }
