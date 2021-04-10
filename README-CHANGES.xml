@@ -39,11 +39,16 @@
         <c:change date="2020-04-10T00:00:00+00:00" summary="Enable CheckStyle to enforce code style"/>
       </c:changes>
     </c:release>
-    <c:release date="2021-04-10T20:20:02+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
+    <c:release date="2021-04-10T21:12:49+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
       <c:changes>
-        <c:change date="2021-04-10T20:20:02+00:00" summary="Allow the escape key to close file choosers">
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Allow the escape key to close file choosers">
           <c:tickets>
             <c:ticket id="14"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-10T21:12:49+00:00" summary="Allow for specifying an initial filename in choosers">
+          <c:tickets>
+            <c:ticket id="15"/>
           </c:tickets>
         </c:change>
       </c:changes>

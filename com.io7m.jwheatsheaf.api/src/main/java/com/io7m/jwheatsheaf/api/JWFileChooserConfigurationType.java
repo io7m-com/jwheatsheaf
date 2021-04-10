@@ -58,6 +58,12 @@ public interface JWFileChooserConfigurationType
   Optional<Path> initialDirectory();
 
   /**
+   * @return The file name initially entered into the selection field
+   */
+
+  Optional<String> initialFileName();
+
+  /**
    * The image set used to select images for the file chooser UI. If no
    * set is specified here, a default set of images and icons will be used.
    *

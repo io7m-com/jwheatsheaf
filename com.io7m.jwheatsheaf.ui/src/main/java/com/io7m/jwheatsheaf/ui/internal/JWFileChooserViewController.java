@@ -57,8 +57,11 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -103,6 +106,7 @@ public final class JWFileChooserViewController
   private JWFileChoosersTesting testing;
   private JWStrings strings;
   private JWToolTips toolTips;
+  private BlockingDeque<String> initialFilename;
 
   /**
    * Construct a view controller.
@@ -112,6 +116,7 @@ public final class JWFileChooserViewController
   {
     this.listener = this::onPathMenuItemSelected;
     this.result = List.of();
+    this.initialFilename = new LinkedBlockingDeque<>();
     this.eventReceiver = new AtomicReference<>(event -> {
     });
   }
@@ -242,6 +247,8 @@ public final class JWFileChooserViewController
   {
     this.fileName.textProperty()
       .addListener(observable -> this.onNameFieldChanged());
+    this.configuration.initialFileName()
+      .ifPresent(this.initialFilename::push);
   }
 
   private void configureSourceList(
@@ -346,6 +353,14 @@ public final class JWFileChooserViewController
         Platform.runLater(() -> {
           this.ioUnlockUI();
           this.fileListing.setItems(items);
+
+          try {
+            final var name = this.initialFilename.pop();
+            this.trySelectDirectoryItem(items, name);
+            this.fileName.setText(name);
+          } catch (final NoSuchElementException e) {
+            // Most of the time, there's no initial filename.
+          }
         });
       } catch (final Exception e) {
         LOG.error("exception during directory listing: ", e);
@@ -361,6 +376,26 @@ public final class JWFileChooserViewController
         });
       }
     });
+  }
+
+  /**
+   * Select the item in the list of file items that has the given name. If
+   * none of them have the given name, do nothing.
+   */
+
+  private void trySelectDirectoryItem(
+    final List<JWFileItem> items,
+    final String name)
+  {
+    for (final var item : items) {
+      final var itemFileName = item.path().getFileName();
+      if (itemFileName != null) {
+        if (Objects.equals(itemFileName.toString(), name)) {
+          this.directoryTable.getSelectionModel().select(item);
+          return;
+        }
+      }
+    }
   }
 
   private void ioUnlockUI()
