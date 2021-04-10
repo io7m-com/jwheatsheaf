@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import java.io.IOException;
@@ -172,6 +173,7 @@ public final class JWFileChoosers implements JWFileChoosersType
 
       final var dialog = new Stage(((Stage) window).getStyle());
       dialog.initModality(Modality.APPLICATION_MODAL);
+      dialog.initStyle(StageStyle.DECORATED);
       dialog.setScene(new Scene(pane));
 
       switch (configuration.action()) {

@@ -16,4 +16,4 @@ jobs:
         with:
           java-version: 15
       - name: Build
-        run: mvn --errors clean verify site
+        run: mvn -DskipTests=true --errors clean verify site

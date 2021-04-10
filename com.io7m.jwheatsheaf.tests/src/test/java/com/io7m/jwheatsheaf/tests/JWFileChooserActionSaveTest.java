@@ -22,16 +22,20 @@ import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
+import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -87,50 +91,83 @@ public final class JWFileChooserActionSaveTest
 
   /**
    * In SAVE mode, entering a name unlocks the OK button.
+   *
+   * @param robot The FX test robot
    */
 
   @Test
-  public void testActionSaveNamed(final FxRobot robot)
-    throws Exception
+  public void testActionSaveNamed(
+    final FxRobot robot,
+    final TestInfo info)
   {
-    robot
-      .clickOn("#fileChooserNameField")
-      .write("GCC.EXE")
-      .type(KeyCode.ENTER)
-      .clickOn("#fileChooserOKButton");
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    robot.clickOn("#fileChooserNameField");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.write("GCC.EXE");
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+
+    robot.type(KeyCode.ENTER);
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
 
     Assertions.assertEquals(
       List.of("Z:\\USERS\\GROUCH\\GCC.EXE"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList())
+    );
     Assertions.assertEquals(0, this.events.size());
   }
 
   /**
    * The enter directly dialog works.
+   *
+   * @param robot The FX test robot
    */
 
   @Test
-  public void testDirectorySelectDirect(final FxRobot robot)
-    throws IOException
+  public void testDirectorySelectDirect(
+    final FxRobot robot,
+    final TestInfo info)
   {
-    // Test is fragile when run on Travis CI
-    Assumptions.assumeFalse(JWFileChooserTest.isTravisCI());
+    JWFileWindowTitles.setTitle(this.chooser, info);
 
-    robot
-      .clickOn("#fileChooserSelectDirectButton")
-      .write("Y:\\NEWFILE.TXT")
-      .type(KeyCode.ENTER)
-      .clickOn("#fileChooserOKButton");
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var selectButton =
+      robot.lookup("#fileChooserSelectDirectButton")
+        .queryButton();
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.clickOn(selectButton);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.write("Y:\\NEWFILE.TXT");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.type(KeyCode.ENTER);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
 
     Assertions.assertEquals(
       List.of("Y:\\NEWFILE.TXT"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList())
+    );
     Assertions.assertEquals(0, this.events.size());
   }
 }
