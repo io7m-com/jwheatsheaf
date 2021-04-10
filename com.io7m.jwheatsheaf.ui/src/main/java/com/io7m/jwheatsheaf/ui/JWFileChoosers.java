@@ -178,15 +178,25 @@ public final class JWFileChoosers implements JWFileChoosersType
       dialog.initStyle(StageStyle.DECORATED);
       dialog.setScene(new Scene(pane));
 
-      switch (configuration.action()) {
-        case CREATE:
-        case OPEN_EXISTING_SINGLE:
-          dialog.setTitle(this.strings.fileSelect());
-          break;
-        case OPEN_EXISTING_MULTIPLE:
-          dialog.setTitle(this.strings.filesSelect());
-          break;
-      }
+      /*
+       * Configure the title for the dialog.
+       */
+
+      configuration.title()
+        .ifPresentOrElse(
+          dialog::setTitle,
+          () -> {
+            switch (configuration.action()) {
+              case CREATE:
+              case OPEN_EXISTING_SINGLE:
+                dialog.setTitle(this.strings.fileSelect());
+                break;
+              case OPEN_EXISTING_MULTIPLE:
+                dialog.setTitle(this.strings.filesSelect());
+                break;
+            }
+          }
+        );
 
       /*
        * Close the dialog when escape is pressed.

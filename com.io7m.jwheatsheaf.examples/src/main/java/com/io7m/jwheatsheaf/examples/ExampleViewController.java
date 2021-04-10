@@ -28,6 +28,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
@@ -64,6 +65,8 @@ public final class ExampleViewController implements Initializable
   private CheckBox slowIO;
   @FXML
   private ChoiceBox<JWFileChooserAction> action;
+  @FXML
+  private TextField title;
 
   public ExampleViewController()
   {
@@ -150,7 +153,7 @@ public final class ExampleViewController implements Initializable
         fileSystem.getPath("G", "H", "I")
       );
 
-    final var configuration =
+    final var configurationBuilder =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
         .setFileSystem(fileSystem)
@@ -159,8 +162,14 @@ public final class ExampleViewController implements Initializable
         .setAction(this.action.getValue())
         .addFileFilters(new ExampleFilterRejectAll())
         .addFileFilters(new ExampleFilterXML())
-        .addAllRecentFiles(recents)
-        .build();
+        .addAllRecentFiles(recents);
+
+    if (!this.title.getText().isEmpty()) {
+      configurationBuilder.setTitle(this.title.getText());
+    }
+
+    final var configuration =
+      configurationBuilder.build();
 
     final var testingBuilder = JWFileChoosersTesting.builder();
     if (this.slowIO.isSelected()) {

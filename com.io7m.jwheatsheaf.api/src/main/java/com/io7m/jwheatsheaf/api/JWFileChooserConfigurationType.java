@@ -64,6 +64,12 @@ public interface JWFileChooserConfigurationType
   Optional<String> initialFileName();
 
   /**
+   * @return A string that will override the generic dialog title
+   */
+
+  Optional<String> title();
+
+  /**
    * The image set used to select images for the file chooser UI. If no
    * set is specified here, a default set of images and icons will be used.
    *

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -54,6 +55,13 @@
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="170.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox>
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Title" />
+            <TextField fx:id="title" minHeight="-Infinity" prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox>
          <children>
             <Region HBox.hgrow="ALWAYS" />
