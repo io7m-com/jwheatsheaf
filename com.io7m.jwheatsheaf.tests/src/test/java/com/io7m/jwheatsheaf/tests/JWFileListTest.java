@@ -17,16 +17,20 @@
 package com.io7m.jwheatsheaf.tests;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
+import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
+import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterAllFiles;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterOnlyDirectories;
 import com.io7m.jwheatsheaf.ui.internal.JWFileItem;
 import com.io7m.jwheatsheaf.ui.internal.JWFileList;
 import com.io7m.jwheatsheaf.ui.internal.JWStrings;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
@@ -39,16 +43,16 @@ public final class JWFileListTest
   private JWFileItem item1;
   private JWFileItem item2;
   private List<JWFileItem> baseItems;
-  private JWFileChooserFilterType filterAll;
   private JWStrings strings;
+  private JWFileChoosersType choosers;
 
   @BeforeEach
   public void testSetup()
   {
     this.strings =
       JWStrings.of(JWStrings.getResourceBundle());
-    this.filterAll =
-      JWFileChooserFilterAllFiles.create(this.strings);
+    this.choosers =
+      JWFileChoosers.create();
 
     this.item0 =
       JWFileItem.builder()
@@ -76,10 +80,17 @@ public final class JWFileListTest
       List.of(this.item0, this.item1, this.item2);
   }
 
+  @AfterEach
+  public void testShutdown()
+    throws IOException
+  {
+    this.choosers.close();
+  }
+
   @Test
   public void testListBase()
   {
-    final var items = new JWFileList(this.filterAll);
+    final var items = new JWFileList(this.choosers.filterForAllFiles());
 
     items.setItems(this.baseItems);
     Assertions.assertEquals(this.baseItems, items.items());
@@ -88,7 +99,7 @@ public final class JWFileListTest
   @Test
   public void testListSearch()
   {
-    final var items = new JWFileList(this.filterAll);
+    final var items = new JWFileList(this.choosers.filterForAllFiles());
 
     items.setItems(this.baseItems);
     items.setSearch("x");
@@ -100,7 +111,7 @@ public final class JWFileListTest
   @Test
   public void testListFilter()
   {
-    final var items = new JWFileList(this.filterAll);
+    final var items = new JWFileList(this.choosers.filterForAllFiles());
 
     items.setItems(this.baseItems);
     items.setFilter(new JWFileChooserFilterType()
@@ -119,19 +130,19 @@ public final class JWFileListTest
     });
 
     Assertions.assertEquals(List.of(this.item1), items.items());
-    items.setFilter(this.filterAll);
+    items.setFilter(this.choosers.filterForAllFiles());
     Assertions.assertEquals(this.baseItems, items.items());
   }
 
   @Test
   public void testListFilterDirectories()
   {
-    final var items = new JWFileList(this.filterAll);
+    final var items = new JWFileList(this.choosers.filterForAllFiles());
 
     items.setItems(this.baseItems);
     items.setFilter(JWFileChooserFilterOnlyDirectories.create(this.strings));
     Assertions.assertEquals(List.of(), items.items());
-    items.setFilter(this.filterAll);
+    items.setFilter(this.choosers.filterForAllFiles());
     Assertions.assertEquals(this.baseItems, items.items());
   }
 }

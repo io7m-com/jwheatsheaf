@@ -106,7 +106,7 @@ public final class JWFileChooserViewController
   private JWFileChoosersTesting testing;
   private JWStrings strings;
   private JWToolTips toolTips;
-  private BlockingDeque<String> initialFilename;
+  private final BlockingDeque<String> initialFilename;
 
   /**
    * Construct a view controller.

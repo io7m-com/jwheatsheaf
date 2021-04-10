@@ -17,9 +17,12 @@
 package com.io7m.jwheatsheaf.ui;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
+import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterAllFiles;
+import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterOnlyDirectories;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChooserViewController;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
@@ -51,11 +54,15 @@ public final class JWFileChoosers implements JWFileChoosersType
   private final ExecutorService ioExecutor;
   private final JWFileImageDefaultSet imageSet;
   private final JWStrings strings;
+  private final JWFileChooserFilterType filterAllFiles;
+  private final JWFileChooserFilterType filterOnlyDirectories;
 
   private JWFileChoosers(
     final JWStrings inStrings,
     final JWFileChoosersTesting inTesting,
-    final ExecutorService inIoExecutor)
+    final ExecutorService inIoExecutor,
+    final JWFileChooserFilterType inFilterAllFiles,
+    final JWFileChooserFilterType inFilterOnlyDirectories)
   {
     this.strings =
       Objects.requireNonNull(inStrings, "inStrings");
@@ -63,6 +70,10 @@ public final class JWFileChoosers implements JWFileChoosersType
       Objects.requireNonNull(inTesting, "testing");
     this.ioExecutor =
       Objects.requireNonNull(inIoExecutor, "ioExecutor");
+    this.filterAllFiles =
+      Objects.requireNonNull(inFilterAllFiles, "filterAllFiles");
+    this.filterOnlyDirectories =
+      Objects.requireNonNull(inFilterOnlyDirectories, "filterOnlyDirectories");
     this.imageSet =
       new JWFileImageDefaultSet();
   }
@@ -115,8 +126,16 @@ public final class JWFileChoosers implements JWFileChoosersType
     final JWFileChoosersTesting testing,
     final Locale locale)
   {
-    final var strings = JWStrings.of(JWStrings.getResourceBundle(locale));
-    return new JWFileChoosers(strings, testing, executor);
+    final var strings =
+      JWStrings.of(JWStrings.getResourceBundle(locale));
+
+    return new JWFileChoosers(
+      strings,
+      testing,
+      executor,
+      JWFileChooserFilterAllFiles.create(strings),
+      JWFileChooserFilterOnlyDirectories.create(strings)
+    );
   }
 
   /**
@@ -138,7 +157,13 @@ public final class JWFileChoosers implements JWFileChoosersType
       JWFileChoosersTesting.builder()
         .build();
 
-    return new JWFileChoosers(strings, testing, executor);
+    return new JWFileChoosers(
+      strings,
+      testing,
+      executor,
+      JWFileChooserFilterAllFiles.create(strings),
+      JWFileChooserFilterOnlyDirectories.create(strings)
+    );
   }
 
   @Override
@@ -212,6 +237,18 @@ public final class JWFileChoosers implements JWFileChoosersType
     } catch (final IOException e) {
       throw new UncheckedIOException(e);
     }
+  }
+
+  @Override
+  public JWFileChooserFilterType filterForAllFiles()
+  {
+    return this.filterAllFiles;
+  }
+
+  @Override
+  public JWFileChooserFilterType filterForOnlyDirectories()
+  {
+    return this.filterOnlyDirectories;
   }
 
   @Override
