@@ -13,3 +13,5 @@ jwheatsheaf
 | OpenJDK Current | Linux    | [![Build (OpenJDK Current, Linux)](https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_current-linux)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_current-linux)
 | OpenJDK Current | Windows  | [![Build (OpenJDK Current, Windows)](https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_current-windows)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_current-windows)
 
+An alternative to JavaFX's FileChooser that aims to be feature-compatible, if not fully API-compatible.
+
