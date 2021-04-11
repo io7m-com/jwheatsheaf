@@ -197,11 +197,6 @@
         <version>${testfx.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.testfx</groupId>
-        <artifactId>openjfx-monocle</artifactId>
-        <version>jdk-11+26</version>
-      </dependency>
-      <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
         <version>6.3.0</version>
