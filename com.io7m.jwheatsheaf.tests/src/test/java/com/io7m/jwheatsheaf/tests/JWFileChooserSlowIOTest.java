@@ -61,10 +61,7 @@ public final class JWFileChooserSlowIOTest
 
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private FileSystem brokenFilesystem;
-  private FileSystem brokenFilesFilesystem;
   private JWFileChooserType chooser;
-  private List<Path> selected;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
 
@@ -77,8 +74,6 @@ public final class JWFileChooserSlowIOTest
     this.filesystems = JWTestFilesystems.create();
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
-    this.brokenFilesystem = systems.get("Broken");
-    this.brokenFilesFilesystem = systems.get("BrokenFiles");
 
     final var configuration =
       JWFileChooserConfiguration.builder()
