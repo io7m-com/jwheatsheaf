@@ -23,8 +23,7 @@
             <Region maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
             <HBox>
                <children>
-                  <Button id="fileChooserHomeButton" fx:id="homeDirectoryButton" maxHeight="-Infinity" maxWidth="-Infinity"
-                           minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onHomeSelected" prefHeight="32.0" prefWidth="32.0">
+                  <Button id="fileChooserHomeButton" fx:id="homeDirectoryButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onHomeSelected" prefHeight="32.0" prefWidth="32.0">
                      <tooltip>
                         <Tooltip text="%ui.tooltip.home" />
                      </tooltip></Button>
@@ -71,10 +70,10 @@
                   <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
                   <TableView id="fileChooserDirectoryTable" fx:id="directoryTable" prefHeight="200.0" prefWidth="200.0" styleClass="fileChooserDirectoryTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn editable="false" maxWidth="24.0" minWidth="24.0" prefWidth="24.0" sortable="false" />
-                      <TableColumn editable="false" minWidth="16.0" prefWidth="384.0" text="%ui.columnName" />
-                      <TableColumn editable="false" minWidth="64.0" prefWidth="64.0" text="%ui.columnSize" />
-                        <TableColumn editable="false" minWidth="0.0" prefWidth="128.0" text="%ui.columnModified" />
+                        <TableColumn id="fileChooserTableColumnType" editable="false" maxWidth="24.0" minWidth="24.0" prefWidth="24.0" sortable="false" />
+                      <TableColumn id="fileChooserTableColumnName" editable="false" minWidth="16.0" prefWidth="384.0" text="%ui.columnName" />
+                      <TableColumn id="fileChooserTableColumnSize" editable="false" minWidth="64.0" prefWidth="64.0" text="%ui.columnSize" />
+                        <TableColumn id="fileChooserTableColumnModified" editable="false" minWidth="0.0" prefWidth="128.0" text="%ui.columnModified" />
                     </columns>
                   </TableView>
                </children>
