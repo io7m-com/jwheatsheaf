@@ -19,6 +19,7 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.*;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -36,17 +37,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.testfx.util.WaitForAsyncUtils.waitFor;
-
+@SuppressWarnings( {"unused", "SameParameterValue"} )
 @ExtendWith(ApplicationExtension.class)
-public final class JWFileChooserSelectionModeTest
+public final class JWFileChooserDefaultModeTest
 {
-  private JWTestFilesystems filesystems;
-  private FileSystem dosFilesystem;
   private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
@@ -55,18 +51,17 @@ public final class JWFileChooserSelectionModeTest
   public void start(final Stage stage)
     throws Exception
   {
-    this.events = Collections.synchronizedList( new ArrayList<>());
+    this.events = Collections.synchronizedList(new ArrayList<>());
 
-    this.filesystems = JWTestFilesystems.create();
-    final var systems = this.filesystems.filesystems();
-    this.dosFilesystem = systems.get("ExampleDOS");
+    final JWTestFilesystems filesystems = JWTestFilesystems.create();
+    final var systems = filesystems.filesystems();
+    final FileSystem dosFilesystem = systems.get( "ExampleDOS" );
 
     final var configuration =
       JWFileChooserConfiguration.builder()
                                 .setAllowDirectoryCreation(true)
-                                .setAction( JWFileChooserAction.OPEN_EXISTING_SINGLE)
-                                .setFileSystem(this.dosFilesystem)
-                                .setInitialFileName("README.TXT")
+                                .setAction(JWFileChooserAction.OPEN_EXISTING_SINGLE)
+                                .setFileSystem(dosFilesystem)
                                 .build();
 
     this.choosers = JWFileChoosers.create();
@@ -82,37 +77,40 @@ public final class JWFileChooserSelectionModeTest
     this.choosers.close();
   }
 
+  @AfterEach
+  public void afterEach() {
+    Assertions.assertEquals(0, this.events.size());
+  }
+
   /**
-   * Supplying an initial filename allows instantly selecting a file.
-   *
-   * @param robot The FX test robot
+   * Clicking the "Open" button (if enabled) permits picking the selected file.
    */
 
   @Test
-  public void test(
+  public void test_DefaultMode_ClickOpenButton_SelectedItemReturned(
     final FxRobot robot,
     final TestInfo info)
-    throws TimeoutException
   {
-    final var okButton =
-      robot.lookup("#fileChooserOKButton")
-           .queryButton();
-    final var textField =
-      robot.lookup("#fileChooserNameField")
-           .queryTextInputControl();
+    final var delegate = new JWRobotDelegate( robot);
+    final var okButton = delegate.getOkButton();
 
-    //waitFor(3L, SECONDS, () -> !textField.textProperty().get().isEmpty());
-    FxAssert.verifyThat( okButton, NodeMatchers.isEnabled());
-    robot.sleep(1L, SECONDS);
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.clickOn(delegate.getTableCellFileName("DATA.XML"));
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(delegate.getTableCellFileName("DOC"));
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
 
+    assertSelected("Z:\\USERS\\GROUCH\\DOC");
+  }
+
+  private void assertSelected(final String... selectedItems) {
     Assertions.assertEquals(
-      List.of( "Z:\\USERS\\GROUCH\\README.TXT"),
+      List.of(selectedItems),
       this.chooser.result()
                   .stream()
-                  .map( Path::toString)
-                  .collect( Collectors.toList())
+                  .map(Path::toString)
+                  .collect(Collectors.toList())
     );
-    Assertions.assertEquals(0, this.events.size());
   }
 }

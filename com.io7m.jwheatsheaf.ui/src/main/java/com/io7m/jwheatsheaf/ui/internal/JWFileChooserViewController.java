@@ -17,7 +17,12 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
-import com.io7m.jwheatsheaf.api.*;
+import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
+import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
+import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
+import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
+import com.io7m.jwheatsheaf.api.JWFileImageSetType;
+import com.io7m.jwheatsheaf.api.JWFileListingFailed;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -26,7 +31,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
@@ -38,7 +55,10 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -549,7 +569,7 @@ public final class JWFileChooserViewController
                  .filter(this::filterSelectionMode)
                  .collect(Collectors.toList());
 
-    if(!this.result().isEmpty()) {
+    if (!this.result().isEmpty()) {
       final var window = this.mainContent.getScene().getWindow();
       window.hide();
     }
@@ -720,7 +740,7 @@ public final class JWFileChooserViewController
    */
 
   private boolean filterSelectionMode(final Path path) {
-    return this.configuration.fileSelectionMode().apply( path );
+    return this.configuration.fileSelectionMode().apply(path);
   }
 
   private boolean atLeastOneItemSelected()
