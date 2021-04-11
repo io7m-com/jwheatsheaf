@@ -22,10 +22,13 @@ import org.immutables.value.Value;
 
 import java.net.URL;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * The configuration information used to instantiate file choosers.
@@ -91,6 +94,22 @@ public interface JWFileChooserConfigurationType
    */
 
   List<JWFileChooserFilterType> fileFilters();
+
+  /**
+   * Sets a mode that prevents returning a file to the client if that file
+   * does not meet criteria returned by this method. For example, this may be
+   * used to prevent selecting directories by implementing a function that
+   * returns {@code true} when {@link Files#isRegularFile(Path, LinkOption...)}
+   * returns {@code true}.
+   *
+   * @return The {@link Function} that accepts or rejects selected files
+   */
+
+  @Value.Default
+  default Function<Path, Boolean> fileSelectionMode()
+  {
+    return JWFileChooserConfigurationDefaults.fileSelectionMode();
+  }
 
   /**
    * @return {@code true} if the UI will allow the creation of directories
