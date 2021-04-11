@@ -84,11 +84,57 @@ final var configuration =
     .build();
 ```
 
+#### Glob Filtering
+
+The [com.io7m.jwheatsheaf.filter.glob](com.io7m.jwheatsheaf.filter.glob) module
+provides a convenient system for constructing rule-based filters for files.
+
+A _Glob Filter_ consists of rules evaluated in declaration order against incoming
+filenames.
+
+A filter rule must be one of `INCLUDE`, `EXCLUDE`, `INCLUDE_AND_HALT`, or 
+`EXCLUDE_AND_HALT`. The incoming file names are matched against the 
+patterns given in the filter rules. The patterns are given in
+[PathMatcher glob syntax](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)).
+
+A file is included or excluded based on the result of the last rule that matched 
+the file.
+
+The `INCLUDE` rule marks a file as included if the pattern matches the file 
+name. Evaluation of other rules continues if the pattern matches.
+
+The `EXCLUDE` rule marks a file as excluded if the pattern matches the file 
+name. Evaluation of other rules continues if the pattern matches.
+
+The `INCLUDE_AND_HALT` rule marks a file as included if the pattern matches 
+the file name. Evaluation of other rules halts if the pattern matches.
+
+The `EXCLUDE_AND_HALT` rule marks a file as excluded if the pattern matches 
+the file name. Evaluation of other rules halts if the pattern matches.
+
+If no rules are specified at all, no files are included. If no rules 
+match at all for a given file, the file is not included.
+
+As an example, a filter that allows access to `.txt` and `.png` files but
+excludes `data.txt`:
+
+```
+final var filters =
+  new JWFilterGlobFactory();
+
+final var filter =
+  filters.create("Text and images (*.txt, *.png)")
+    .addRule(INCLUDE, "**/*.txt")
+    .addRule(INCLUDE, "**/*.png")
+    .addRule(EXCLUDE_AND_HALT, "**/data.txt")
+    .build();
+```
+
 #### Action
 
-    By default, file choosers are configured to allow the selection of at most one file. The "OK"
-    button cannot be clicked until one file is selected. Other behaviours can be specified by
-    setting the <i>action</i> for the chooser:
+By default, file choosers are configured to allow the selection of at most one file. The "OK"
+button cannot be clicked until one file is selected. Other behaviours can be specified by
+setting the _action_ for the chooser:
 
 ```
 final var configuration =
