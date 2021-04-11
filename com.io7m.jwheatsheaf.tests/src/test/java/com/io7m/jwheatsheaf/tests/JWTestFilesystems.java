@@ -179,6 +179,8 @@ public final class JWTestFilesystems
         })
         .build();
 
+    Files.createDirectories(filesystem.getPath("Z:\\HOME"));
+    Files.writeString(filesystem.getPath("Z:\\HOME","FILE.TXT"), "FILE!");
     Files.createDirectories(filesystem.getPath("DOC"));
     Files.writeString(filesystem.getPath("README.TXT"), "HELLO!");
     Files.writeString(filesystem.getPath("DATA.XML"), "Some data.");

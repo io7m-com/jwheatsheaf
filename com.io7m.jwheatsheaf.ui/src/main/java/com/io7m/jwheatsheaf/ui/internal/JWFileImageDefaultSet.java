@@ -67,6 +67,12 @@ public final class JWFileImageDefaultSet implements JWFileImageSetType
   }
 
   @Override
+  public URL forHome()
+  {
+    return forName("home.png").orElseThrow();
+  }
+
+  @Override
   public URL forRecentItems()
   {
     return forName("recentItems.png").orElseThrow();

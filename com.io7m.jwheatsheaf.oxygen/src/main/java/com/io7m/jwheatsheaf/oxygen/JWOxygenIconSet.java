@@ -63,6 +63,12 @@ public final class JWOxygenIconSet implements JWFileImageSetType
   }
 
   @Override
+  public URL forHome()
+  {
+    return forName("go-home.png").orElseThrow();
+  }
+
+  @Override
   public URL forRecentItems()
   {
     return forName("chronometer-lap.png").orElseThrow();
