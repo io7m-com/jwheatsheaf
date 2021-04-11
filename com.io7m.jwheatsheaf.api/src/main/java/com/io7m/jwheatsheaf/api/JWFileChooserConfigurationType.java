@@ -105,6 +105,12 @@ public interface JWFileChooserConfigurationType
   List<JWFileChooserFilterType> fileFilters();
 
   /**
+   * @return The default file filter
+   */
+
+  Optional<JWFileChooserFilterType> fileFilterDefault();
+
+  /**
    * Sets a mode that prevents returning a file to the client if that file
    * does not meet criteria returned by this method. For example, this may be
    * used to prevent selecting directories by implementing a function that
