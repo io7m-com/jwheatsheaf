@@ -20,6 +20,11 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 
 /**
  * The type of glob filter builders.
+ *
+ * A glob filter works by executing a series of rules on incoming filenames.
+ * The rules are executed against each incoming path in the order that they
+ * were added to the filter with {@code addRule}. A path that matches none of
+ * the rules is excluded, unless the path refers to a directory.
  */
 
 public interface JWFilterGlobBuilderType
