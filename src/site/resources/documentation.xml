@@ -81,6 +81,34 @@ final List<Path> selected = chooser.showAndWait();
     .build();
 ]]></pre>
 
+  <h5>Home Directory</h5>
+
+  <p>
+    If a home directory path is specified (typically a value taken from <tt>System.getProperty("user.home")</tt>),
+    a button will be displayed in the UI that allows for navigating directly to this path.
+  </p>
+
+  <pre class="code"><![CDATA[final var configuration =
+  JWFileChooserConfiguration.builder()
+    .setFileSystem(FileSystems.getDefault())
+    .setHomeDirectory(someHomeDirectoryPath)
+    .build();
+]]></pre>
+
+  <h5>Custom Titles</h5>
+
+  <p>
+    The titles of file chooser dialogs can be adjusted in the configuration. By default, a generic "Please select…"
+    title is used if no other value is specified.
+  </p>
+
+  <pre class="code"><![CDATA[final var configuration =
+  JWFileChooserConfiguration.builder()
+    .setFileSystem(FileSystems.getDefault())
+    .setTitle("Export to PNG…")
+    .build();
+]]></pre>
+
   <h5>Recent Items</h5>
 
   <p>
@@ -151,6 +179,10 @@ final List<Path> selected = chooser.showAndWait();
     All of the elements in a file chooser window are assigned CSS identifiers.
   </p>
 
+  <p>
+    <img src="css.png" alt="CSS identifiers" width="640" />
+  </p>
+
   <table>
     <thead>
       <tr>
@@ -166,6 +198,10 @@ final List<Path> selected = chooser.showAndWait();
       <tr>
         <td><tt>fileChooserUpButton</tt></td>
         <td>The button used to move to the parent directory.</td>
+      </tr>
+      <tr>
+        <td><tt>fileChooserHomeButton</tt></td>
+        <td>The button used to move to the home directory.</td>
       </tr>
       <tr>
         <td><tt>fileChooserCreateDirectoryButton</tt></td>
