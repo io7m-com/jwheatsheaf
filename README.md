@@ -148,13 +148,13 @@ final var configuration =
 The file chooser contains a button that allows for the creation of new directories.
 This can be disabled.
 
-  <pre class="code"><![CDATA[
+```
 final var configuration =
   JWFileChooserConfiguration.builder()
     .setFileSystem(FileSystems.getDefault())
     .setAllowDirectoryCreation(false)
     .build();
-]]></pre>
+```
 
 #### Icons
 
