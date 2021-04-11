@@ -287,7 +287,22 @@ public final class JWFileChooserViewController
     filters.add(this.filterOnlyDirectories);
     filters.addAll(this.configuration.fileFilters());
     this.fileTypeMenu.setItems(FXCollections.observableList(filters));
-    this.fileTypeMenu.getSelectionModel().select(0);
+
+    /*
+     * Select the default filter. If there isn't one, select the first
+     * filter.
+     */
+
+    final var selectionModel =
+      this.fileTypeMenu.getSelectionModel();
+
+    this.configuration.fileFilterDefault()
+      .ifPresentOrElse(
+        selectionModel::select,
+        () -> selectionModel.select(0)
+      );
+
+    this.onFileFilterSelected();
   }
 
   /**

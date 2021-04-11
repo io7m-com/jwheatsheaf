@@ -184,5 +184,13 @@ public interface JWFileChooserConfigurationType
         this.fileSystem()
       );
     }
+
+    final var filterOpt = this.fileFilterDefault();
+    filterOpt.ifPresent(filter -> {
+      Preconditions.checkPreconditionV(
+        this.fileFilters().contains(filter),
+        "The default file filter must be contained in the list of filters"
+      );
+    });
   }
 }
