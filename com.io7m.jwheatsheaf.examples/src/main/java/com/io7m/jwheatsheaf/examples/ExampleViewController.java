@@ -64,6 +64,8 @@ public final class ExampleViewController implements Initializable
   @FXML
   private CheckBox slowIO;
   @FXML
+  private CheckBox homeDirectory;
+  @FXML
   private ChoiceBox<JWFileChooserAction> action;
   @FXML
   private TextField title;
@@ -136,6 +138,12 @@ public final class ExampleViewController implements Initializable
   }
 
   @FXML
+  private void onHomeDirectoryChanged()
+  {
+
+  }
+
+  @FXML
   private void onOpenSelected()
     throws IOException
   {
@@ -163,6 +171,12 @@ public final class ExampleViewController implements Initializable
         .addFileFilters(new ExampleFilterRejectAll())
         .addFileFilters(new ExampleFilterXML())
         .addAllRecentFiles(recents);
+
+    if (this.homeDirectory.isSelected()) {
+      configurationBuilder.setHomeDirectory(
+        fileSystem.getPath(System.getProperty("user.home"))
+      );
+    }
 
     if (!this.title.getText().isEmpty()) {
       configurationBuilder.setTitle(this.title.getText());

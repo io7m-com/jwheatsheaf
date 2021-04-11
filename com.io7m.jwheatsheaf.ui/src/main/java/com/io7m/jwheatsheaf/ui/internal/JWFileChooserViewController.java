@@ -79,6 +79,7 @@ public final class JWFileChooserViewController
 
   private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
   private final ChangeListener<Path> listener;
+  private final BlockingDeque<String> initialFilename;
   private JWFileChooserConfiguration configuration;
   private JWFileChooserFilterType filterAll;
   private JWFileChooserFilterType filterOnlyDirectories;
@@ -88,11 +89,11 @@ public final class JWFileChooserViewController
   private List<Node> lockableViews;
   private List<Path> result;
   private volatile Path currentDirectory;
-
   @FXML private Button newDirectoryButton;
   @FXML private Button okButton;
   @FXML private Button selectDirectButton;
   @FXML private Button upDirectoryButton;
+  @FXML private Button homeDirectoryButton;
   @FXML private ChoiceBox<Path> pathMenu;
   @FXML private ComboBox<JWFileChooserFilterType> fileTypeMenu;
   @FXML private ListView<JWFileSourceEntryType> sourcesList;
@@ -101,12 +102,10 @@ public final class JWFileChooserViewController
   @FXML private TableView<JWFileItem> directoryTable;
   @FXML private TextField fileName;
   @FXML private TextField searchField;
-
   private ExecutorService ioExecutor;
   private JWFileChoosersTesting testing;
   private JWStrings strings;
   private JWToolTips toolTips;
-  private final BlockingDeque<String> initialFilename;
 
   /**
    * Construct a view controller.
@@ -203,6 +202,9 @@ public final class JWFileChooserViewController
     this.selectDirectButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forSelectDirect())
     );
+    this.homeDirectoryButton.setGraphic(
+      JWImages.imageView16x16Of(this.imageSet.forHome())
+    );
 
     final var fileSystem =
       this.configuration.fileSystem();
@@ -225,6 +227,7 @@ public final class JWFileChooserViewController
 
     this.lockableViews = List.of(
       this.directoryTable,
+      this.homeDirectoryButton,
       this.newDirectoryButton,
       this.okButton,
       this.pathMenu,
@@ -558,6 +561,13 @@ public final class JWFileChooserViewController
   }
 
   @FXML
+  private void onHomeSelected()
+  {
+    final var homeDirectoryOpt = this.configuration.homeDirectory();
+    homeDirectoryOpt.ifPresent(this::setCurrentDirectory);
+  }
+
+  @FXML
   private void onNameFieldChanged()
   {
     this.reconfigureOKButton();
@@ -565,6 +575,8 @@ public final class JWFileChooserViewController
 
   private void configureButtons()
   {
+    this.configureButtonHome();
+
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
@@ -585,6 +597,19 @@ public final class JWFileChooserViewController
       .addListener(item -> this.reconfigureOKButton());
   }
 
+  private void configureButtonHome()
+  {
+    final var homeParent =
+      this.homeDirectoryButton.getParent();
+    final var homeDirectoryOpt =
+      this.configuration.homeDirectory();
+
+    if (homeDirectoryOpt.isEmpty()) {
+      homeParent.setVisible(false);
+      homeParent.setManaged(false);
+    }
+  }
+
   private void configureTableView()
   {
     final var selectionModel = this.directoryTable.getSelectionModel();
@@ -600,17 +625,18 @@ public final class JWFileChooserViewController
 
     this.directoryTable.setPlaceholder(new Label(""));
 
-    final var tableColumns = this.directoryTable.getColumns();
-    final TableColumn<JWFileItem, JWFileItem> tableTypeColumn =
+    final var tableColumns =
+      this.directoryTable.getColumns();
+    final var tableTypeColumn =
       (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(0);
-    final TableColumn<JWFileItem, JWFileItem> tableNameColumn =
+    final var tableNameColumn =
       (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(1);
-    final TableColumn<JWFileItem, Long> tableSizeColumn =
+    final var tableSizeColumn =
       (TableColumn<JWFileItem, Long>) tableColumns.get(2);
-    final TableColumn<JWFileItem, FileTime> tableTimeColumn =
+    final var tableTimeColumn =
       (TableColumn<JWFileItem, FileTime>) tableColumns.get(3);
 
-    tableTypeColumn.setSortable(false);
+    tableTypeColumn.setSortable(true);
     tableTypeColumn.setReorderable(false);
     tableTypeColumn.setCellFactory(column -> {
       final TableCell<JWFileItem, JWFileItem> cell =
@@ -654,11 +680,14 @@ public final class JWFileChooserViewController
       param -> new ReadOnlyObjectWrapper<>(Long.valueOf(param.getValue().size())));
     tableTimeColumn.setCellValueFactory(
       param -> new ReadOnlyObjectWrapper<>(param.getValue().modifiedTime()));
+
+    this.fileListing.comparator()
+      .bind(this.directoryTable.comparatorProperty());
   }
 
   private void reconfigureOKButton()
   {
-    boolean enabled = false;
+    var enabled = false;
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE: {
