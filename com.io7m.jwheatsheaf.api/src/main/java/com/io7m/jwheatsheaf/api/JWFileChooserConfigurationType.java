@@ -102,6 +102,12 @@ public interface JWFileChooserConfigurationType
   List<JWFileChooserFilterType> fileFilters();
 
   /**
+   * @return The default file filter
+   */
+
+  Optional<JWFileChooserFilterType> fileFilterDefault();
+
+  /**
    * @return {@code true} if the UI will allow the creation of directories
    */
 
@@ -165,5 +171,13 @@ public interface JWFileChooserConfigurationType
         this.fileSystem()
       );
     }
+
+    final var filterOpt = this.fileFilterDefault();
+    filterOpt.ifPresent(filter -> {
+      Preconditions.checkPreconditionV(
+        this.fileFilters().contains(filter),
+        "The default file filter must be contained in the list of filters"
+      );
+    });
   }
 }
