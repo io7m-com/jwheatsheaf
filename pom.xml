@@ -28,6 +28,7 @@
     <module>com.io7m.jwheatsheaf.api</module>
     <module>com.io7m.jwheatsheaf.documentation</module>
     <module>com.io7m.jwheatsheaf.examples</module>
+    <module>com.io7m.jwheatsheaf.filter.glob</module>
     <module>com.io7m.jwheatsheaf.oxygen</module>
     <module>com.io7m.jwheatsheaf.tests</module>
     <module>com.io7m.jwheatsheaf.ui</module>
