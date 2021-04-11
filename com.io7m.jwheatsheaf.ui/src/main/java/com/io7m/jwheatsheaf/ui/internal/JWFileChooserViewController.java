@@ -93,6 +93,7 @@ public final class JWFileChooserViewController
   @FXML private Button okButton;
   @FXML private Button selectDirectButton;
   @FXML private Button upDirectoryButton;
+  @FXML private Button homeDirectoryButton;
   @FXML private ChoiceBox<Path> pathMenu;
   @FXML private ComboBox<JWFileChooserFilterType> fileTypeMenu;
   @FXML private ListView<JWFileSourceEntryType> sourcesList;
@@ -203,6 +204,9 @@ public final class JWFileChooserViewController
     this.selectDirectButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forSelectDirect())
     );
+    this.homeDirectoryButton.setGraphic(
+      JWImages.imageView16x16Of(this.imageSet.forHome())
+    );
 
     final var fileSystem =
       this.configuration.fileSystem();
@@ -225,6 +229,7 @@ public final class JWFileChooserViewController
 
     this.lockableViews = List.of(
       this.directoryTable,
+      this.homeDirectoryButton,
       this.newDirectoryButton,
       this.okButton,
       this.pathMenu,
@@ -558,6 +563,13 @@ public final class JWFileChooserViewController
   }
 
   @FXML
+  private void onHomeSelected()
+  {
+    final var homeDirectoryOpt = this.configuration.homeDirectory();
+    homeDirectoryOpt.ifPresent(this::setCurrentDirectory);
+  }
+
+  @FXML
   private void onNameFieldChanged()
   {
     this.reconfigureOKButton();
@@ -565,6 +577,8 @@ public final class JWFileChooserViewController
 
   private void configureButtons()
   {
+    this.configureButtonHome();
+
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
@@ -583,6 +597,19 @@ public final class JWFileChooserViewController
     final var selectionModel = this.directoryTable.getSelectionModel();
     selectionModel.selectedItemProperty()
       .addListener(item -> this.reconfigureOKButton());
+  }
+
+  private void configureButtonHome()
+  {
+    final var homeParent =
+      this.homeDirectoryButton.getParent();
+    final var homeDirectoryOpt =
+      this.configuration.homeDirectory();
+
+    if (homeDirectoryOpt.isEmpty()) {
+      homeParent.setVisible(false);
+      homeParent.setManaged(false);
+    }
   }
 
   private void configureTableView()

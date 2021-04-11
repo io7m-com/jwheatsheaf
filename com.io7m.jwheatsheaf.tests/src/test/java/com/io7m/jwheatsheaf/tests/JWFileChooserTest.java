@@ -83,6 +83,7 @@ public final class JWFileChooserTest
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
         .setFileSystem(this.dosFilesystem)
+        .setHomeDirectory(this.dosFilesystem.getPath("Z:\\HOME"))
         .build();
 
     this.choosers = JWFileChoosers.create();
@@ -462,6 +463,55 @@ public final class JWFileChooserTest
 
     Assertions.assertEquals(
       List.of("Z:\\USERS"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * The home button works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testDirectoryHome(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var homeButton =
+      robot.lookup("#fileChooserHomeButton")
+        .queryButton();
+
+    robot.clickOn(homeButton);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .queryAllAs(TableCell.class)
+        .stream()
+        .filter(cell -> Objects.equals(cell.getText(), "FILE.TXT"))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException(
+          "Unable to locate a 'FILE.TXT' directory entry")
+        );
+
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\HOME\\FILE.TXT"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
