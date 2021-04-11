@@ -83,6 +83,7 @@ public final class JWFileChooserTest
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
         .setFileSystem(this.dosFilesystem)
+        .setHomeDirectory(this.dosFilesystem.getPath("Z:\\HOME"))
         .build();
 
     this.choosers = JWFileChoosers.create();
@@ -471,6 +472,55 @@ public final class JWFileChooserTest
   }
 
   /**
+   * The home button works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testDirectoryHome(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var homeButton =
+      robot.lookup("#fileChooserHomeButton")
+        .queryButton();
+
+    robot.clickOn(homeButton);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .queryAllAs(TableCell.class)
+        .stream()
+        .filter(cell -> Objects.equals(cell.getText(), "FILE.TXT"))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException(
+          "Unable to locate a 'FILE.TXT' directory entry")
+        );
+
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\HOME\\FILE.TXT"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
    * Pressing escape closes the dialog without selecting a file.
    *
    * @param robot The FX test robot
@@ -493,6 +543,194 @@ public final class JWFileChooserTest
     Assertions.assertEquals(
       List.of(),
       this.chooser.result()
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * Sorting by type works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testSortType(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var column =
+      robot.lookup("#fileChooserTableColumnType")
+        .query();
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(column);
+    robot.clickOn(column);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .nth(0)
+        .queryAs(TableCell.class);
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\README.TXT"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * Sorting by name works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testSortName(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var column =
+      robot.lookup("#fileChooserTableColumnName")
+        .query();
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(column);
+    robot.clickOn(column);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .nth(0)
+        .queryAs(TableCell.class);
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\README.TXT"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * Sorting by time works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testSortTime(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var column =
+      robot.lookup("#fileChooserTableColumnModified")
+        .query();
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(column);
+    robot.clickOn(column);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .nth(0)
+        .queryAs(TableCell.class);
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\PHOTO.JPG"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * Sorting by size works.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void testSortSize(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var column =
+      robot.lookup("#fileChooserTableColumnSize")
+        .query();
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(column);
+    robot.clickOn(column);
+
+    final var targetCell =
+      robot.lookup(n -> n instanceof TableCell)
+        .nth(0)
+        .queryAs(TableCell.class);
+
+    robot.sleep(1L, SECONDS);
+    robot.clickOn(targetCell);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
     );
     Assertions.assertEquals(0, this.events.size());
   }

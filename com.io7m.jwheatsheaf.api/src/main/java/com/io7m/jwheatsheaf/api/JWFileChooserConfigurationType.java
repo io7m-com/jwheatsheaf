@@ -61,6 +61,15 @@ public interface JWFileChooserConfigurationType
   Optional<Path> initialDirectory();
 
   /**
+   * The directory to which the chooser will navigate when the user clicks
+   * the "home" button. If no path is specified, the button is not shown.
+   *
+   * @return The user's home directory
+   */
+
+  Optional<Path> homeDirectory();
+
+  /**
    * @return The file name initially entered into the selection field
    */
 

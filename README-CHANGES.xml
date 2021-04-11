@@ -39,7 +39,7 @@
         <c:change date="2020-04-10T00:00:00+00:00" summary="Enable CheckStyle to enforce code style"/>
       </c:changes>
     </c:release>
-    <c:release date="2021-04-10T21:48:15+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
+    <c:release date="2021-04-11T15:34:52+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
       <c:changes>
         <c:change date="2021-04-10T00:00:00+00:00" summary="Allow the escape key to close file choosers">
           <c:tickets>
@@ -56,9 +56,19 @@
             <c:ticket id="8"/>
           </c:tickets>
         </c:change>
-        <c:change date="2021-04-10T21:48:15+00:00" summary="Make the default filters part of the public API">
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Make the default filters part of the public API">
           <c:tickets>
             <c:ticket id="10"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-11T00:00:00+00:00" summary="Add an optional home directory button">
+          <c:tickets>
+            <c:ticket id="12"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-11T15:34:52+00:00" summary="Enable sorting of directory items">
+          <c:tickets>
+            <c:ticket id="22"/>
           </c:tickets>
         </c:change>
       </c:changes>
