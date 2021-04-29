@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -397,11 +398,12 @@ public final class JWFileChooserViewController
   }
 
   /**
-   * Select the item in the list of file items that has the given name. If
-   * none of them have the given name, do nothing.
+   * Select the item in the list of file items that has the given name and
+   * return it. If none of them have the given name, do nothing and return
+   * nothing.
    */
 
-  private void trySelectDirectoryItem(
+  private Optional<JWFileItem> trySelectDirectoryItem(
     final List<JWFileItem> items,
     final String name)
   {
@@ -410,10 +412,30 @@ public final class JWFileChooserViewController
       if (itemFileName != null) {
         if (Objects.equals(itemFileName.toString(), name)) {
           this.directoryTable.getSelectionModel().select(item);
-          return;
+          return Optional.of(item);
         }
       }
     }
+    return Optional.empty();
+  }
+
+  /**
+   * Select the item in the list of file items that has the given name and
+   * return it. If none of them have the given name, do nothing and clear
+   * the directory table selection.
+   */
+
+  private Optional<JWFileItem> trySelectDirectoryItemOrDeselect(
+    final TableView<JWFileItem> tableView,
+    final String name)
+  {
+    final var selected =
+      this.trySelectDirectoryItem(tableView.getItems(), name);
+
+    if (selected.isEmpty()) {
+      tableView.getSelectionModel().clearSelection();
+    }
+    return selected;
   }
 
   private void ioUnlockUI()
@@ -583,8 +605,25 @@ public final class JWFileChooserViewController
   }
 
   @FXML
+  private void onNameFieldAction()
+  {
+    this.trySelectDirectoryItemOrDeselect(
+      this.directoryTable,
+      this.fileName.getText()
+    );
+
+    this.reconfigureOKButton();
+    this.okButton.requestFocus();
+  }
+
+  @FXML
   private void onNameFieldChanged()
   {
+    this.trySelectDirectoryItemOrDeselect(
+      this.directoryTable,
+      this.fileName.getText()
+    );
+
     this.reconfigureOKButton();
   }
 

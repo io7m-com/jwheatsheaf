@@ -142,6 +142,8 @@ public final class JWFileChooserTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.clickOn(targetCell);
+    robot.clickOn(targetCell);
+
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
 
@@ -197,6 +199,7 @@ public final class JWFileChooserTest
         );
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.clickOn(targetCell);
     robot.clickOn(targetCell);
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
@@ -452,6 +455,7 @@ public final class JWFileChooserTest
 
     robot.clickOn(targetCell);
     robot.sleep(1L, SECONDS);
+    robot.clickOn(targetCell);
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -719,6 +723,46 @@ public final class JWFileChooserTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * Typing a name into the name field and pressing return selects an item and
+   * requests focus for the OK button. Pressing return again presses the button.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void test_TypeNameIntoFieldAndReturn_CandidateSelected(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var fileField =
+      robot.lookup("#fileChooserNameField")
+        .query();
+
+    robot.clickOn(fileField);
+    robot.write("DATA.XML");
+    robot.type(KeyCode.ENTER);
+    robot.sleep(1L, SECONDS);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.type(KeyCode.ENTER);
 
     Assertions.assertEquals(
       List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
