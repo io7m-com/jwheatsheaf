@@ -43,9 +43,6 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.testfx.util.WaitForAsyncUtils.waitFor;
-
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserInitialNameCreateTest
 {
@@ -94,12 +91,14 @@ public final class JWFileChooserInitialNameCreateTest
    */
 
   @Test
-  public void testInitialNameCreate(
+  public void test_SelectItem_WithInitialFileName_CandidateSelected(
     final FxRobot robot,
     final TestInfo info)
     throws TimeoutException
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var delegate = new JWRobotDelegate(robot);
 
     final var okButton =
       robot.lookup("#fileChooserOKButton")
@@ -108,9 +107,8 @@ public final class JWFileChooserInitialNameCreateTest
       robot.lookup("#fileChooserNameField")
         .queryTextInputControl();
 
-    waitFor(3L, SECONDS, () -> !textField.textProperty().get().isEmpty());
+    delegate.waitUntil(() -> !textField.textProperty().get().isEmpty());
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.sleep(1L, SECONDS);
     robot.clickOn(okButton);
 
     Assertions.assertEquals(

@@ -43,8 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserActionSaveTest
 {
@@ -98,6 +96,8 @@ public final class JWFileChooserActionSaveTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -106,7 +106,7 @@ public final class JWFileChooserActionSaveTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.write("GCC.EXE");
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
 
     robot.type(KeyCode.ENTER);

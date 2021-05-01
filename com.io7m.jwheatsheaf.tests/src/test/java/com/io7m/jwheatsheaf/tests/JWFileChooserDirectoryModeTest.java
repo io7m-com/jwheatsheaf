@@ -43,8 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * Verify that DOC, which represents a directory, may be selected.
  */
@@ -112,9 +110,9 @@ public final class JWFileChooserDirectoryModeTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.clickOn(delegate.getDirectoryTable());
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(delegate.getTableCellFileName("DOC"));
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -138,9 +136,9 @@ public final class JWFileChooserDirectoryModeTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.clickOn(delegate.getDirectoryTable());
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(delegate.getTableCellFileName("DATA.XML"));
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.clickOn(okButton);
@@ -164,12 +162,12 @@ public final class JWFileChooserDirectoryModeTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.doubleClickOn(delegate.getTableCellFileName("DOC"));
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(delegate.getTableCellFileName("."));
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     robot.clickOn(okButton);
 

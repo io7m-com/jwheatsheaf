@@ -22,8 +22,13 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextInputControl;
 import org.testfx.api.FxRobot;
 import org.testfx.service.query.NodeQuery;
+import org.testfx.util.WaitForAsyncUtils;
 
 import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+import java.util.function.BooleanSupplier;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Abstracts common unit test functionality with respect to retrieving widgets.
@@ -34,9 +39,10 @@ final class JWRobotDelegate
 {
   private final FxRobot robot;
 
-  JWRobotDelegate(final FxRobot robot)
+  JWRobotDelegate(
+    final FxRobot inRobot)
   {
-    this.robot = robot;
+    this.robot = Objects.requireNonNull(inRobot, "inRobot");
   }
 
   Button getOkButton()
@@ -88,5 +94,27 @@ final class JWRobotDelegate
       .orElseThrow(() -> new IllegalStateException(
         String.format("Unable to locate a '%s' directory entry", text))
       );
+  }
+
+  void pauseBriefly()
+  {
+    this.robot.sleep(1L, SECONDS);
+  }
+
+  /**
+   * Wait until the given condition is true, or until ten seconds have elapsed.
+   *
+   * @param condition The condition
+   *
+   * @throws TimeoutException If the time elapses before the condition becomes true
+   */
+
+  public void waitUntil(
+    final BooleanSupplier condition)
+    throws TimeoutException
+  {
+    WaitForAsyncUtils.waitFor(10L, SECONDS, () -> {
+      return Boolean.valueOf(condition.getAsBoolean());
+    });
   }
 }

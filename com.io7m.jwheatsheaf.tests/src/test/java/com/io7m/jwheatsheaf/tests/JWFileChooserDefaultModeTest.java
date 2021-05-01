@@ -107,7 +107,7 @@ public final class JWFileChooserDefaultModeTest
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
 
-    assertSelected("Z:\\USERS\\GROUCH\\DOC");
+    this.assertSelected("Z:\\USERS\\GROUCH\\DOC");
   }
 
   private void assertSelected(final String... selectedItems)

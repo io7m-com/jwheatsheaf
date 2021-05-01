@@ -41,8 +41,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserFilterDefaultTest
 {
@@ -101,6 +99,8 @@ public final class JWFileChooserFilterDefaultTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -108,7 +108,7 @@ public final class JWFileChooserFilterDefaultTest
       robot.lookup("#fileChooserCancelButton")
         .queryButton();
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
 
     final var tableView =

@@ -50,9 +50,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.testfx.util.WaitForAsyncUtils.waitFor;
-
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserSlowIOTest
 {
@@ -112,12 +109,14 @@ public final class JWFileChooserSlowIOTest
    */
 
   @Test
-  public void testDirectorySelect(
+  public void test_SelectItem_SingleClickFirstRow_CandidateSelected(
     final FxRobot robot,
     final TestInfo info)
     throws TimeoutException
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var delegate = new JWRobotDelegate(robot);
 
     final var okButton =
       robot.lookup("#fileChooserOKButton")
@@ -131,16 +130,15 @@ public final class JWFileChooserSlowIOTest
       robot.lookup(".fileChooserDirectoryTable")
         .query();
 
-    waitFor(10L, SECONDS, () -> Boolean.valueOf(!root.isDisabled()));
+    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
 
     robot.doubleClickOn("Z:\\");
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
 
-    waitFor(10L, SECONDS, () -> Boolean.valueOf(!root.isDisabled()));
-    robot.sleep(1L, SECONDS);
+    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
     robot.clickOn(directoryTable);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn("USERS");
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());

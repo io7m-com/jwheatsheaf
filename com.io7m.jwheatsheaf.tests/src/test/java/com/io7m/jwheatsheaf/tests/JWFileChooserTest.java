@@ -48,9 +48,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.testfx.util.WaitForAsyncUtils.waitFor;
-
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserTest
 {
@@ -171,6 +168,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -187,7 +186,7 @@ public final class JWFileChooserTest
 
     LOG.debug("pathMenuItem: {}", pathMenuItem);
     robot.clickOn(pathMenuItem);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     final var targetCell =
       robot.lookup(n -> n instanceof TableCell)
@@ -229,6 +228,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -240,7 +241,7 @@ public final class JWFileChooserTest
 
     LOG.debug("rootItem: {}", rootItem);
     robot.doubleClickOn(rootItem);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     final TableCell<?, ?> row =
       robot.lookup(".table-row-cell")
@@ -279,6 +280,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -303,18 +306,17 @@ public final class JWFileChooserTest
         .query();
 
     robot.doubleClickOn(sourceItem);
-    waitFor(10L, SECONDS, () -> Boolean.valueOf(!sourceList.isDisabled()));
-    robot.sleep(1L, SECONDS);
+    delegate.waitUntil(() -> !sourceList.isDisabled());
 
     robot.doubleClickOn("EGG");
-    waitFor(10L, SECONDS, () -> Boolean.valueOf(!sourceList.isDisabled()));
-    robot.sleep(1L, SECONDS);
+    delegate.waitUntil(() -> !sourceList.isDisabled());
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.clickOn(directoryTable);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
+
     robot.clickOn("EGG.TXT");
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -385,6 +387,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -405,7 +409,7 @@ public final class JWFileChooserTest
 
     LOG.debug("testDirectorySearch: {}", tableItem);
     robot.clickOn(tableItem);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
 
@@ -432,6 +436,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -439,10 +445,10 @@ public final class JWFileChooserTest
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
 
     robot.clickOn("#fileChooserUpButton");
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     robot.clickOn("#fileChooserUpButton");
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     final var targetCell =
       robot.lookup(n -> n instanceof TableCell)
@@ -455,7 +461,7 @@ public final class JWFileChooserTest
         );
 
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(targetCell);
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
@@ -484,6 +490,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -505,7 +513,7 @@ public final class JWFileChooserTest
         );
 
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -560,6 +568,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -568,7 +578,7 @@ public final class JWFileChooserTest
       robot.lookup("#fileChooserTableColumnType")
         .query();
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(column);
     robot.clickOn(column);
 
@@ -577,9 +587,9 @@ public final class JWFileChooserTest
         .nth(0)
         .queryAs(TableCell.class);
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -607,6 +617,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -615,7 +627,7 @@ public final class JWFileChooserTest
       robot.lookup("#fileChooserTableColumnName")
         .query();
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(column);
     robot.clickOn(column);
 
@@ -624,9 +636,9 @@ public final class JWFileChooserTest
         .nth(0)
         .queryAs(TableCell.class);
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -654,6 +666,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -662,7 +676,7 @@ public final class JWFileChooserTest
       robot.lookup("#fileChooserTableColumnModified")
         .query();
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(column);
     robot.clickOn(column);
 
@@ -671,9 +685,9 @@ public final class JWFileChooserTest
         .nth(0)
         .queryAs(TableCell.class);
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -701,6 +715,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -709,7 +725,7 @@ public final class JWFileChooserTest
       robot.lookup("#fileChooserTableColumnSize")
         .query();
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(column);
     robot.clickOn(column);
 
@@ -718,9 +734,9 @@ public final class JWFileChooserTest
         .nth(0)
         .queryAs(TableCell.class);
 
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
     robot.clickOn(targetCell);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.clickOn(okButton);
@@ -749,6 +765,8 @@ public final class JWFileChooserTest
   {
     JWFileWindowTitles.setTitle(this.chooser, info);
 
+    final var delegate = new JWRobotDelegate(robot);
+
     final var okButton =
       robot.lookup("#fileChooserOKButton")
         .queryButton();
@@ -760,7 +778,7 @@ public final class JWFileChooserTest
     robot.clickOn(fileField);
     robot.write("DATA.XML");
     robot.type(KeyCode.ENTER);
-    robot.sleep(1L, SECONDS);
+    delegate.pauseBriefly();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
     robot.type(KeyCode.ENTER);
