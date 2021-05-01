@@ -22,7 +22,6 @@ import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,14 +37,11 @@ import org.testfx.matcher.control.TableViewMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserFilterDefaultTest
@@ -89,6 +85,7 @@ public final class JWFileChooserFilterDefaultTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**

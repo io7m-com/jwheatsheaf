@@ -16,7 +16,11 @@
 
 package com.io7m.jwheatsheaf.tests;
 
-import com.io7m.jwheatsheaf.api.*;
+import com.io7m.jwheatsheaf.api.JWFileChooserAction;
+import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
+import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
+import com.io7m.jwheatsheaf.api.JWFileChooserType;
+import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
@@ -39,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@SuppressWarnings( {"unused", "SameParameterValue"} )
+@SuppressWarnings({"unused", "SameParameterValue"})
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserDefaultModeTest
 {
@@ -55,14 +59,14 @@ public final class JWFileChooserDefaultModeTest
 
     final JWTestFilesystems filesystems = JWTestFilesystems.create();
     final var systems = filesystems.filesystems();
-    final FileSystem dosFilesystem = systems.get( "ExampleDOS" );
+    final FileSystem dosFilesystem = systems.get("ExampleDOS");
 
     final var configuration =
       JWFileChooserConfiguration.builder()
-                                .setAllowDirectoryCreation(true)
-                                .setAction(JWFileChooserAction.OPEN_EXISTING_SINGLE)
-                                .setFileSystem(dosFilesystem)
-                                .build();
+        .setAllowDirectoryCreation(true)
+        .setAction(JWFileChooserAction.OPEN_EXISTING_SINGLE)
+        .setFileSystem(dosFilesystem)
+        .build();
 
     this.choosers = JWFileChoosers.create();
     this.chooser = this.choosers.create(stage, configuration);
@@ -75,10 +79,12 @@ public final class JWFileChooserDefaultModeTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   @AfterEach
-  public void afterEach() {
+  public void afterEach()
+  {
     Assertions.assertEquals(0, this.events.size());
   }
 
@@ -91,7 +97,7 @@ public final class JWFileChooserDefaultModeTest
     final FxRobot robot,
     final TestInfo info)
   {
-    final var delegate = new JWRobotDelegate( robot);
+    final var delegate = new JWRobotDelegate(robot);
     final var okButton = delegate.getOkButton();
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
@@ -104,13 +110,14 @@ public final class JWFileChooserDefaultModeTest
     assertSelected("Z:\\USERS\\GROUCH\\DOC");
   }
 
-  private void assertSelected(final String... selectedItems) {
+  private void assertSelected(final String... selectedItems)
+  {
     Assertions.assertEquals(
       List.of(selectedItems),
       this.chooser.result()
-                  .stream()
-                  .map(Path::toString)
-                  .collect(Collectors.toList())
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
     );
   }
 }

@@ -101,6 +101,7 @@ public final class JWFileChooserSlowIOTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**

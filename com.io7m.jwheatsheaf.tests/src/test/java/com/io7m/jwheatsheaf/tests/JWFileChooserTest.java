@@ -92,6 +92,7 @@ public final class JWFileChooserTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**

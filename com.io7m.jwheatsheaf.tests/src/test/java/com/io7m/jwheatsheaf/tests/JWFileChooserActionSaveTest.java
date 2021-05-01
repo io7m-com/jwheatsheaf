@@ -22,11 +22,9 @@ import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
 import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ExtendWith(ApplicationExtension.class)
 public final class JWFileChooserActionSaveTest
@@ -82,6 +82,7 @@ public final class JWFileChooserActionSaveTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**
@@ -105,6 +106,7 @@ public final class JWFileChooserActionSaveTest
 
     FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
     robot.write("GCC.EXE");
+    robot.sleep(1L, SECONDS);
     FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
 
     robot.type(KeyCode.ENTER);

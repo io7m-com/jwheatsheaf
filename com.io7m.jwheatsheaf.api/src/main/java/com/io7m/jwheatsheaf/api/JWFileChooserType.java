@@ -57,4 +57,11 @@ public interface JWFileChooserType
    */
 
   List<Path> result();
+
+  /**
+   * If the file chooser is open, then hide it and behave as if the user
+   * cancelled the selection.
+   */
+
+  void cancel();
 }

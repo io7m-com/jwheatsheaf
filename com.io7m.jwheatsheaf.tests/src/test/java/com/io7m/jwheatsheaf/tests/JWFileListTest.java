@@ -20,7 +20,6 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.api.JWFileKind;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterAllFiles;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChooserFilterOnlyDirectories;
 import com.io7m.jwheatsheaf.ui.internal.JWFileItem;
 import com.io7m.jwheatsheaf.ui.internal.JWFileList;

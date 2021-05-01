@@ -84,6 +84,7 @@ public final class JWFileChooserInitialNameCreateTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**
