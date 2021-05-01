@@ -16,9 +16,11 @@
 
 package com.io7m.jwheatsheaf.api;
 
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
+import java.util.function.Function;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
@@ -62,6 +64,18 @@ public final class JWFileChooserConfigurationDefaults
       .appendValue(SECOND_OF_MINUTE, 2)
       .appendOffsetId()
       .toFormatter();
+  }
+
+  /**
+   * The default file selection mode. By default, any type of file (including
+   * directories) may be selected.
+   *
+   * @return A function that dictates whether the selected items may be
+   * returned.
+   */
+
+  public static Function<Path, Boolean> fileSelectionMode() {
+    return (path) -> true;
   }
 
   /**

@@ -52,7 +52,7 @@ final class JWFileChooser implements JWFileChooserType
   public List<Path> showAndWait()
   {
     this.window.showAndWait();
-    return this.viewController.result();
+    return result();
   }
 
   @Override

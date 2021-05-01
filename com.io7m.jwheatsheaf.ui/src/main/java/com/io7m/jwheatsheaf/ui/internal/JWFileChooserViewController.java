@@ -568,6 +568,8 @@ public final class JWFileChooserViewController
   @FXML
   private void onOKSelected()
   {
+    this.result = List.of();
+
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
@@ -584,8 +586,15 @@ public final class JWFileChooserViewController
         break;
     }
 
-    final var window = this.mainContent.getScene().getWindow();
-    window.hide();
+    this.result =
+      this.result.stream()
+                 .filter(this::filterSelectionMode)
+                 .collect(Collectors.toList());
+
+    if (!this.result().isEmpty()) {
+      final var window = this.mainContent.getScene().getWindow();
+      window.hide();
+    }
   }
 
   @FXML
@@ -762,11 +771,24 @@ public final class JWFileChooserViewController
     return !this.fileName.getText().isEmpty();
   }
 
+  /**
+   * Answers whether the given {@link Path} may be returned to the client.
+   *
+   * @param path A file selected in the user interface.
+   * @return {@code true} if the given {@link Path} is an acceptable selection.
+   */
+
+  private boolean filterSelectionMode(final Path path) {
+    return this.configuration.fileSelectionMode().apply(path);
+  }
+
   private boolean atLeastOneItemSelected()
   {
     return this.directoryTable.getSelectionModel()
       .getSelectedItems()
-      .size() >= 1;
+      .stream()
+      .filter(file -> filterSelectionMode(file.path()))
+      .count() >= 1;
   }
 
   private void onTableRowClicked(
