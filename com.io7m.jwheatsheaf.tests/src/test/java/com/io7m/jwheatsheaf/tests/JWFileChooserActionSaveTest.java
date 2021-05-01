@@ -90,7 +90,7 @@ public final class JWFileChooserActionSaveTest
    */
 
   @Test
-  public void testActionSaveNamed(
+  public void test_NameField_ExplicitlyTypedName_CandidateSelected(
     final FxRobot robot,
     final TestInfo info)
   {
@@ -126,13 +126,15 @@ public final class JWFileChooserActionSaveTest
   }
 
   /**
-   * The enter directly dialog works.
+   * If the path entered into the "select direct" dialog is not a directory,
+   * then the parent of that path's file name is set as the current directory,
+   * and the file name is selected.
    *
    * @param robot The FX test robot
    */
 
   @Test
-  public void testDirectorySelectDirect(
+  public void test_SelectDirectly_TargetIsNotFile_TargetSelected(
     final FxRobot robot,
     final TestInfo info)
   {
@@ -160,6 +162,100 @@ public final class JWFileChooserActionSaveTest
 
     Assertions.assertEquals(
       List.of("Y:\\NEWFILE.TXT"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * If the path entered into the "select direct" dialog is not a directory,
+   * then the parent of that path's file name is set as the current directory,
+   * and the file name is selected.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void test_SelectDirectly_TargetIsFile_TargetSelected(
+    final FxRobot robot,
+    final TestInfo info)
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var selectButton =
+      robot.lookup("#fileChooserSelectDirectButton")
+        .queryButton();
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.clickOn(selectButton);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.write("Z:\\USERS\\GROUCH\\PHOTO.JPG");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.type(KeyCode.ENTER);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS\\GROUCH\\PHOTO.JPG"),
+      this.chooser.result()
+        .stream()
+        .map(Path::toString)
+        .collect(Collectors.toList())
+    );
+    Assertions.assertEquals(0, this.events.size());
+  }
+
+  /**
+   * If the path entered into the "select direct" dialog is a directory,
+   * then that path becomes the new current directory, and "." is selected.
+   *
+   * @param robot The FX test robot
+   */
+
+  @Test
+  public void test_SelectDirectly_TargetIsDirectory_TargetSelected(
+    final FxRobot robot,
+    final TestInfo info)
+    throws Exception
+  {
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var delegate = new JWRobotDelegate(robot);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var selectButton =
+      robot.lookup("#fileChooserSelectDirectButton")
+        .queryButton();
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.clickOn(selectButton);
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.write("Z:\\USERS\\");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.type(KeyCode.ENTER);
+
+    delegate.waitUntil(() -> !okButton.isDisabled());
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
+
+    Assertions.assertEquals(
+      List.of("Z:\\USERS"),
       this.chooser.result()
         .stream()
         .map(Path::toString)

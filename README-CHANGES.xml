@@ -39,7 +39,7 @@
         <c:change date="2020-04-10T00:00:00+00:00" summary="Enable CheckStyle to enforce code style"/>
       </c:changes>
     </c:release>
-    <c:release date="2021-05-01T13:22:17+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
+    <c:release date="2021-05-01T14:39:36+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
       <c:changes>
         <c:change date="2021-04-10T00:00:00+00:00" summary="Allow the escape key to close file choosers">
           <c:tickets>
@@ -86,9 +86,14 @@
             <c:ticket id="28"/>
           </c:tickets>
         </c:change>
-        <c:change date="2021-05-01T13:22:17+00:00" summary="Allow for including &quot;..&quot; in directory listings">
+        <c:change date="2021-05-01T00:00:00+00:00" summary="Allow for including &quot;..&quot; in directory listings">
           <c:tickets>
             <c:ticket id="23"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-01T14:39:36+00:00" summary="Improve &quot;select directly&quot; dialog behaviour">
+          <c:tickets>
+            <c:ticket id="29"/>
           </c:tickets>
         </c:change>
       </c:changes>
