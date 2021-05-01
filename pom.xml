@@ -64,6 +64,13 @@
     </developer>
   </developers>
 
+  <contributors>
+    <contributor>
+      <name>Dave Jarvis</name>
+      <url>https://github.com/DaveJarvis/</url>
+    </contributor>
+  </contributors>
+
   <issueManagement>
     <url>http://github.com/io7m/jwheatsheaf/issues</url>
     <system>GitHub Issues</system>
