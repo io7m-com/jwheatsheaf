@@ -270,7 +270,9 @@ public final class JWFileChooserViewController
     final var sources = new ArrayList<JWFileSourceEntryType>();
     sources.add(new JWFileSourceEntryRecentItems(this.configuration));
     for (final var root : fileSystem.getRootDirectories()) {
-      sources.add(new JWFileSourceEntryFilesystemRoot(root));
+      sources.add(new JWFileSourceEntryFilesystemRoot(
+        this.configuration.showParentDirectory(), root)
+      );
     }
 
     this.sourcesList.setItems(FXCollections.observableList(sources));
@@ -359,7 +361,11 @@ public final class JWFileChooserViewController
   private void populateDirectoryTable(
     final Path directory)
   {
-    this.populateDirectoryTableWith(() -> JWFileItems.listDirectory(directory));
+    this.populateDirectoryTableWith(
+      () -> JWFileItems.listDirectory(
+        directory,
+        this.configuration.showParentDirectory())
+    );
   }
 
   private void populateDirectoryTableWith(

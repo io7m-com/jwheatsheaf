@@ -48,6 +48,13 @@
          </children>
       </HBox>
       <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox alignment="CENTER_LEFT" layoutX="18.0" layoutY="178.0">
+         <children>
+            <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="160.0" />
+            <CheckBox fx:id="parentDirectory" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onParentDirectoryChanged" prefHeight="32.0" text="Parent directory" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="18.0" layoutY="210.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox layoutX="18.0" layoutY="58.0">
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="CSS" />

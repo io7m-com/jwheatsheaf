@@ -66,6 +66,8 @@ public final class ExampleViewController implements Initializable
   @FXML
   private CheckBox homeDirectory;
   @FXML
+  private CheckBox parentDirectory;
+  @FXML
   private ChoiceBox<JWFileChooserAction> action;
   @FXML
   private TextField title;
@@ -144,6 +146,12 @@ public final class ExampleViewController implements Initializable
   }
 
   @FXML
+  private void onParentDirectoryChanged()
+  {
+
+  }
+
+  @FXML
   private void onOpenSelected()
     throws IOException
   {
@@ -164,6 +172,7 @@ public final class ExampleViewController implements Initializable
     final var configurationBuilder =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
+        .setShowParentDirectory(this.parentDirectory.isSelected())
         .setFileSystem(fileSystem)
         .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
         .setFileImageSet(imageSet)

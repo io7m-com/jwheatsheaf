@@ -134,6 +134,19 @@ public interface JWFileChooserConfigurationType
   }
 
   /**
+   * Determine whether or not to show a link to the parent directory inside
+   * the file listing. This entry is always called "..".
+   *
+   * @return {@code true} if the directory listing will contain ".."
+   */
+
+  @Value.Default
+  default boolean showParentDirectory()
+  {
+    return false;
+  }
+
+  /**
    * @return The date/time formatter used to display file times
    */
 

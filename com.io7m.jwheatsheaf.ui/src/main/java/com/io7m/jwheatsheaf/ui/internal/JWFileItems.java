@@ -46,6 +46,7 @@ public final class JWFileItems
    * List the given directory, resolving each entry into a file item.
    *
    * @param directory The directory
+   * @param withParent {@code true} if the parent directory entry should be included
    *
    * @return A list of items
    *
@@ -53,11 +54,19 @@ public final class JWFileItems
    */
 
   public static List<JWFileItem> listDirectory(
-    final Path directory)
+    final Path directory,
+    final boolean withParent)
     throws IOException
   {
     final var items = new ArrayList<JWFileItem>(32);
     items.add(resolveFileItem(directory).withDisplayName("."));
+
+    if (withParent) {
+      final var directoryParent = directory.getParent();
+      if (directoryParent != null) {
+        items.add(resolveFileItem(directoryParent).withDisplayName(".."));
+      }
+    }
 
     try (var stream = Files.list(directory)) {
       stream.sorted().forEach(path -> items.add(resolveFileItem(path)));
