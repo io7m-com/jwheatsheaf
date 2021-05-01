@@ -138,13 +138,31 @@ public final class JWStrings
     return this.resourceBundle.getString("ui.enterPath");
   }
 
-  public String tooltipDirectory(final Path path)
+  public String tooltipDirectory(
+    final Path path)
   {
     return this.format("ui.tooltip.directory", path.toAbsolutePath());
   }
 
-  public String tooltipFile(final Path path)
+  public String tooltipFile(
+    final Path path)
   {
     return this.format("ui.tooltip.file", path.toAbsolutePath());
+  }
+
+  public String fileConfirmReplace(
+    final String name)
+  {
+    return this.format("ui.fileConfirmReplace", name);
+  }
+
+  public String fileConfirmReplaceButton()
+  {
+    return this.format("ui.fileConfirmReplaceButton");
+  }
+
+  public String fileConfirmReplaceTitle()
+  {
+    return this.format("ui.fileConfirmReplaceTitle");
   }
 }

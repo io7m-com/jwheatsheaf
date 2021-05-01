@@ -19,6 +19,8 @@ package com.io7m.jwheatsheaf.examples;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
+import com.io7m.jwheatsheaf.api.JWFileChooserStringOverridesEmpty;
+import com.io7m.jwheatsheaf.api.JWFileChooserStringOverridesType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.collections.FXCollections;
@@ -67,6 +69,10 @@ public final class ExampleViewController implements Initializable
   private CheckBox homeDirectory;
   @FXML
   private CheckBox parentDirectory;
+  @FXML
+  private CheckBox confirmSelection;
+  @FXML
+  private CheckBox unusualStrings;
   @FXML
   private ChoiceBox<JWFileChooserAction> action;
   @FXML
@@ -152,6 +158,12 @@ public final class ExampleViewController implements Initializable
   }
 
   @FXML
+  private void onConfirmSelectionChanged()
+  {
+
+  }
+
+  @FXML
   private void onOpenSelected()
     throws IOException
   {
@@ -170,16 +182,28 @@ public final class ExampleViewController implements Initializable
       );
 
     final var configurationBuilder =
-      JWFileChooserConfiguration.builder()
-        .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
-        .setShowParentDirectory(this.parentDirectory.isSelected())
-        .setFileSystem(fileSystem)
-        .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
-        .setFileImageSet(imageSet)
-        .setAction(this.action.getValue())
-        .addFileFilters(new ExampleFilterRejectAll())
-        .addFileFilters(new ExampleFilterXML())
-        .addAllRecentFiles(recents);
+      JWFileChooserConfiguration.builder();
+
+    final JWFileChooserStringOverridesType stringOverrides;
+    if (this.unusualStrings.isSelected()) {
+      stringOverrides = new ExampleWeirdStrings();
+      configurationBuilder.setTitle("Please deblaterate on your limerance!");
+    } else {
+      stringOverrides = JWFileChooserStringOverridesEmpty.get();
+    }
+
+    configurationBuilder
+      .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
+      .setShowParentDirectory(this.parentDirectory.isSelected())
+      .setConfirmFileSelection(this.confirmSelection.isSelected())
+      .setFileSystem(fileSystem)
+      .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
+      .setFileImageSet(imageSet)
+      .setAction(this.action.getValue())
+      .setStringOverrides(stringOverrides)
+      .addFileFilters(new ExampleFilterRejectAll())
+      .addFileFilters(new ExampleFilterXML())
+      .addAllRecentFiles(recents);
 
     if (this.homeDirectory.isSelected()) {
       configurationBuilder.setHomeDirectory(

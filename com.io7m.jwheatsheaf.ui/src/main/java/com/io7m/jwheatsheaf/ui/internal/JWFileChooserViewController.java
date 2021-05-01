@@ -17,6 +17,7 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
@@ -31,7 +32,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -66,6 +69,10 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
+import static javafx.scene.control.ButtonBar.ButtonData.OK_DONE;
+import static javafx.scene.control.ButtonType.CANCEL;
 
 /**
  * The file chooser view controller.
@@ -639,10 +646,11 @@ public final class JWFileChooserViewController
   {
     this.result = List.of();
 
+    var resultTarget = List.<Path>of();
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
-        this.result =
+        resultTarget =
           this.directoryTableSelectionModel
             .getSelectedItems()
             .stream()
@@ -650,20 +658,99 @@ public final class JWFileChooserViewController
             .collect(Collectors.toList());
         break;
       case CREATE:
-        this.result =
+        resultTarget =
           List.of(this.currentDirectory.resolve(this.fileName.getText()));
         break;
     }
 
-    this.result =
-      this.result.stream()
+    resultTarget =
+      resultTarget.stream()
         .filter(this::filterSelectionMode)
         .collect(Collectors.toList());
 
-    if (!this.result().isEmpty()) {
-      final var window = this.mainContent.getScene().getWindow();
-      window.hide();
+    if (!resultTarget.isEmpty()) {
+      final boolean confirmed;
+      if (this.isFileSelectionConfirmationRequired()) {
+        confirmed = this.confirmFileSelection(resultTarget);
+      } else {
+        confirmed = true;
+      }
+
+      if (confirmed) {
+        this.result = resultTarget;
+        final var window = this.mainContent.getScene().getWindow();
+        window.hide();
+      }
     }
+  }
+
+  /**
+   * Open a dialog that asks if the user wants to replace an existing file.
+   *
+   * @param results The selected files
+   *
+   * @return {@code true} if the user confirms they want to replace files
+   */
+
+  private boolean confirmFileSelection(
+    final List<Path> results)
+  {
+    final var shortName =
+      results.stream()
+        .findFirst()
+        .map(Path::getFileName)
+        .map(Path::toString)
+        .orElse("");
+
+    final var messageOverrides =
+      this.configuration.stringOverrides();
+
+    final var confirmButtonMessage =
+      messageOverrides.confirmReplaceButton()
+        .orElse(this.strings.fileConfirmReplaceButton());
+
+    final var confirmMessage =
+      messageOverrides.confirmReplaceMessage(shortName)
+        .orElse(this.strings.fileConfirmReplace(shortName));
+
+    final var confirmTitle =
+      messageOverrides.confirmTitleMessage()
+        .orElse(this.strings.fileConfirmReplaceTitle());
+
+    final var confirm =
+      new ButtonType(confirmButtonMessage, OK_DONE);
+    final var dialog =
+      new Alert(CONFIRMATION, confirmMessage);
+
+    dialog.setHeaderText(confirmTitle);
+
+    final var dialogButtons = dialog.getButtonTypes();
+    dialogButtons.clear();
+    dialogButtons.add(CANCEL);
+    dialogButtons.add(confirm);
+
+    this.configuration.cssStylesheet().ifPresent(css -> {
+      dialog.getDialogPane()
+        .getStylesheets()
+        .add(css.toExternalForm());
+    });
+
+    return dialog.showAndWait()
+      .stream()
+      .anyMatch(b -> Objects.equals(b, confirm));
+  }
+
+  private boolean isFileSelectionConfirmationRequired()
+  {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_SINGLE:
+      case OPEN_EXISTING_MULTIPLE:
+        return false;
+      case CREATE:
+        return this.configuration.confirmFileSelection();
+    }
+
+    throw new UnreachableCodeException();
   }
 
   @FXML
@@ -707,18 +794,31 @@ public final class JWFileChooserViewController
     this.reconfigureOKButton();
   }
 
+  /**
+   * Configure the visibility and contents of various UI buttons.
+   */
+
   private void configureButtons()
   {
     this.configureButtonHome();
 
+    final var messageOverrides =
+      this.configuration.stringOverrides();
+
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
-      case OPEN_EXISTING_SINGLE:
-        this.okButton.setText(this.strings.open());
+      case OPEN_EXISTING_SINGLE: {
+        final var buttonMessage =
+          messageOverrides.buttonOpen().orElse(this.strings.open());
+        this.okButton.setText(buttonMessage);
         break;
-      case CREATE:
-        this.okButton.setText(this.strings.save());
+      }
+      case CREATE: {
+        final var buttonMessage =
+          messageOverrides.buttonSave().orElse(this.strings.save());
+        this.okButton.setText(buttonMessage);
         break;
+      }
     }
 
     this.okButton.setDisable(true);
@@ -729,6 +829,10 @@ public final class JWFileChooserViewController
     this.directoryTableSelectionModel.selectedItemProperty()
       .addListener(item -> this.reconfigureOKButton());
   }
+
+  /**
+   * Show or hide the home button based on the chooser configuration.
+   */
 
   private void configureButtonHome()
   {

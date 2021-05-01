@@ -143,6 +143,8 @@ public interface JWFileChooserConfigurationType
    * the file listing. This entry is always called "..".
    *
    * @return {@code true} if the directory listing will contain ".."
+   *
+   * @since 3.0.0
    */
 
   @Value.Default
@@ -213,5 +215,33 @@ public interface JWFileChooserConfigurationType
         "The default file filter must be contained in the list of filters"
       );
     });
+  }
+
+  /**
+   * If set to {@code true}, then when the user is using a mode such as
+   * {@link JWFileChooserAction#CREATE}, a confirmation dialog will be displayed
+   * if the user selects a file that already exists.
+   *
+   * @return {@code true} if confirmation dialogs should be shown
+   *
+   * @since 3.0.0
+   */
+
+  @Value.Default
+  default boolean confirmFileSelection()
+  {
+    return false;
+  }
+
+  /**
+   * @return A provider of UI string overrides
+   *
+   * @since 3.0.0
+   */
+
+  @Value.Default
+  default JWFileChooserStringOverridesType stringOverrides()
+  {
+    return JWFileChooserStringOverridesEmpty.get();
   }
 }

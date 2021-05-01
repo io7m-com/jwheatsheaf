@@ -74,7 +74,8 @@ public final class JWFileChooserConfigurationDefaults
    * returned.
    */
 
-  public static Function<Path, Boolean> fileSelectionMode() {
+  public static Function<Path, Boolean> fileSelectionMode()
+  {
     return (path) -> true;
   }
 
