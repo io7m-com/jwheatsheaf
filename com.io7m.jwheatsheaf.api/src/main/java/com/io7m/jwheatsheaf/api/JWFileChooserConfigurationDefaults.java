@@ -97,19 +97,20 @@ public final class JWFileChooserConfigurationDefaults
         return Long.toUnsignedString(size) + "B";
       }
       if (Long.compareUnsigned(size, 1_000_000L) < 0) {
-        return String.format(
-          "%.2fkB", Double.valueOf(real / 1_000.0));
+        final var resultSize = real / 1_000.0;
+        return String.format("%.2fkB", Double.valueOf(resultSize));
       }
       if (Long.compareUnsigned(size, 1_000_000_000L) < 0) {
-        return String.format(
-          "%.2fMB", Double.valueOf(real / 1_000_000.0));
+        final var resultSize = real / 1_000_000.0;
+        return String.format("%.2fMB", Double.valueOf(resultSize));
       }
       if (Long.compareUnsigned(size, 1_000_000_000_000L) < 0) {
-        return String.format(
-          "%.2fGB", Double.valueOf(real / 1_000_000_000_000.0));
+        final var resultSize = real / 1_000_000_000.0;
+        return String.format("%.2fGB", Double.valueOf(resultSize));
       }
-      return String.format(
-        "%.2fTB", Double.valueOf(real / 1_000_000_000_000.0));
+
+      final var resultSize = real / 1_000_000_000_000.0;
+      return String.format("%.2fTB", Double.valueOf(resultSize));
     };
   }
 }
