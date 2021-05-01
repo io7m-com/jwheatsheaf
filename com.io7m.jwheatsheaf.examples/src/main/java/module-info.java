@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2021 Mark Raynsford <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,32 +15,19 @@
  */
 
 /**
- * JavaFX file chooser (UI)
+ * JavaFX file chooser (Examples)
  */
 
-module com.io7m.jwheatsheaf.ui
+module com.io7m.jwheatsheaf.examples
 {
-  requires static com.io7m.immutables.style;
-  requires static org.immutables.value;
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
-
-  requires com.io7m.jaffirm.core;
+  requires com.github.marschall.memoryfilesystem;
   requires com.io7m.junreachable.core;
+  requires com.io7m.jwheatsheaf.api;
+  requires com.io7m.jwheatsheaf.oxygen;
+  requires com.io7m.jwheatsheaf.ui;
   requires javafx.controls;
   requires javafx.fxml;
   requires org.slf4j;
 
-  requires transitive com.io7m.jwheatsheaf.api;
-  requires transitive javafx.graphics;
-
-  opens com.io7m.jwheatsheaf.ui
-    to javafx.fxml;
-  opens com.io7m.jwheatsheaf.ui.internal
-    to javafx.fxml, com.io7m.jwheatsheaf.examples;
-
-  exports com.io7m.jwheatsheaf.ui.internal
-    to com.io7m.jwheatsheaf.examples;
-
-  exports com.io7m.jwheatsheaf.ui;
+  opens com.io7m.jwheatsheaf.examples;
 }
