@@ -50,7 +50,6 @@ final Window mainWindow = ...;
 
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .build();
 
 final var choosers = JWFileChoosers.create();

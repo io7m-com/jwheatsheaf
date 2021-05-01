@@ -22,6 +22,7 @@ import org.immutables.value.Value;
 
 import java.net.URL;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -50,7 +51,11 @@ public interface JWFileChooserConfigurationType
    * @return The file system traversed by the file chooser
    */
 
-  FileSystem fileSystem();
+  @Value.Default
+  default FileSystem fileSystem()
+  {
+    return FileSystems.getDefault();
+  }
 
   /**
    * @return The starting directory
