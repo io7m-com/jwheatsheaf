@@ -62,7 +62,6 @@ user to select one to filter results.
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .addFileFilters(new ExampleFilterRejectAll())
     .addFileFilters(new ExampleFilterXML())
     .build();
@@ -123,7 +122,6 @@ setting the _action_ for the chooser:
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setAction(OPEN_EXISTING_MULTIPLE)
     .build();
 ```
@@ -136,7 +134,6 @@ a button will be displayed in the UI that allows for navigating directly to this
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setHomeDirectory(someHomeDirectoryPath)
     .build();
 ```
@@ -149,8 +146,32 @@ title is used if no other value is specified.
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setTitle("Export to PNG…")
+    .build();
+```
+
+#### Custom Strings
+
+Some of the strings in the file chooser UI may be customized on a per-chooser
+basis. For example, this can be useful for specifying strings such as "Export"
+instead of "Save" for the "Save" button in the file chooser. To specify custom
+strings, provide an implementation of [JWFileChooserStringOverridesType](com.io7m.jwheatsheaf.api/src/main/java/com/io7m/jwheatsheaf/api/JWFileChooserStringOverridesType.java)
+in the constructor. An [abstract implementation](com.io7m.jwheatsheaf.api/src/main/java/com/io7m/jwheatsheaf/api/JWFileChooserStringOverridesAbstract.java)
+is available for convenience.
+
+```
+final var customStrings = 
+  new JWFileChooserStringOverridesAbstract() {
+    @Override
+    public Optional<String> buttonSave()
+    {
+      return Optional.of("Export");
+    }
+  };
+
+final var configuration =
+  JWFileChooserConfiguration.builder()
+    .setStringOverrides(customStrings)
     .build();
 ```
 
@@ -164,7 +185,6 @@ of paths is passed in:
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setRecentFiles(List.of(
       Paths.get("/tmp/x"),
       Paths.get("/tmp/y"),
@@ -181,7 +201,6 @@ This can be disabled.
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setAllowDirectoryCreation(false)
     .build();
 ```
@@ -195,7 +214,6 @@ sets should implement this interface and pass in an instance to the configuratio
 ```
 final var configuration =
   JWFileChooserConfiguration.builder()
-    .setFileSystem(FileSystems.getDefault())
     .setFileImageSet(new CustomIcons())
     .build();
 ```
