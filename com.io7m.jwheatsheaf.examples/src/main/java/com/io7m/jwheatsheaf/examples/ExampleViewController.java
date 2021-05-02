@@ -51,6 +51,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * The view controller for the example application.
+ */
+
 public final class ExampleViewController implements Initializable
 {
   private static final Logger LOG =
@@ -87,6 +91,10 @@ public final class ExampleViewController implements Initializable
   private ChoiceBox<JWFileChooserAction> action;
   @FXML
   private TextField title;
+
+  /**
+   * Construct a view controller.
+   */
 
   public ExampleViewController()
   {

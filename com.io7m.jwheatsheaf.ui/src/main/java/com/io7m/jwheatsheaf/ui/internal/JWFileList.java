@@ -70,11 +70,23 @@ public final class JWFileList
     return allowed && searched;
   }
 
+  /**
+   * Set the items for the file list.
+   *
+   * @param newItems The new items
+   */
+
   public void setItems(
     final List<JWFileItem> newItems)
   {
     this.items.setAll(newItems);
   }
+
+  /**
+   * Set the search filter.
+   *
+   * @param searchText The filter
+   */
 
   public void setSearch(
     final String searchText)
@@ -83,6 +95,12 @@ public final class JWFileList
     this.items.setAll(List.copyOf(this.items));
   }
 
+  /**
+   * Set the type filter.
+   *
+   * @param newFilter The type filter
+   */
+
   public void setFilter(
     final JWFileChooserFilterType newFilter)
   {
@@ -90,10 +108,18 @@ public final class JWFileList
     this.items.setAll(List.copyOf(this.items));
   }
 
+  /**
+   * @return The observable list of items
+   */
+
   public ObservableList<JWFileItem> items()
   {
     return this.sorted;
   }
+
+  /**
+   * @return The comparator used for sorting
+   */
 
   public ObjectProperty<Comparator<? super JWFileItem>> comparator()
   {

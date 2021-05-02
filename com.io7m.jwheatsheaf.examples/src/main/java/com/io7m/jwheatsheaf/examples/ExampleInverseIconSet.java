@@ -24,6 +24,10 @@ import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Example inverse icons.
+ */
+
 public final class ExampleInverseIconSet implements JWFileImageSetType
 {
   /**

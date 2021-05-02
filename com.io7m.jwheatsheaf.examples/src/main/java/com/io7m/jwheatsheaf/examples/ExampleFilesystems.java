@@ -29,6 +29,10 @@ import java.nio.file.attribute.DosFileAttributeView;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Example filesystems.
+ */
+
 public final class ExampleFilesystems
 {
   private final Map<String, FileSystem> filesystems;
@@ -39,6 +43,14 @@ public final class ExampleFilesystems
     this.filesystems =
       Objects.requireNonNull(inFilesystems, "filesystems");
   }
+
+  /**
+   * Create a set of example filesystems.
+   *
+   * @return The filesystems
+   *
+   * @throws IOException On I/O errors
+   */
 
   public static ExampleFilesystems create()
     throws IOException
@@ -100,6 +112,10 @@ public final class ExampleFilesystems
     Files.writeString(filesystem.getPath("PHOTO.JPG"), "☺");
     return filesystem;
   }
+
+  /**
+   * @return The available filesystems
+   */
 
   public Map<String, FileSystem> filesystems()
   {

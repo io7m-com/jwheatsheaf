@@ -83,60 +83,110 @@ public final class JWStrings
     return MessageFormat.format(this.resourceBundle.getString(idId), inArgs);
   }
 
+  /**
+   * @return "ui.directoryCreateTitle"
+   */
+
   public String createDirectoryTitle()
   {
     return this.resourceBundle.getString("ui.directoryCreateTitle");
   }
+
+  /**
+   * @return "ui.recentItems"
+   */
 
   public String recentItems()
   {
     return this.resourceBundle.getString("ui.recentItems");
   }
 
+  /**
+   * @return "ui.filterAllFilesDescription"
+   */
+
   public String filterAllFilesDescription()
   {
     return this.resourceBundle.getString("ui.filterAllFilesDescription");
   }
+
+  /**
+   * @return "ui.filterOnlyDirectoriesDescription"
+   */
 
   public String filterOnlyDirectoriesDescription()
   {
     return this.resourceBundle.getString("ui.filterOnlyDirectoriesDescription");
   }
 
+  /**
+   * @return "ui.directoryName"
+   */
+
   public String enterDirectoryName()
   {
     return this.resourceBundle.getString("ui.directoryName");
   }
+
+  /**
+   * @return "ui.fileSelect"
+   */
 
   public String fileSelect()
   {
     return this.resourceBundle.getString("ui.fileSelect");
   }
 
+  /**
+   * @return "ui.filesSelect"
+   */
+
   public String filesSelect()
   {
     return this.resourceBundle.getString("ui.filesSelect");
   }
+
+  /**
+   * @return "ui.open"
+   */
 
   public String open()
   {
     return this.resourceBundle.getString("ui.open");
   }
 
+  /**
+   * @return "ui.save"
+   */
+
   public String save()
   {
     return this.resourceBundle.getString("ui.save");
   }
+
+  /**
+   * @return "ui.enterPathTitle"
+   */
 
   public String enterPathTitle()
   {
     return this.resourceBundle.getString("ui.enterPathTitle");
   }
 
+  /**
+   * @return "ui.enterPath"
+   */
+
   public String enterPath()
   {
     return this.resourceBundle.getString("ui.enterPath");
   }
+
+  /**
+   * @param path The directory target
+   *
+   * @return "ui.tooltip.directory"
+   */
 
   public String tooltipDirectory(
     final Path path)
@@ -144,11 +194,23 @@ public final class JWStrings
     return this.format("ui.tooltip.directory", path.toAbsolutePath());
   }
 
+  /**
+   * @param path The file target
+   *
+   * @return "ui.tooltip.file"
+   */
+
   public String tooltipFile(
     final Path path)
   {
     return this.format("ui.tooltip.file", path.toAbsolutePath());
   }
+
+  /**
+   * @param name The file to replace
+   *
+   * @return "ui.fileConfirmReplace"
+   */
 
   public String fileConfirmReplace(
     final String name)
@@ -156,10 +218,18 @@ public final class JWStrings
     return this.format("ui.fileConfirmReplace", name);
   }
 
+  /**
+   * @return "ui.fileConfirmReplaceButton"
+   */
+
   public String fileConfirmReplaceButton()
   {
     return this.format("ui.fileConfirmReplaceButton");
   }
+
+  /**
+   * @return "ui.fileConfirmReplaceTitle"
+   */
 
   public String fileConfirmReplaceTitle()
   {

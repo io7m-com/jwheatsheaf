@@ -21,6 +21,10 @@ import javafx.scene.control.Tooltip;
 
 import java.util.Objects;
 
+/**
+ * Functions to create tooltips.
+ */
+
 public final class JWToolTips
 {
   private final JWStrings strings;
@@ -30,6 +34,14 @@ public final class JWToolTips
   {
     this.strings = Objects.requireNonNull(inStrings, "strings");
   }
+
+  /**
+   * Create a tooltip for the given file item.
+   *
+   * @param item The item
+   *
+   * @return A tooltip
+   */
 
   public Tooltip tooltipOf(
     final JWFileItem item)

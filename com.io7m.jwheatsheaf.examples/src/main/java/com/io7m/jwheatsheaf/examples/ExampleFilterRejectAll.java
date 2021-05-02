@@ -20,8 +20,16 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 
 import java.nio.file.Path;
 
+/**
+ * An example filter that rejects everything.
+ */
+
 public final class ExampleFilterRejectAll implements JWFileChooserFilterType
 {
+  /**
+   * Construct a filter.
+   */
+
   public ExampleFilterRejectAll()
   {
 

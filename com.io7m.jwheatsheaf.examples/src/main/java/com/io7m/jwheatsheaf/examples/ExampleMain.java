@@ -18,12 +18,22 @@ package com.io7m.jwheatsheaf.examples;
 
 import javafx.application.Application;
 
+/**
+ * The main example application entry point.
+ */
+
 public final class ExampleMain
 {
   private ExampleMain()
   {
 
   }
+
+  /**
+   * The main entry point.
+   *
+   * @param args Command-line arguments
+   */
 
   public static void main(
     final String[] args)

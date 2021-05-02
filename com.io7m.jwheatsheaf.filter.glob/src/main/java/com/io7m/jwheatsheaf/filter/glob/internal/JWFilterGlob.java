@@ -23,10 +23,20 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A glob-based filter.
+ */
+
 public final class JWFilterGlob implements JWFileChooserFilterType
 {
   private final String description;
   private final List<JWFilterGlobRule> rules;
+
+  /**
+   * Construct a glob-based filter.
+   * @param inDescription The description
+   * @param inRules A set of filter rules
+   */
 
   public JWFilterGlob(
     final String inDescription,

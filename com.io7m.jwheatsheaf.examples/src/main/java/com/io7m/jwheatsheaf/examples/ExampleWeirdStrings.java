@@ -27,6 +27,10 @@ import java.util.Optional;
 public final class ExampleWeirdStrings
   extends JWFileChooserStringOverridesAbstract
 {
+  /**
+   * Construct a set of strings.
+   */
+
   public ExampleWeirdStrings()
   {
 

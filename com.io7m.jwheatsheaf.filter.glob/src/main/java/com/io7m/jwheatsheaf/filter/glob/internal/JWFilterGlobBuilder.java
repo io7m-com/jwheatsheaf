@@ -24,10 +24,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A glob-based filter builder.
+ */
+
 public final class JWFilterGlobBuilder implements JWFilterGlobBuilderType
 {
   private final String description;
   private final ArrayList<JWFilterGlobRule> rules;
+
+  /**
+   * Construct a glob-based filter builder.
+   *
+   * @param inDescription The filter description
+   */
 
   public JWFilterGlobBuilder(
     final String inDescription)

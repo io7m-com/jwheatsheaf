@@ -152,6 +152,12 @@ public final class JWFileChooserViewController
     return this.configuration.fileSizeFormatter().formatSize(size);
   }
 
+  /**
+   * Set a function that will receive events from the chooser.
+   *
+   * @param newEventReceiver The event receiver
+   */
+
   public void setEventReceiver(
     final Consumer<JWFileChooserEventType> newEventReceiver)
   {
