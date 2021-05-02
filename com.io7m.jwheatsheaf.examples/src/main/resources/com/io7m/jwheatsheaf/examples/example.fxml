@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ComboBox?>
 <VBox fx:id="main" prefHeight="600.0" prefWidth="800.0" stylesheets="@example.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.io7m.jwheatsheaf.examples.ExampleViewController">
    <children>
       <HBox layoutX="18.0" layoutY="18.0">
@@ -67,6 +68,14 @@
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="170.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox layoutX="18.0" layoutY="295.0">
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Locale" />
+            <ComboBox fx:id="localeSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="18.0" layoutY="327.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox>
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Title" />

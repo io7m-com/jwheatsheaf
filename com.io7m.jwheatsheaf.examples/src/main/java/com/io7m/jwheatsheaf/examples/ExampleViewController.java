@@ -29,9 +29,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -39,6 +42,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -48,6 +53,9 @@ import java.util.stream.Collectors;
 
 public final class ExampleViewController implements Initializable
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ExampleViewController.class);
+
   private ExampleFilesystems filesystems;
   private ExampleImageSets imageSets;
 
@@ -59,6 +67,8 @@ public final class ExampleViewController implements Initializable
   private ChoiceBox<String> cssSelection;
   @FXML
   private ChoiceBox<String> imageSetSelection;
+  @FXML
+  private ComboBox<Locale> localeSelection;
   @FXML
   private TextArea textArea;
   @FXML
@@ -131,6 +141,15 @@ public final class ExampleViewController implements Initializable
       )
     );
     this.imageSetSelection.getSelectionModel().select(0);
+
+    this.localeSelection.setItems(
+      FXCollections.observableArrayList(
+        Arrays.stream(Locale.getAvailableLocales())
+          .sorted(Comparator.comparing(Locale::toString))
+          .collect(Collectors.toList())
+      )
+    );
+    this.localeSelection.getSelectionModel().selectFirst();
   }
 
   @FXML
@@ -222,12 +241,17 @@ public final class ExampleViewController implements Initializable
     if (this.slowIO.isSelected()) {
       testingBuilder.setIoDelay(Duration.of(2L, ChronoUnit.SECONDS));
     }
-    final var testing = testingBuilder.build();
+    final var testing =
+      testingBuilder.build();
+    final var locale =
+      this.localeSelection.getSelectionModel().getSelectedItem();
+
+    LOG.debug("Locale: {}", locale);
 
     try (var choosers = JWFileChoosers.createWithTesting(
       Executors.newSingleThreadExecutor(),
       testing,
-      Locale.getDefault()
+      locale
     )) {
       final var chooser =
         choosers.create(this.main.getScene().getWindow(), configuration);
