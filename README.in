@@ -175,6 +175,21 @@ final var configuration =
     .build();
 ```
 
+#### Confirmation
+
+The file chooser can optionally prompt for confirmation of the selection of
+files when in `CREATE` mode.
+
+```
+final var configuration =
+  JWFileChooserConfiguration.builder()
+    .setAction(CREATE)
+    .setConfirmFileSelection(true)
+    .build();
+```
+
+![Confirmation](./src/site/resources/confirm.png?raw=true)
+
 #### Recent Items
 
 The file chooser can display a list of recently used items. It is the responsibility of
