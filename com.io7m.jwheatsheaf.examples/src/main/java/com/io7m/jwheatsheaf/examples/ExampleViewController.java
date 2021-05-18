@@ -19,6 +19,8 @@ package com.io7m.jwheatsheaf.examples;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
+import com.io7m.jwheatsheaf.api.JWFileChooserStringOverridesEmpty;
+import com.io7m.jwheatsheaf.api.JWFileChooserStringOverridesType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.collections.FXCollections;
@@ -27,8 +29,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -36,6 +42,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -43,8 +51,15 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * The view controller for the example application.
+ */
+
 public final class ExampleViewController implements Initializable
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(ExampleViewController.class);
+
   private ExampleFilesystems filesystems;
   private ExampleImageSets imageSets;
 
@@ -57,13 +72,29 @@ public final class ExampleViewController implements Initializable
   @FXML
   private ChoiceBox<String> imageSetSelection;
   @FXML
+  private ComboBox<Locale> localeSelection;
+  @FXML
   private TextArea textArea;
   @FXML
   private CheckBox allowDirectoryCreation;
   @FXML
   private CheckBox slowIO;
   @FXML
+  private CheckBox homeDirectory;
+  @FXML
+  private CheckBox parentDirectory;
+  @FXML
+  private CheckBox confirmSelection;
+  @FXML
+  private CheckBox unusualStrings;
+  @FXML
   private ChoiceBox<JWFileChooserAction> action;
+  @FXML
+  private TextField title;
+
+  /**
+   * Construct a view controller.
+   */
 
   public ExampleViewController()
   {
@@ -118,6 +149,15 @@ public final class ExampleViewController implements Initializable
       )
     );
     this.imageSetSelection.getSelectionModel().select(0);
+
+    this.localeSelection.setItems(
+      FXCollections.observableArrayList(
+        Arrays.stream(Locale.getAvailableLocales())
+          .sorted(Comparator.comparing(Locale::toString))
+          .collect(Collectors.toList())
+      )
+    );
+    this.localeSelection.getSelectionModel().selectFirst();
   }
 
   @FXML
@@ -128,6 +168,24 @@ public final class ExampleViewController implements Initializable
 
   @FXML
   private void onSlowIOChanged()
+  {
+
+  }
+
+  @FXML
+  private void onHomeDirectoryChanged()
+  {
+
+  }
+
+  @FXML
+  private void onParentDirectoryChanged()
+  {
+
+  }
+
+  @FXML
+  private void onConfirmSelectionChanged()
   {
 
   }
@@ -150,28 +208,58 @@ public final class ExampleViewController implements Initializable
         fileSystem.getPath("G", "H", "I")
       );
 
+    final var configurationBuilder =
+      JWFileChooserConfiguration.builder();
+
+    final JWFileChooserStringOverridesType stringOverrides;
+    if (this.unusualStrings.isSelected()) {
+      stringOverrides = new ExampleWeirdStrings();
+      configurationBuilder.setTitle("Please deblaterate on your limerance!");
+    } else {
+      stringOverrides = JWFileChooserStringOverridesEmpty.get();
+    }
+
+    configurationBuilder
+      .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
+      .setShowParentDirectory(this.parentDirectory.isSelected())
+      .setConfirmFileSelection(this.confirmSelection.isSelected())
+      .setFileSystem(fileSystem)
+      .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
+      .setFileImageSet(imageSet)
+      .setAction(this.action.getValue())
+      .setStringOverrides(stringOverrides)
+      .addFileFilters(new ExampleFilterRejectAll())
+      .addFileFilters(new ExampleFilterXML())
+      .addAllRecentFiles(recents);
+
+    if (this.homeDirectory.isSelected()) {
+      configurationBuilder.setHomeDirectory(
+        fileSystem.getPath(System.getProperty("user.home"))
+      );
+    }
+
+    if (!this.title.getText().isEmpty()) {
+      configurationBuilder.setTitle(this.title.getText());
+    }
+
     final var configuration =
-      JWFileChooserConfiguration.builder()
-        .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
-        .setFileSystem(fileSystem)
-        .setCssStylesheet(ExampleViewController.class.getResource(this.cssSelection.getValue()))
-        .setFileImageSet(imageSet)
-        .setAction(this.action.getValue())
-        .addFileFilters(new ExampleFilterRejectAll())
-        .addFileFilters(new ExampleFilterXML())
-        .addAllRecentFiles(recents)
-        .build();
+      configurationBuilder.build();
 
     final var testingBuilder = JWFileChoosersTesting.builder();
     if (this.slowIO.isSelected()) {
       testingBuilder.setIoDelay(Duration.of(2L, ChronoUnit.SECONDS));
     }
-    final var testing = testingBuilder.build();
+    final var testing =
+      testingBuilder.build();
+    final var locale =
+      this.localeSelection.getSelectionModel().getSelectedItem();
+
+    LOG.debug("Locale: {}", locale);
 
     try (var choosers = JWFileChoosers.createWithTesting(
       Executors.newSingleThreadExecutor(),
       testing,
-      Locale.getDefault()
+      locale
     )) {
       final var chooser =
         choosers.create(this.main.getScene().getWindow(), configuration);

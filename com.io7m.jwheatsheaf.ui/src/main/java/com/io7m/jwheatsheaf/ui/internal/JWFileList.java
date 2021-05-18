@@ -17,10 +17,13 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +35,7 @@ public final class JWFileList
 {
   private final ObservableList<JWFileItem> items;
   private final FilteredList<JWFileItem> filtered;
+  private final SortedList<JWFileItem> sorted;
   private volatile String search;
   private volatile JWFileChooserFilterType filter;
 
@@ -52,6 +56,8 @@ public final class JWFileList
       "";
     this.filtered =
       this.items.filtered(this::isItemVisible);
+    this.sorted =
+      new SortedList<>(this.filtered);
   }
 
   private boolean isItemVisible(
@@ -64,11 +70,23 @@ public final class JWFileList
     return allowed && searched;
   }
 
+  /**
+   * Set the items for the file list.
+   *
+   * @param newItems The new items
+   */
+
   public void setItems(
     final List<JWFileItem> newItems)
   {
     this.items.setAll(newItems);
   }
+
+  /**
+   * Set the search filter.
+   *
+   * @param searchText The filter
+   */
 
   public void setSearch(
     final String searchText)
@@ -77,6 +95,12 @@ public final class JWFileList
     this.items.setAll(List.copyOf(this.items));
   }
 
+  /**
+   * Set the type filter.
+   *
+   * @param newFilter The type filter
+   */
+
   public void setFilter(
     final JWFileChooserFilterType newFilter)
   {
@@ -84,8 +108,21 @@ public final class JWFileList
     this.items.setAll(List.copyOf(this.items));
   }
 
+  /**
+   * @return The observable list of items
+   */
+
   public ObservableList<JWFileItem> items()
   {
-    return this.filtered;
+    return this.sorted;
+  }
+
+  /**
+   * @return The comparator used for sorting
+   */
+
+  public ObjectProperty<Comparator<? super JWFileItem>> comparator()
+  {
+    return this.sorted.comparatorProperty();
   }
 }

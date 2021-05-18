@@ -16,9 +16,11 @@
 
 package com.io7m.jwheatsheaf.api;
 
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.SignStyle;
+import java.util.function.Function;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
@@ -65,6 +67,19 @@ public final class JWFileChooserConfigurationDefaults
   }
 
   /**
+   * The default file selection mode. By default, any type of file (including
+   * directories) may be selected.
+   *
+   * @return A function that dictates whether the selected items may be
+   * returned.
+   */
+
+  public static Function<Path, Boolean> fileSelectionMode()
+  {
+    return (path) -> true;
+  }
+
+  /**
    * This is a basic file size formatter that displays fractional kilobyte,
    * megabyte, gigabyte, and terabyte values depending on sizes.
    *
@@ -83,19 +98,20 @@ public final class JWFileChooserConfigurationDefaults
         return Long.toUnsignedString(size) + "B";
       }
       if (Long.compareUnsigned(size, 1_000_000L) < 0) {
-        return String.format(
-          "%.2fkB", Double.valueOf(real / 1_000.0));
+        final var resultSize = real / 1_000.0;
+        return String.format("%.2fkB", Double.valueOf(resultSize));
       }
       if (Long.compareUnsigned(size, 1_000_000_000L) < 0) {
-        return String.format(
-          "%.2fMB", Double.valueOf(real / 1_000_000.0));
+        final var resultSize = real / 1_000_000.0;
+        return String.format("%.2fMB", Double.valueOf(resultSize));
       }
       if (Long.compareUnsigned(size, 1_000_000_000_000L) < 0) {
-        return String.format(
-          "%.2fGB", Double.valueOf(real / 1_000_000_000_000.0));
+        final var resultSize = real / 1_000_000_000.0;
+        return String.format("%.2fGB", Double.valueOf(resultSize));
       }
-      return String.format(
-        "%.2fTB", Double.valueOf(real / 1_000_000_000_000.0));
+
+      final var resultSize = real / 1_000_000_000_000.0;
+      return String.format("%.2fTB", Double.valueOf(resultSize));
     };
   }
 }

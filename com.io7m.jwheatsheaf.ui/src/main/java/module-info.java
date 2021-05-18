@@ -34,8 +34,13 @@ module com.io7m.jwheatsheaf.ui
   requires transitive com.io7m.jwheatsheaf.api;
   requires transitive javafx.graphics;
 
-  opens com.io7m.jwheatsheaf.ui to javafx.fxml;
-  opens com.io7m.jwheatsheaf.ui.internal to javafx.fxml;
+  opens com.io7m.jwheatsheaf.ui
+    to javafx.fxml;
+  opens com.io7m.jwheatsheaf.ui.internal
+    to javafx.fxml, com.io7m.jwheatsheaf.examples;
+
+  exports com.io7m.jwheatsheaf.ui.internal
+    to com.io7m.jwheatsheaf.examples;
 
   exports com.io7m.jwheatsheaf.ui;
 }

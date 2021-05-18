@@ -17,6 +17,7 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
@@ -31,7 +32,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -57,11 +60,19 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
+import static javafx.scene.control.ButtonBar.ButtonData.OK_DONE;
+import static javafx.scene.control.ButtonType.CANCEL;
 
 /**
  * The file chooser view controller.
@@ -74,18 +85,14 @@ public final class JWFileChooserViewController
   private static final Logger LOG =
     LoggerFactory.getLogger(JWFileChooserViewController.class);
 
-  private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
-  private final ChangeListener<Path> listener;
-  private JWFileChooserConfiguration configuration;
-  private JWFileChooserFilterType filterAll;
-  private JWFileChooserFilterType filterOnlyDirectories;
-  private JWFileChoosers choosers;
-  private JWFileImageSetType imageSet;
-  private JWFileList fileListing;
-  private List<Node> lockableViews;
-  private List<Path> result;
-  private volatile Path currentDirectory;
+  private static final Runnable AND_THEN_DO_NOTHING = () -> {
 
+  };
+
+  private final AtomicReference<Consumer<JWFileChooserEventType>> eventReceiver;
+  private final BlockingDeque<String> initialFilename;
+  private final ChangeListener<Path> listener;
+  @FXML private Button homeDirectoryButton;
   @FXML private Button newDirectoryButton;
   @FXML private Button okButton;
   @FXML private Button selectDirectButton;
@@ -98,11 +105,20 @@ public final class JWFileChooserViewController
   @FXML private TableView<JWFileItem> directoryTable;
   @FXML private TextField fileName;
   @FXML private TextField searchField;
-
   private ExecutorService ioExecutor;
+  private JWFileChooserConfiguration configuration;
+  private JWFileChooserFilterType filterAll;
+  private JWFileChooserFilterType filterOnlyDirectories;
+  private JWFileChoosers choosers;
   private JWFileChoosersTesting testing;
+  private JWFileImageSetType imageSet;
+  private JWFileList fileListing;
   private JWStrings strings;
   private JWToolTips toolTips;
+  private List<Node> lockableViews;
+  private List<Path> result;
+  private TableView.TableViewSelectionModel<JWFileItem> directoryTableSelectionModel;
+  private volatile Path currentDirectory;
 
   /**
    * Construct a view controller.
@@ -112,6 +128,7 @@ public final class JWFileChooserViewController
   {
     this.listener = this::onPathMenuItemSelected;
     this.result = List.of();
+    this.initialFilename = new LinkedBlockingDeque<>();
     this.eventReceiver = new AtomicReference<>(event -> {
     });
   }
@@ -134,6 +151,12 @@ public final class JWFileChooserViewController
   {
     return this.configuration.fileSizeFormatter().formatSize(size);
   }
+
+  /**
+   * Set a function that will receive events from the chooser.
+   *
+   * @param newEventReceiver The event receiver
+   */
 
   public void setEventReceiver(
     final Consumer<JWFileChooserEventType> newEventReceiver)
@@ -175,6 +198,8 @@ public final class JWFileChooserViewController
 
     Objects.requireNonNull(inDefaultImageSet, "inDefaultImageSet");
 
+    this.directoryTableSelectionModel =
+      this.directoryTable.getSelectionModel();
     this.toolTips =
       new JWToolTips(this.strings);
 
@@ -198,6 +223,9 @@ public final class JWFileChooserViewController
     this.selectDirectButton.setGraphic(
       JWImages.imageView16x16Of(this.imageSet.forSelectDirect())
     );
+    this.homeDirectoryButton.setGraphic(
+      JWImages.imageView16x16Of(this.imageSet.forHome())
+    );
 
     final var fileSystem =
       this.configuration.fileSystem();
@@ -220,6 +248,7 @@ public final class JWFileChooserViewController
 
     this.lockableViews = List.of(
       this.directoryTable,
+      this.homeDirectoryButton,
       this.newDirectoryButton,
       this.okButton,
       this.pathMenu,
@@ -229,7 +258,7 @@ public final class JWFileChooserViewController
       this.upDirectoryButton
     );
 
-    this.setCurrentDirectory(startDirectory);
+    this.setCurrentDirectory(startDirectory, AND_THEN_DO_NOTHING);
   }
 
   private void configureSearch()
@@ -242,6 +271,8 @@ public final class JWFileChooserViewController
   {
     this.fileName.textProperty()
       .addListener(observable -> this.onNameFieldChanged());
+    this.configuration.initialFileName()
+      .ifPresent(this.initialFilename::push);
   }
 
   private void configureSourceList(
@@ -256,7 +287,9 @@ public final class JWFileChooserViewController
     final var sources = new ArrayList<JWFileSourceEntryType>();
     sources.add(new JWFileSourceEntryRecentItems(this.configuration));
     for (final var root : fileSystem.getRootDirectories()) {
-      sources.add(new JWFileSourceEntryFilesystemRoot(root));
+      sources.add(new JWFileSourceEntryFilesystemRoot(
+        this.configuration.showParentDirectory(), root)
+      );
     }
 
     this.sourcesList.setItems(FXCollections.observableList(sources));
@@ -297,7 +330,22 @@ public final class JWFileChooserViewController
     filters.add(this.filterOnlyDirectories);
     filters.addAll(this.configuration.fileFilters());
     this.fileTypeMenu.setItems(FXCollections.observableList(filters));
-    this.fileTypeMenu.getSelectionModel().select(0);
+
+    /*
+     * Select the default filter. If there isn't one, select the first
+     * filter.
+     */
+
+    final var selectionModel =
+      this.fileTypeMenu.getSelectionModel();
+
+    this.configuration.fileFilterDefault()
+      .ifPresentOrElse(
+        selectionModel::select,
+        () -> selectionModel.select(0)
+      );
+
+    this.onFileFilterSelected();
   }
 
   /**
@@ -309,11 +357,12 @@ public final class JWFileChooserViewController
    */
 
   private void setCurrentDirectory(
-    final Path path)
+    final Path path,
+    final Runnable andThen)
   {
     this.currentDirectory = Objects.requireNonNull(path, "path");
     this.rebuildPathMenu(path);
-    this.populateDirectoryTable(path);
+    this.populateDirectoryTable(path, andThen);
   }
 
   private void rebuildPathMenu(
@@ -328,13 +377,20 @@ public final class JWFileChooserViewController
   }
 
   private void populateDirectoryTable(
-    final Path directory)
+    final Path directory,
+    final Runnable andThen)
   {
-    this.populateDirectoryTableWith(() -> JWFileItems.listDirectory(directory));
+    this.populateDirectoryTableWith(
+      () -> JWFileItems.listDirectory(
+        directory,
+        this.configuration.showParentDirectory()),
+      andThen
+    );
   }
 
   private void populateDirectoryTableWith(
-    final JWFileListingRetrieverType itemRetriever)
+    final JWFileListingRetrieverType itemRetriever,
+    final Runnable andThen)
   {
     this.directoryTable.setItems(this.fileListing.items());
     this.ioLockUI();
@@ -346,6 +402,16 @@ public final class JWFileChooserViewController
         Platform.runLater(() -> {
           this.ioUnlockUI();
           this.fileListing.setItems(items);
+
+          try {
+            final var name = this.initialFilename.pop();
+            this.trySelectDirectoryItem(items, name);
+            this.fileName.setText(name);
+          } catch (final NoSuchElementException e) {
+            // Most of the time, there's no initial filename.
+          }
+
+          andThen.run();
         });
       } catch (final Exception e) {
         LOG.error("exception during directory listing: ", e);
@@ -361,6 +427,69 @@ public final class JWFileChooserViewController
         });
       }
     });
+  }
+
+  /**
+   * Select the item in the list of file items that has the given name and
+   * return it. If none of them have the given name, do nothing and return
+   * nothing.
+   */
+
+  private Optional<JWFileItem> trySelectDirectoryItem(
+    final List<JWFileItem> items,
+    final String name)
+  {
+    for (final var item : items) {
+
+      /*
+       * Check to see if the given name matches the display name of the file.
+       * Some file items have artificial display names (such as "." and "..").
+       */
+
+      final var itemDisplayOpt = item.displayName();
+      if (itemDisplayOpt.isPresent()) {
+        final var itemDisplay = itemDisplayOpt.get();
+        if (Objects.equals(itemDisplay, name)) {
+          this.directoryTableSelectionModel.select(item);
+          return Optional.of(item);
+        }
+      }
+
+      /*
+       * Check to see if the given name matches the filename component
+       * of the file item path.
+       */
+
+      final var itemFile =
+        Optional.ofNullable(item.path().getFileName())
+          .map(Path::toString)
+          .orElse(null);
+
+      if (Objects.equals(itemFile, name)) {
+        this.directoryTableSelectionModel.select(item);
+        return Optional.of(item);
+      }
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Select the item in the list of file items that has the given name and
+   * return it. If none of them have the given name, do nothing and clear
+   * the directory table selection.
+   */
+
+  private Optional<JWFileItem> trySelectDirectoryItemOrDeselect(
+    final TableView<JWFileItem> tableView,
+    final String name)
+  {
+    final var selected =
+      this.trySelectDirectoryItem(tableView.getItems(), name);
+
+    if (selected.isEmpty()) {
+      this.directoryTableSelectionModel.clearSelection();
+    }
+    return selected;
   }
 
   private void ioUnlockUI()
@@ -407,7 +536,7 @@ public final class JWFileChooserViewController
     final Path oldValue,
     final Path newValue)
   {
-    this.setCurrentDirectory(newValue);
+    this.setCurrentDirectory(newValue, AND_THEN_DO_NOTHING);
   }
 
   @FXML
@@ -439,12 +568,40 @@ public final class JWFileChooserViewController
     final var nameOpt = dialog.showAndWait();
     if (nameOpt.isPresent()) {
       final var name = nameOpt.get();
-      final var path = this.configuration.fileSystem().getPath(name);
-      final var parent = path.getParent();
-      if (parent != null) {
-        this.setCurrentDirectory(parent);
+      final var fileSystem = this.configuration.fileSystem();
+      final var targetPath = fileSystem.getPath(name);
+
+      /*
+       * If the specified path is a directory, then simply set the current
+       * directory to that path.
+       */
+
+      if (Files.isDirectory(targetPath)) {
+        this.setCurrentDirectory(targetPath, () -> {
+          this.trySelectDirectoryItem(this.directoryTable.getItems(), ".");
+        });
+        return;
       }
-      this.fileName.setText(path.getFileName().toString());
+
+      /*
+       * Otherwise, set the current directory to the parent of the target
+       * path, and attempt to select the file with the path's file name.
+       */
+
+      final var targetFileNameOpt =
+        Optional.ofNullable(targetPath.getFileName())
+          .map(Path::toString);
+
+      final var parent = targetPath.getParent();
+      if (parent != null) {
+        this.setCurrentDirectory(parent, () -> {
+          targetFileNameOpt.ifPresent(
+            targetName -> this.fileName.setText(targetName));
+        });
+      } else {
+        targetFileNameOpt.ifPresent(
+          targetName -> this.fileName.setText(targetName));
+      }
     }
   }
 
@@ -453,7 +610,7 @@ public final class JWFileChooserViewController
   {
     final var parent = this.currentDirectory.getParent();
     if (parent != null) {
-      this.setCurrentDirectory(parent);
+      this.setCurrentDirectory(parent, AND_THEN_DO_NOTHING);
     }
   }
 
@@ -486,31 +643,120 @@ public final class JWFileChooserViewController
           LOG.error("exception raised by event receiver: ", ex);
         }
       }
-      this.setCurrentDirectory(this.currentDirectory);
+      this.setCurrentDirectory(this.currentDirectory, AND_THEN_DO_NOTHING);
     }
   }
 
   @FXML
   private void onOKSelected()
   {
+    this.result = List.of();
+
+    var resultTarget = List.<Path>of();
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE:
-        this.result =
-          this.directoryTable.getSelectionModel()
+        resultTarget =
+          this.directoryTableSelectionModel
             .getSelectedItems()
             .stream()
             .map(JWFileItem::path)
             .collect(Collectors.toList());
         break;
       case CREATE:
-        this.result =
+        resultTarget =
           List.of(this.currentDirectory.resolve(this.fileName.getText()));
         break;
     }
 
-    final var window = this.mainContent.getScene().getWindow();
-    window.hide();
+    resultTarget =
+      resultTarget.stream()
+        .filter(this::filterSelectionMode)
+        .collect(Collectors.toList());
+
+    if (!resultTarget.isEmpty()) {
+      final boolean confirmed;
+      if (this.isFileSelectionConfirmationRequired()) {
+        confirmed = this.confirmFileSelection(resultTarget);
+      } else {
+        confirmed = true;
+      }
+
+      if (confirmed) {
+        this.result = resultTarget;
+        final var window = this.mainContent.getScene().getWindow();
+        window.hide();
+      }
+    }
+  }
+
+  /**
+   * Open a dialog that asks if the user wants to replace an existing file.
+   *
+   * @param results The selected files
+   *
+   * @return {@code true} if the user confirms they want to replace files
+   */
+
+  private boolean confirmFileSelection(
+    final List<Path> results)
+  {
+    final var shortName =
+      results.stream()
+        .findFirst()
+        .map(Path::getFileName)
+        .map(Path::toString)
+        .orElse("");
+
+    final var messageOverrides =
+      this.configuration.stringOverrides();
+
+    final var confirmButtonMessage =
+      messageOverrides.confirmReplaceButton()
+        .orElse(this.strings.fileConfirmReplaceButton());
+
+    final var confirmMessage =
+      messageOverrides.confirmReplaceMessage(shortName)
+        .orElse(this.strings.fileConfirmReplace(shortName));
+
+    final var confirmTitle =
+      messageOverrides.confirmTitleMessage()
+        .orElse(this.strings.fileConfirmReplaceTitle());
+
+    final var confirm =
+      new ButtonType(confirmButtonMessage, OK_DONE);
+    final var dialog =
+      new Alert(CONFIRMATION, confirmMessage);
+
+    dialog.setHeaderText(confirmTitle);
+
+    final var dialogButtons = dialog.getButtonTypes();
+    dialogButtons.clear();
+    dialogButtons.add(CANCEL);
+    dialogButtons.add(confirm);
+
+    this.configuration.cssStylesheet().ifPresent(css -> {
+      dialog.getDialogPane()
+        .getStylesheets()
+        .add(css.toExternalForm());
+    });
+
+    return dialog.showAndWait()
+      .stream()
+      .anyMatch(b -> Objects.equals(b, confirm));
+  }
+
+  private boolean isFileSelectionConfirmationRequired()
+  {
+    switch (this.configuration.action()) {
+      case OPEN_EXISTING_SINGLE:
+      case OPEN_EXISTING_MULTIPLE:
+        return false;
+      case CREATE:
+        return this.configuration.confirmFileSelection();
+    }
+
+    throw new UnreachableCodeException();
   }
 
   @FXML
@@ -523,21 +769,62 @@ public final class JWFileChooserViewController
   }
 
   @FXML
+  private void onHomeSelected()
+  {
+    final var homeDirectoryOpt =
+      this.configuration.homeDirectory();
+    homeDirectoryOpt
+      .ifPresent(path -> this.setCurrentDirectory(path, AND_THEN_DO_NOTHING));
+  }
+
+  @FXML
+  private void onNameFieldAction()
+  {
+    this.trySelectDirectoryItemOrDeselect(
+      this.directoryTable,
+      this.fileName.getText()
+    );
+
+    this.reconfigureOKButton();
+    this.okButton.requestFocus();
+  }
+
+  @FXML
   private void onNameFieldChanged()
   {
+    this.trySelectDirectoryItemOrDeselect(
+      this.directoryTable,
+      this.fileName.getText()
+    );
+
     this.reconfigureOKButton();
   }
 
+  /**
+   * Configure the visibility and contents of various UI buttons.
+   */
+
   private void configureButtons()
   {
+    this.configureButtonHome();
+
+    final var messageOverrides =
+      this.configuration.stringOverrides();
+
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
-      case OPEN_EXISTING_SINGLE:
-        this.okButton.setText(this.strings.open());
+      case OPEN_EXISTING_SINGLE: {
+        final var buttonMessage =
+          messageOverrides.buttonOpen().orElse(this.strings.open());
+        this.okButton.setText(buttonMessage);
         break;
-      case CREATE:
-        this.okButton.setText(this.strings.save());
+      }
+      case CREATE: {
+        final var buttonMessage =
+          messageOverrides.buttonSave().orElse(this.strings.save());
+        this.okButton.setText(buttonMessage);
         break;
+      }
     }
 
     this.okButton.setDisable(true);
@@ -545,37 +832,55 @@ public final class JWFileChooserViewController
     this.newDirectoryButton.setDisable(
       !this.configuration.allowDirectoryCreation());
 
-    final var selectionModel = this.directoryTable.getSelectionModel();
-    selectionModel.selectedItemProperty()
+    this.directoryTableSelectionModel.selectedItemProperty()
       .addListener(item -> this.reconfigureOKButton());
+  }
+
+  /**
+   * Show or hide the home button based on the chooser configuration.
+   */
+
+  private void configureButtonHome()
+  {
+    final var homeParent =
+      this.homeDirectoryButton.getParent();
+    final var homeDirectoryOpt =
+      this.configuration.homeDirectory();
+
+    if (homeDirectoryOpt.isEmpty()) {
+      homeParent.setVisible(false);
+      homeParent.setManaged(false);
+    }
   }
 
   private void configureTableView()
   {
-    final var selectionModel = this.directoryTable.getSelectionModel();
     switch (this.configuration.action()) {
       case OPEN_EXISTING_SINGLE:
       case CREATE:
-        selectionModel.setSelectionMode(SelectionMode.SINGLE);
+        this.directoryTableSelectionModel
+          .setSelectionMode(SelectionMode.SINGLE);
         break;
       case OPEN_EXISTING_MULTIPLE:
-        selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
+        this.directoryTableSelectionModel
+          .setSelectionMode(SelectionMode.MULTIPLE);
         break;
     }
 
     this.directoryTable.setPlaceholder(new Label(""));
 
-    final var tableColumns = this.directoryTable.getColumns();
-    final TableColumn<JWFileItem, JWFileItem> tableTypeColumn =
+    final var tableColumns =
+      this.directoryTable.getColumns();
+    final var tableTypeColumn =
       (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(0);
-    final TableColumn<JWFileItem, JWFileItem> tableNameColumn =
+    final var tableNameColumn =
       (TableColumn<JWFileItem, JWFileItem>) tableColumns.get(1);
-    final TableColumn<JWFileItem, Long> tableSizeColumn =
+    final var tableSizeColumn =
       (TableColumn<JWFileItem, Long>) tableColumns.get(2);
-    final TableColumn<JWFileItem, FileTime> tableTimeColumn =
+    final var tableTimeColumn =
       (TableColumn<JWFileItem, FileTime>) tableColumns.get(3);
 
-    tableTypeColumn.setSortable(false);
+    tableTypeColumn.setSortable(true);
     tableTypeColumn.setReorderable(false);
     tableTypeColumn.setCellFactory(column -> {
       final TableCell<JWFileItem, JWFileItem> cell =
@@ -619,11 +924,14 @@ public final class JWFileChooserViewController
       param -> new ReadOnlyObjectWrapper<>(Long.valueOf(param.getValue().size())));
     tableTimeColumn.setCellValueFactory(
       param -> new ReadOnlyObjectWrapper<>(param.getValue().modifiedTime()));
+
+    this.fileListing.comparator()
+      .bind(this.directoryTable.comparatorProperty());
   }
 
   private void reconfigureOKButton()
   {
-    boolean enabled = false;
+    var enabled = false;
     switch (this.configuration.action()) {
       case OPEN_EXISTING_MULTIPLE:
       case OPEN_EXISTING_SINGLE: {
@@ -644,18 +952,40 @@ public final class JWFileChooserViewController
     return !this.fileName.getText().isEmpty();
   }
 
+  /**
+   * Answers whether the given {@link Path} may be returned to the client.
+   *
+   * @param path A file selected in the user interface.
+   *
+   * @return {@code true} if the given {@link Path} is an acceptable selection.
+   */
+
+  private boolean filterSelectionMode(final Path path)
+  {
+    return this.configuration.fileSelectionMode().apply(path);
+  }
+
   private boolean atLeastOneItemSelected()
   {
-    return this.directoryTable.getSelectionModel()
-      .getSelectedItems()
-      .size() >= 1;
+    final var selectedItems =
+      this.directoryTableSelectionModel
+        .getSelectedItems();
+
+    for (final var selectedItem : selectedItems) {
+      final var itemPath = selectedItem.path();
+      if (this.filterSelectionMode(itemPath)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private void onTableRowClicked(
     final MouseEvent event)
   {
     if (event.getClickCount() == 1) {
-      final var selectionModel = this.directoryTable.getSelectionModel();
+      final var selectionModel = this.directoryTableSelectionModel;
       final var item = selectionModel.getSelectedItem();
       if (item != null) {
         this.fileName.setText(item.name());
@@ -664,12 +994,12 @@ public final class JWFileChooserViewController
     }
 
     if (event.getClickCount() == 2) {
-      final var selectionModel = this.directoryTable.getSelectionModel();
+      final var selectionModel = this.directoryTableSelectionModel;
       final var item = selectionModel.getSelectedItem();
       if (item != null) {
         final var directory = item.path();
         if (Files.isDirectory(directory)) {
-          this.setCurrentDirectory(directory);
+          this.setCurrentDirectory(directory, AND_THEN_DO_NOTHING);
         }
       }
     }
@@ -679,9 +1009,11 @@ public final class JWFileChooserViewController
     final MouseEvent event)
   {
     if (event.getClickCount() == 2) {
-      final var item = this.sourcesList.getSelectionModel().getSelectedItem();
-      item.path().ifPresent(this::setCurrentDirectory);
-      this.populateDirectoryTableWith(item);
+      final var item =
+        this.sourcesList.getSelectionModel().getSelectedItem();
+      item.path()
+        .ifPresent(path -> this.setCurrentDirectory(path, AND_THEN_DO_NOTHING));
+      this.populateDirectoryTableWith(item, AND_THEN_DO_NOTHING);
     }
   }
 
@@ -692,6 +1024,18 @@ public final class JWFileChooserViewController
   public List<Path> result()
   {
     return this.result;
+  }
+
+  /**
+   * Cancel and hide the file selection.
+   */
+
+  public void cancel()
+  {
+    this.result = List.of();
+    this.mainContent.getScene()
+      .getWindow()
+      .hide();
   }
 
   private final class SourceListCellFactory

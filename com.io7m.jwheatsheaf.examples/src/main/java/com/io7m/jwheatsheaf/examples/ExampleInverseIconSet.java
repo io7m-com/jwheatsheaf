@@ -24,6 +24,10 @@ import com.io7m.jwheatsheaf.ui.internal.JWFileImageDefaultSet;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * Example inverse icons.
+ */
+
 public final class ExampleInverseIconSet implements JWFileImageSetType
 {
   /**
@@ -61,6 +65,12 @@ public final class ExampleInverseIconSet implements JWFileImageSetType
   public URL forDirectoryUp()
   {
     return forName("goUp.png").orElseThrow();
+  }
+
+  @Override
+  public URL forHome()
+  {
+    return forName("home.png").orElseThrow();
   }
 
   @Override

@@ -23,15 +23,31 @@ import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The available image sets.
+ */
+
 public final class ExampleImageSets
 {
   private final Map<String, JWFileImageSetType> imageSets;
+
+  /**
+   * Construct image sets.
+   *
+   * @param inImageSets The image sets
+   */
 
   public ExampleImageSets(
     final Map<String, JWFileImageSetType> inImageSets)
   {
     this.imageSets = Objects.requireNonNull(inImageSets, "imageSets");
   }
+
+  /**
+   * Create a new set of image sets.
+   *
+   * @return The image sets
+   */
 
   public static ExampleImageSets create()
   {
@@ -43,6 +59,10 @@ public final class ExampleImageSets
       )
     );
   }
+
+  /**
+   * @return The available image sets
+   */
 
   public Map<String, JWFileImageSetType> imageSets()
   {

@@ -44,6 +44,12 @@ public interface JWFileImageSetType
   URL forDirectoryUp();
 
   /**
+   * @return An icon for the "home" button
+   */
+
+  URL forHome();
+
+  /**
    * @return An icon for the "recent items" entry
    */
 

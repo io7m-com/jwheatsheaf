@@ -26,13 +26,16 @@ import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testfx.api.FxAssert;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
+import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -44,7 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @ExtendWith(ApplicationExtension.class)
@@ -55,10 +58,7 @@ public final class JWFileChooserSlowIOTest
 
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private FileSystem brokenFilesystem;
-  private FileSystem brokenFilesFilesystem;
   private JWFileChooserType chooser;
-  private List<Path> selected;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
 
@@ -71,8 +71,6 @@ public final class JWFileChooserSlowIOTest
     this.filesystems = JWTestFilesystems.create();
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
-    this.brokenFilesystem = systems.get("Broken");
-    this.brokenFilesFilesystem = systems.get("BrokenFiles");
 
     final var configuration =
       JWFileChooserConfiguration.builder()
@@ -100,29 +98,59 @@ public final class JWFileChooserSlowIOTest
     throws IOException
   {
     this.choosers.close();
+    this.chooser.cancel();
   }
 
   /**
    * Clicking the first row of the directory table yields a directory, and
    * clicking the OK button selects it.
+   *
+   * @param robot The FX test robot
    */
 
   @Test
-  public void testDirectorySelect(final FxRobot robot)
+  public void test_SelectItem_SingleClickFirstRow_CandidateSelected(
+    final FxRobot robot,
+    final TestInfo info)
+    throws TimeoutException
   {
-    robot
-      .sleep(2L, TimeUnit.SECONDS)
-      .doubleClickOn("Z:\\")
-      .sleep(2L, TimeUnit.SECONDS)
-      .clickOn("USERS")
-      .clickOn("#fileChooserOKButton");
+    JWFileWindowTitles.setTitle(this.chooser, info);
+
+    final var delegate = new JWRobotDelegate(robot);
+
+    final var okButton =
+      robot.lookup("#fileChooserOKButton")
+        .queryButton();
+
+    final var root =
+      robot.lookup(".fileChooserSourceList")
+        .query();
+
+    final var directoryTable =
+      robot.lookup(".fileChooserDirectoryTable")
+        .query();
+
+    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+
+    robot.doubleClickOn("Z:\\");
+    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+
+    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
+    robot.clickOn(directoryTable);
+    delegate.pauseBriefly();
+    robot.clickOn("USERS");
+
+    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.clickOn(okButton);
 
     Assertions.assertEquals(
       List.of("Z:\\USERS"),
       this.chooser.result()
         .stream()
         .map(Path::toString)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList())
+    );
     Assertions.assertEquals(0, this.events.size());
   }
 }

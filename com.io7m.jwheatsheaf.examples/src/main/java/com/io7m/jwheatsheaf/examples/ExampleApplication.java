@@ -25,6 +25,10 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The example application.
+ */
+
 public final class ExampleApplication extends Application
 {
   private static final Logger LOG =

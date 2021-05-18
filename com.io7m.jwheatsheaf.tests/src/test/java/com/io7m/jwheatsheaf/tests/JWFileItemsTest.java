@@ -48,7 +48,8 @@ public final class JWFileItemsTest
     throws IOException
   {
     final var items =
-      JWFileItems.listDirectory(this.dosFilesystem.getPath(""));
+      JWFileItems.listDirectory(
+        this.dosFilesystem.getPath(""), false);
 
     Assertions.assertEquals(5, items.size());
 
@@ -73,7 +74,8 @@ public final class JWFileItemsTest
     throws IOException
   {
     Assertions.assertThrows(IOException.class, () -> {
-      JWFileItems.listDirectory(this.brokenFilesystem.getPath(""));
+      JWFileItems.listDirectory(
+        this.brokenFilesystem.getPath(""), false);
     });
   }
 
@@ -82,7 +84,8 @@ public final class JWFileItemsTest
     throws IOException
   {
     final var items =
-      JWFileItems.listDirectory(this.brokenFilesFilesystem.getPath(""));
+      JWFileItems.listDirectory(
+        this.brokenFilesFilesystem.getPath(""), false);
 
     Assertions.assertEquals(2, items.size());
     Assertions.assertEquals(JWFileKind.UNKNOWN, items.get(0).kind());

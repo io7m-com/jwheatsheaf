@@ -23,6 +23,12 @@ import com.io7m.jwheatsheaf.api.JWFileKind;
 import java.net.URL;
 import java.util.Optional;
 
+/**
+ * A set of icons based on the Oxygen icon theme.
+ *
+ * @see "https://github.com/KDE/oxygen-icons"
+ */
+
 public final class JWOxygenIconSet implements JWFileImageSetType
 {
   /**
@@ -60,6 +66,12 @@ public final class JWOxygenIconSet implements JWFileImageSetType
   public URL forDirectoryUp()
   {
     return forName("go-up.png").orElseThrow();
+  }
+
+  @Override
+  public URL forHome()
+  {
+    return forName("go-home.png").orElseThrow();
   }
 
   @Override

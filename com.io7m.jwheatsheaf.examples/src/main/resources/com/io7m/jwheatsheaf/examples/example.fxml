@@ -6,10 +6,15 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ComboBox?>
 <VBox fx:id="main" prefHeight="600.0" prefWidth="800.0" stylesheets="@example.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.io7m.jwheatsheaf.examples.ExampleViewController">
    <children>
       <HBox layoutX="18.0" layoutY="18.0">
@@ -26,20 +31,29 @@
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="50.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
-      <HBox alignment="CENTER_LEFT" layoutX="18.0" layoutY="58.0">
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="633.0" minWidth="10.0" prefWidth="623.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="633.0" minWidth="10.0" prefWidth="623.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
-            <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="160.0" />
-            <CheckBox fx:id="allowDirectoryCreation" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAllowDirectoryCreationChanged" prefHeight="32.0" selected="true" text="Allow directory creation" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="allowDirectoryCreation" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAllowDirectoryCreationChanged" prefHeight="32.0" selected="true" text="Allow directory creation" GridPane.columnIndex="1" />
+            <CheckBox fx:id="slowIO" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onSlowIOChanged" prefHeight="32.0" text="Slow I/O" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <CheckBox fx:id="homeDirectory" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onHomeDirectoryChanged" prefHeight="32.0" text="Home directory" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="parentDirectory" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onParentDirectoryChanged" prefHeight="32.0" text="Parent directory" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <CheckBox fx:id="confirmSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onConfirmSelectionChanged" prefHeight="32.0" text="Confirm selection" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <CheckBox fx:id="unusualStrings" mnemonicParsing="false" text="Unusual strings" GridPane.columnIndex="2" />
          </children>
-      </HBox>
-      <Region layoutX="18.0" layoutY="90.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
-      <HBox alignment="CENTER_LEFT" layoutX="18.0" layoutY="98.0">
-         <children>
-            <Region maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="160.0" />
-            <CheckBox fx:id="slowIO" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onSlowIOChanged" prefHeight="32.0" text="Slow I/O" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <Region layoutX="18.0" layoutY="130.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      </GridPane>
+      <Region layoutX="18.0" layoutY="250.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox layoutX="18.0" layoutY="58.0">
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="CSS" />
@@ -54,6 +68,21 @@
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="170.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox layoutX="18.0" layoutY="295.0">
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Locale" />
+            <ComboBox fx:id="localeSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region layoutX="18.0" layoutY="327.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
+      <HBox>
+         <children>
+            <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Title" />
+            <TextField fx:id="title" minHeight="-Infinity" prefHeight="32.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Region maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
       <HBox>
          <children>
             <Region HBox.hgrow="ALWAYS" />

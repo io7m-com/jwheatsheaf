@@ -33,17 +33,21 @@ import java.util.Optional;
 public final class JWFileSourceEntryFilesystemRoot
   implements JWFileSourceEntryType
 {
+  private final boolean withParent;
   private final Path root;
 
   /**
    * Construct a source entry.
    *
-   * @param inRoot The root directory
+   * @param inRoot       The root directory
+   * @param inWithParent {@code true} if a parent directory should be shown
    */
 
   public JWFileSourceEntryFilesystemRoot(
+    final boolean inWithParent,
     final Path inRoot)
   {
+    this.withParent = inWithParent;
     this.root = Objects.requireNonNull(inRoot, "root");
   }
 
@@ -75,6 +79,6 @@ public final class JWFileSourceEntryFilesystemRoot
       !Platform.isFxApplicationThread(),
       "Must not be FX application thread");
 
-    return JWFileItems.listDirectory(this.root);
+    return JWFileItems.listDirectory(this.root, this.withParent);
   }
 }

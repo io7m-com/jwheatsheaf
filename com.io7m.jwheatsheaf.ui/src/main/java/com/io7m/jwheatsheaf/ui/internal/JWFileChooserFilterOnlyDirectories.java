@@ -38,6 +38,14 @@ public final class JWFileChooserFilterOnlyDirectories
       Objects.requireNonNull(inDescription, "inDescription");
   }
 
+  /**
+   * Create a file chooser filter that only accepts directories.
+   *
+   * @param strings The string resource provider
+   *
+   * @return A file filter
+   */
+
   public static JWFileChooserFilterType create(
     final JWStrings strings)
   {

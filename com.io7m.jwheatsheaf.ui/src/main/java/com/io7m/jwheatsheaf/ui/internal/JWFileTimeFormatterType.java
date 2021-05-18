@@ -18,7 +18,19 @@ package com.io7m.jwheatsheaf.ui.internal;
 
 import java.nio.file.attribute.FileTime;
 
+/**
+ * The type of file time formatters.
+ */
+
 public interface JWFileTimeFormatterType
 {
+  /**
+   * Format the given file time as a humanly-readable string.
+   *
+   * @param time The time
+   *
+   * @return The time as a string
+   */
+
   String formatTime(FileTime time);
 }

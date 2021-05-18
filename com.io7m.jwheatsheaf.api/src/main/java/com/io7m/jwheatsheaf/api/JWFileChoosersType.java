@@ -42,4 +42,16 @@ public interface JWFileChoosersType extends Closeable
     Window window,
     JWFileChooserConfiguration configuration
   );
+
+  /**
+   * @return A filter that allows access to all files
+   */
+
+  JWFileChooserFilterType filterForAllFiles();
+
+  /**
+   * @return A filter that only allows access to directories
+   */
+
+  JWFileChooserFilterType filterForOnlyDirectories();
 }

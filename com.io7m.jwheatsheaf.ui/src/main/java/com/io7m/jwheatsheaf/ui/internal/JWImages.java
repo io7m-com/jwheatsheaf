@@ -55,6 +55,15 @@ public final class JWImages
     return imageView;
   }
 
+  /**
+   * Load an image for the given file kind.
+   *
+   * @param images The image provider
+   * @param kind   The kind
+   *
+   * @return An image
+   */
+
   public static ImageView imageOfKind(
     final JWFileImageSetType images,
     final JWFileKind kind)

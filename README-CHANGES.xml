@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <c:changelog project="com.io7m.jwheatsheaf" xmlns:c="urn:com.io7m.changelog:4.0">
   <c:releases>
-    <c:release date="2020-03-28T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.0">
+    <c:release date="2020-03-28T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.0">
       <c:changes>
         <c:change date="2020-03-28T00:00:00+00:00" summary="Initial public release"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-03-28T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.1">
+    <c:release date="2020-03-28T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.1">
       <c:changes>
         <c:change date="2020-03-28T00:00:00+00:00" summary="Add missing package exports to module descriptors"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-03-28T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.2">
+    <c:release date="2020-03-28T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.2">
       <c:changes>
         <c:change date="2020-03-28T00:00:00+00:00" summary="Ensure CSS stylesheets are passed to any dialogs opened by the chooser">
           <c:tickets>
@@ -20,7 +20,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-03-29T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.3">
+    <c:release date="2020-03-29T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="1.0.3">
       <c:changes>
         <c:change date="2020-03-29T00:00:00+00:00" summary="Show the full paths of files/directories in tooltips">
           <c:tickets>
@@ -29,14 +29,93 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2020-04-04T00:00:00+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.0">
+    <c:release date="2020-04-04T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.0">
       <c:changes>
         <c:change compatible="false" date="2020-04-04T00:00:00+00:00" summary="Move implementation classes in the ui module into an internal non-exported package"/>
       </c:changes>
     </c:release>
-    <c:release date="2020-04-10T14:35:31+00:00" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.1">
+    <c:release date="2020-04-10T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="2.0.1">
       <c:changes>
-        <c:change date="2020-04-10T14:35:31+00:00" summary="Enable CheckStyle to enforce code style"/>
+        <c:change date="2020-04-10T00:00:00+00:00" summary="Enable CheckStyle to enforce code style"/>
+      </c:changes>
+    </c:release>
+    <c:release date="2021-05-02T11:31:11+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
+      <c:changes>
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Allow the escape key to close file choosers">
+          <c:tickets>
+            <c:ticket id="14"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Allow for specifying an initial filename in choosers">
+          <c:tickets>
+            <c:ticket id="15"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Allow for specifying custom dialog titles">
+          <c:tickets>
+            <c:ticket id="8"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-10T00:00:00+00:00" summary="Make the default filters part of the public API">
+          <c:tickets>
+            <c:ticket id="10"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-11T00:00:00+00:00" summary="Add an optional home directory button">
+          <c:tickets>
+            <c:ticket id="12"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-11T00:00:00+00:00" summary="Enable sorting of directory items">
+          <c:tickets>
+            <c:ticket id="22"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-11T00:00:00+00:00" summary="Allow for setting a default file filter">
+          <c:tickets>
+            <c:ticket id="9"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-29T00:00:00+00:00" summary="Add support for glob-based filters">
+          <c:tickets>
+            <c:ticket id="19"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-04-29T00:00:00+00:00" summary="Improve filename field behaviour">
+          <c:tickets>
+            <c:ticket id="28"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-01T00:00:00+00:00" summary="Allow for including &quot;..&quot; in directory listings">
+          <c:tickets>
+            <c:ticket id="23"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-01T00:00:00+00:00" summary="Improve &quot;select directly&quot; dialog behaviour">
+          <c:tickets>
+            <c:ticket id="29"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-01T00:00:00+00:00" summary="Fix the size formatter">
+          <c:tickets>
+            <c:ticket id="30"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-01T00:00:00+00:00" summary="Use the default filesystem by default">
+          <c:tickets>
+            <c:ticket id="21"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-02T00:00:00+00:00" summary="Add the ability to specify custom strings">
+          <c:tickets>
+            <c:ticket id="7"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2021-05-02T11:31:11+00:00" summary="Add the ability to confirm file selections">
+          <c:tickets>
+            <c:ticket id="17"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>

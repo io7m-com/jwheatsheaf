@@ -21,8 +21,16 @@ import com.io7m.jwheatsheaf.api.JWFileChooserFilterType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * A filter that accepts XML files.
+ */
+
 public final class ExampleFilterXML implements JWFileChooserFilterType
 {
+  /**
+   * Create a new filter.
+   */
+
   public ExampleFilterXML()
   {
 
