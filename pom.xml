@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>6.4.2</version>
+    <version>7.0.0-beta0001</version>
   </parent>
 
   <groupId>com.io7m.jwheatsheaf</groupId>
@@ -38,7 +38,7 @@
     <com.codacy.id>b0ab224c1aa641afbe9d0d34b1f60f1d</com.codacy.id>
     <com.io7m.immutables.version>2.8.3</com.io7m.immutables.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
-    <javafx.version>16</javafx.version>
+    <javafx.version>18-ea+1</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
   </properties>
 
@@ -207,7 +207,7 @@
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>6.4.2</version>
+        <version>7.0.0-beta0001</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
