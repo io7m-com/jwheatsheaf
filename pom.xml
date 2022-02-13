@@ -112,7 +112,7 @@
       <dependency>
         <groupId>com.io7m.jaffirm</groupId>
         <artifactId>com.io7m.jaffirm.core</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.4</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.junreachable</groupId>
