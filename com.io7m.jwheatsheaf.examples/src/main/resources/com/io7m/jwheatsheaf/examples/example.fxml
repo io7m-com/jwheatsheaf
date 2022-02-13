@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -14,7 +15,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.ComboBox?>
 <VBox fx:id="main" prefHeight="600.0" prefWidth="800.0" stylesheets="@example.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.io7m.jwheatsheaf.examples.ExampleViewController">
    <children>
       <HBox layoutX="18.0" layoutY="18.0">
@@ -51,6 +51,7 @@
             <CheckBox fx:id="parentDirectory" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onParentDirectoryChanged" prefHeight="32.0" text="Parent directory" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <CheckBox fx:id="confirmSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onConfirmSelectionChanged" prefHeight="32.0" text="Confirm selection" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <CheckBox fx:id="unusualStrings" mnemonicParsing="false" text="Unusual strings" GridPane.columnIndex="2" />
+            <CheckBox fx:id="onlyFiles" mnemonicParsing="false" text="Only allow files" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Region layoutX="18.0" layoutY="250.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />
@@ -71,8 +72,7 @@
       <HBox layoutX="18.0" layoutY="295.0">
          <children>
             <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="160.0" text="Locale" />
-            <ComboBox fx:id="localeSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-               prefHeight="32.0" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="localeSelection" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="32.0" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <Region layoutX="18.0" layoutY="327.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" />

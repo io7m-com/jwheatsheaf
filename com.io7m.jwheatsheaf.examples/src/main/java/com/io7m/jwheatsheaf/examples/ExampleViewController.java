@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -49,6 +50,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -87,6 +89,8 @@ public final class ExampleViewController implements Initializable
   private CheckBox confirmSelection;
   @FXML
   private CheckBox unusualStrings;
+  @FXML
+  private CheckBox onlyFiles;
   @FXML
   private ChoiceBox<JWFileChooserAction> action;
   @FXML
@@ -219,6 +223,13 @@ public final class ExampleViewController implements Initializable
       stringOverrides = JWFileChooserStringOverridesEmpty.get();
     }
 
+    final Function<Path, Boolean> fileSelectionMode;
+    if (this.onlyFiles.isSelected()) {
+      fileSelectionMode = path -> Boolean.valueOf(Files.isRegularFile(path));
+    } else {
+      fileSelectionMode = path -> Boolean.TRUE;
+    }
+
     configurationBuilder
       .setAllowDirectoryCreation(this.allowDirectoryCreation.isSelected())
       .setShowParentDirectory(this.parentDirectory.isSelected())
@@ -230,6 +241,7 @@ public final class ExampleViewController implements Initializable
       .setStringOverrides(stringOverrides)
       .addFileFilters(new ExampleFilterRejectAll())
       .addFileFilters(new ExampleFilterXML())
+      .setFileSelectionMode(fileSelectionMode)
       .addAllRecentFiles(recents);
 
     if (this.homeDirectory.isSelected()) {

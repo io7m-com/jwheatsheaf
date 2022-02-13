@@ -650,6 +650,8 @@ public final class JWFileChooserViewController
   @FXML
   private void onOKSelected()
   {
+    LOG.debug("ok: selected");
+
     this.result = List.of();
 
     var resultTarget = List.<Path>of();
@@ -669,25 +671,23 @@ public final class JWFileChooserViewController
         break;
     }
 
-    resultTarget =
-      resultTarget.stream()
-        .filter(this::filterSelectionMode)
-        .collect(Collectors.toList());
-
-    if (!resultTarget.isEmpty()) {
-      final boolean confirmed;
-      if (this.isFileSelectionConfirmationRequired()) {
-        confirmed = this.confirmFileSelection(resultTarget);
-      } else {
-        confirmed = true;
-      }
-
-      if (confirmed) {
-        this.result = resultTarget;
-        final var window = this.mainContent.getScene().getWindow();
-        window.hide();
-      }
+    final boolean confirmed;
+    if (this.isFileSelectionConfirmationRequired()) {
+      confirmed = this.confirmFileSelection(resultTarget);
+    } else {
+      confirmed = true;
     }
+
+    if (!confirmed) {
+      LOG.trace("ok: confirmation failed");
+      return;
+    }
+
+    this.result = resultTarget;
+    final var window = this.mainContent.getScene().getWindow();
+
+    LOG.trace("ok: hiding window");
+    window.hide();
   }
 
   /**
