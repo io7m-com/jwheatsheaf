@@ -40,6 +40,7 @@
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
     <javafx.version>18-ea+1</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
+    <junit.version>5.8.2</junit.version>
   </properties>
 
   <licenses>
@@ -177,12 +178,12 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
-        <version>5.6.0</version>
+        <version>${junit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
-        <version>5.6.0</version>
+        <version>${junit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
