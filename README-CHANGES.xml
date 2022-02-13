@@ -118,8 +118,10 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2022-02-13T10:26:59+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
-      <c:changes/>
+    <c:release date="2022-02-13T10:28:32+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+      <c:changes>
+        <c:change compatible="false" date="2022-02-13T10:28:32+00:00" summary="Require JDK 17"/>
+      </c:changes>
     </c:release>
   </c:releases>
   <c:ticket-systems>
