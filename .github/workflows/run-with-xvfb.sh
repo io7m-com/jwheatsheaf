@@ -13,6 +13,8 @@ exec > >(tee build.txt) 2>&1
 #   xterm   to display the build log in the video
 #
 
+sudo apt-get -y update
+sudo apt-get -y upgrade
 sudo apt-get -y install xvfb fluxbox feh ffmpeg xterm
 
 #---------------------------------------------------------------------
