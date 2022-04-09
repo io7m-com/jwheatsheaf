@@ -16,7 +16,7 @@
 
   <name>com.io7m.jwheatsheaf.documentation</name>
   <description>JavaFX File Chooser (Documentation)</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <properties>
     <mdep.analyze.skip>true</mdep.analyze.skip>

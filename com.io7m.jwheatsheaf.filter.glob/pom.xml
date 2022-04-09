@@ -16,7 +16,7 @@
 
   <name>com.io7m.jwheatsheaf.filter.glob</name>
   <description>JavaFX File Chooser (Glob filter)</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <properties>
     <io7m.api.previousVersion>3.0.0-SNAPSHOT</io7m.api.previousVersion>

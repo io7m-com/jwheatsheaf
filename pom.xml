@@ -20,7 +20,7 @@
 
   <name>com.io7m.jwheatsheaf</name>
   <description>JavaFX File Chooser</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <inceptionYear>2020</inceptionYear>
 
@@ -46,7 +46,7 @@
   <licenses>
     <license>
       <name>ISC License</name>
-      <url>http://io7m.com/license/isc.txt</url>
+      <url>https://www.io7m.com/license/isc.txt</url>
     </license>
   </licenses>
 
@@ -61,7 +61,7 @@
       <id>io7m</id>
       <name>io7m</name>
       <email>code@io7m.com</email>
-      <url>http://io7m.com</url>
+      <url>https://www.io7m.com</url>
     </developer>
   </developers>
 
@@ -73,7 +73,7 @@
   </contributors>
 
   <issueManagement>
-    <url>http://github.com/io7m/jwheatsheaf/issues</url>
+    <url>https://github.com/io7m/jwheatsheaf/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
