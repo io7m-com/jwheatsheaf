@@ -5,11 +5,11 @@
            alt="Build status"/>
     </a>
       <a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jwheatsheaf%22">
-         <img src="https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.png?style=flat-square"
+         <img src="https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.svg?style=flat-square"
               alt="Maven Central"/>
       </a>
       <a href="https://codecov.io/gh/io7m/jwheatsheaf">
-         <img src="https://img.shields.io/codecov/c/github/io7m/jwheatsheaf.png?style=flat-square"
+         <img src="https://img.shields.io/codecov/c/github/io7m/jwheatsheaf.svg?style=flat-square"
               alt="Codecov"/>
       </a>
   </p>
