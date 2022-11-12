@@ -38,7 +38,7 @@
     <com.codacy.id>b0ab224c1aa641afbe9d0d34b1f60f1d</com.codacy.id>
     <com.io7m.immutables.version>2.8.3</com.io7m.immutables.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
-    <javafx.version>18-ea+1</javafx.version>
+    <javafx.version>19</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
     <junit.version>5.8.2</junit.version>
   </properties>
