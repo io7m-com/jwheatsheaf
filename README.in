@@ -1,4 +1,5 @@
-An alternative to JavaFX's FileChooser that aims to be feature-compatible, 
+
+An alternative to JavaFX's FileChooser that aims to be feature-compatible,
 if not fully API-compatible.
 
 ### Features
