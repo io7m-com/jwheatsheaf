@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>7.4.0</version>
+    <version>7.5.0</version>
   </parent>
 
   <groupId>com.io7m.jwheatsheaf</groupId>
@@ -208,7 +208,7 @@
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>7.4.0</version>
+        <version>7.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
