@@ -15,6 +15,8 @@ jwheatsheaf
 | OpenJDK (Temurin) LTS | Windows | [![Build (OpenJDK (Temurin) LTS, Windows)](https://img.shields.io/github/actions/workflow/status/io7m/jwheatsheaf/main.windows.temurin.lts.yml)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain.windows.temurin.lts)|
 
 
+# jwheatsheaf
+
 An alternative to JavaFX's FileChooser that aims to be feature-compatible,
 if not fully API-compatible.
 
@@ -25,7 +27,7 @@ if not fully API-compatible.
   * Directory creation.
   * Configurable, extensible file/directory filtering.
   * Simple case-insensitive directory searching.
-  * Written in pure Java 11.
+  * Written in pure Java 17.
   * [OSGi](https://www.osgi.org/) ready
   * [JPMS](https://en.wikipedia.org/wiki/Java_Platform_Module_System) ready
   * ISC license
