@@ -7,7 +7,7 @@
     <li>Directory creation.</li>
     <li>Configurable, extensible file/directory filtering.</li>
     <li>Simple case-insensitive directory searching.</li>
-    <li>Written in pure Java 11.</li>
+    <li>Written in pure Java 17.</li>
     <li><a href="https://www.osgi.org/">OSGi</a>-ready</li>
     <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
     <li>ISC license</li>
