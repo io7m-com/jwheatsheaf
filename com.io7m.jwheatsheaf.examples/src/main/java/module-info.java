@@ -20,7 +20,7 @@
 
 module com.io7m.jwheatsheaf.examples
 {
-  requires memoryfilesystem;
+  requires com.github.marschall.memoryfilesystem;
   requires com.io7m.junreachable.core;
   requires com.io7m.jwheatsheaf.api;
   requires com.io7m.jwheatsheaf.oxygen;
