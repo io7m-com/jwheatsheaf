@@ -38,14 +38,14 @@
     <com.codacy.id>b0ab224c1aa641afbe9d0d34b1f60f1d</com.codacy.id>
     <com.io7m.immutables.version>2.9.3</com.io7m.immutables.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
-    <javafx.version>20</javafx.version>
+    <javafx.version>20.0.1</javafx.version>
     <testfx.version>4.0.16-alpha</testfx.version>
-    <junit.version>5.9.2</junit.version>
+    <junit.version>5.9.3</junit.version>
   </properties>
 
   <licenses>
     <license>
-      <name>ISC License</name>
+      <name>ISC</name>
       <url>https://www.io7m.com/license/isc.txt</url>
     </license>
   </licenses>
@@ -163,7 +163,7 @@
       <dependency>
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-core</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.2</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -173,7 +173,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.6</version>
+        <version>1.4.7</version>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -188,7 +188,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>5.3.0</version>
+        <version>5.3.1</version>
       </dependency>
       <dependency>
         <groupId>com.github.marschall</groupId>
