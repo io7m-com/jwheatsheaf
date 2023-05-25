@@ -45,6 +45,20 @@ slightly differently on each platform.  The purpose of the `jwheatsheaf` package
 configurable, styleable, consistent, non-native file chooser implementation analogous to the `JFileChooser`
 class.
 
+### Building
+
+```
+$ mvn clean verify
+```
+
+Note: The above will run the test suite, and this _will_ take over your
+keyboard and mouse for the duration of the test suite run. If you don't
+want to run the tests, use the `skipTests` propery:
+
+```
+$ mvn -DskipTests=true clean verify
+```
+
 ### Usage
 
 The simplest possible code that can open a file chooser and select at most one file:
