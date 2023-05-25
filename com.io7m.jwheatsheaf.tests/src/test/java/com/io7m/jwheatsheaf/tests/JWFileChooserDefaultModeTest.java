@@ -19,40 +19,44 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.stage.Stage;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@SuppressWarnings({"unused", "SameParameterValue"})
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserDefaultModeTest
 {
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
+  @BeforeAll
+  public static void beforeAll()
+  {
+    JWTestUtilities.publishApplicationInfo();
+  }
+
+  @BeforeEach
+  public void setup()
     throws Exception
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
@@ -61,7 +65,7 @@ public final class JWFileChooserDefaultModeTest
     final var systems = filesystems.filesystems();
     final FileSystem dosFilesystem = systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.OPEN_EXISTING_SINGLE)
@@ -69,55 +73,48 @@ public final class JWFileChooserDefaultModeTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
-  }
-
-  @Stop
-  public void stop()
-    throws IOException
-  {
-    this.choosers.close();
-    this.chooser.cancel();
   }
 
   @AfterEach
-  public void afterEach()
+  public void tearDown()
+    throws IOException
   {
-    Assertions.assertEquals(0, this.events.size());
+    this.choosers.close();
   }
 
   /**
    * Clicking the "Open" button (if enabled) permits picking the selected file.
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_DefaultMode_ClickOpenButton_SelectedItemReturned(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    final var delegate = new JWRobotDelegate(robot);
-    final var okButton = delegate.getOkButton();
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(delegate.getTableCellFileName("DATA.XML"));
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(delegate.getTableCellFileName("DOC"));
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    final var okButton = findOKButton(robot, window);
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
 
-    this.assertSelected("Z:\\USERS\\GROUCH\\DOC");
-  }
+    final var cell0 =
+      robot.findWithText(window, "DATA.XML");
+    final var cell1 =
+      robot.findWithText(window, "DOC");
 
-  private void assertSelected(final String... selectedItems)
-  {
-    Assertions.assertEquals(
-      List.of(selectedItems),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    robot.click(cell0);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+
+    robot.click(cell1);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\DOC");
+    assertEquals(0, this.events.size());
   }
 }

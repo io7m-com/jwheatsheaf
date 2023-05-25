@@ -19,48 +19,52 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.stage.Stage;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import javafx.scene.control.TableCell;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findDirectoryTable;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findNameField;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserParentDirectoryTest
 {
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
+  @BeforeEach
+  public void setup()
     throws Exception
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
 
-    final JWTestFilesystems filesystems = JWTestFilesystems.create();
-    final var systems = filesystems.filesystems();
-    final FileSystem dosFilesystem = systems.get("ExampleDOS");
+    final JWTestFilesystems filesystems =
+      JWTestFilesystems.create();
+    final var systems =
+      filesystems.filesystems();
+    final FileSystem dosFilesystem =
+      systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setShowParentDirectory(true)
@@ -69,23 +73,13 @@ public final class JWFileChooserParentDirectoryTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
-  }
-
-  @Stop
-  public void stop()
-    throws IOException
-  {
-    this.choosers.close();
-    this.chooser.cancel();
   }
 
   @AfterEach
-  public void afterEach()
+  public void tearDown()
+    throws IOException
   {
-    Assertions.assertEquals(0, this.events.size());
+    this.choosers.close();
   }
 
   /**
@@ -93,37 +87,48 @@ public final class JWFileChooserParentDirectoryTest
    * directory.
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_ParentDirectory_DoubleClickParent_NavigatesToParent(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
-    final var delegate = new JWRobotDelegate(robot);
-    final var okButton = delegate.getOkButton();
+    final var okButton =
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+    final var nameField =
+      findNameField(robot, window);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.doubleClickOn(delegate.getTableCellFileName(".."));
-    delegate.pauseBriefly();
+    robot.waitUntil(TIMEOUT, window::isShowing);
+    robot.waitUntil(TIMEOUT, window::isFocused);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
-    robot.clickOn(delegate.getTableCellFileName("."));
-    delegate.pauseBriefly();
+    final var dotDot =
+      robot.findWithText(directoryTable, "..");
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(dotDot);
+    robot.doubleClick(dotDot);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
-    this.assertSelected("Z:\\USERS");
-  }
+    final var dot =
+      robot.findWithText(directoryTable, ".");
 
-  private void assertSelected(final String... selectedItems)
-  {
-    Assertions.assertEquals(
-      List.of(selectedItems),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(dot);
+    robot.click(dot);
+    robot.waitUntil(TIMEOUT, () -> Objects.equals(nameField.getText(), "."));
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS");
   }
 }

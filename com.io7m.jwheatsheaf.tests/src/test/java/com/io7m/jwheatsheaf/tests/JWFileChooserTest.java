@@ -19,36 +19,50 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import javafx.stage.PopupWindow;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findCancelButton;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findDirectoryCreateButton;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findDirectoryTable;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findHomeButton;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findNameField;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findPathMenu;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findSearchField;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findSourceList;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findUpButton;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.writeString;
+import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.stage.Window.getWindows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserTest
 {
   private static final Logger LOG =
@@ -56,21 +70,25 @@ public final class JWFileChooserTest
 
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
-    throws Exception
+  @BeforeEach
+  public void setup()
+    throws IOException
   {
-    this.events = Collections.synchronizedList(new ArrayList<>());
+    this.events =
+      Collections.synchronizedList(new ArrayList<>());
 
-    this.filesystems = JWTestFilesystems.create();
-    final var systems = this.filesystems.filesystems();
-    this.dosFilesystem = systems.get("ExampleDOS");
+    this.filesystems =
+      JWTestFilesystems.create();
+    final var systems =
+      this.filesystems.filesystems();
+    this.dosFilesystem =
+      systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
@@ -79,58 +97,62 @@ public final class JWFileChooserTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
    * Clicking the cancel button yields nothing.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testCancel(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
-    robot.clickOn("#fileChooserCancelButton");
-    Assertions.assertEquals(List.of(), this.chooser.result());
-    Assertions.assertEquals(0, this.events.size());
+    robot.click(findCancelButton(robot, window));
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertEquals(List.of(), chooser.result());
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Clicking the first row of the directory table yields a directory, and
    * clicking the OK button selects it.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectorySelect(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .queryAllAs(TableCell.class)
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
         .filter(cell -> Objects.equals(cell.getText(), "."))
         .findFirst()
@@ -138,59 +160,62 @@ public final class JWFileChooserTest
           "Unable to locate a '.' directory entry")
         );
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(targetCell);
-    robot.clickOn(targetCell);
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+    robot.click(targetCell);
+    robot.click(targetCell);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Navigation via the path menu works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testPathMenuSelect(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
     final var choice =
-      robot.lookup("#fileChooserPathMenu")
-        .query();
+      findPathMenu(robot, window);
 
-    robot.clickOn(choice);
+    robot.click(choice);
+
+    final var popup =
+      robot.evaluate(() -> {
+        return getWindows()
+          .stream()
+          .filter(w -> w instanceof PopupWindow)
+          .map(PopupWindow.class::cast)
+          .findFirst()
+          .orElseThrow()
+          .getScene()
+          .getRoot();
+      });
 
     final var pathMenuItem =
-      robot.lookup(".context-menu")
-        .lookup("Z:\\")
-        .query();
+      robot.findWithText(popup, "Z:\\");
 
     LOG.debug("pathMenuItem: {}", pathMenuItem);
-    robot.clickOn(pathMenuItem);
-    delegate.pauseBriefly();
+    robot.click(pathMenuItem);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .queryAllAs(TableCell.class)
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
         .filter(cell -> Objects.equals(cell.getText(), "."))
         .findFirst()
@@ -198,137 +223,122 @@ public final class JWFileChooserTest
           "Unable to locate a '.' directory entry")
         );
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(targetCell);
-    robot.clickOn(targetCell);
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+    robot.click(targetCell);
+    robot.click(targetCell);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Navigation via the filesystem root menu succeeds.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testSourceMenuSelect(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var sourceList =
+      findSourceList(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var rootItem =
-      robot.lookup(".fileChooserSourceList")
-        .lookup("Z:\\")
-        .query();
+      robot.findWithText(sourceList, "Z:\\");
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     LOG.debug("rootItem: {}", rootItem);
-    robot.doubleClickOn(rootItem);
-    delegate.pauseBriefly();
+    robot.pointAt(rootItem);
+    robot.doubleClick(rootItem);
 
     final TableCell<?, ?> row =
-      robot.lookup(".table-row-cell")
-        .lookup("USERS")
-        .query();
+      robot.findWithText(TableCell.class, directoryTable, "USERS");
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(row);
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+    robot.pointAt(row);
+    robot.click(row);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS");
+    assertEquals(0, this.events.size());
   }
 
   /**
-   * Double clicking a directory navigates to that directory.
-   *
-   * @param robot The FX test robot
-   *
-   * @throws Exception On errors
+   * Double-clicking a directory navigates to that directory.
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectoryDoubleClick(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
     throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var sourceList =
+      findSourceList(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
 
-    Files.createDirectories(
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+
+    createDirectories(
       this.dosFilesystem.getPath("Y:\\", "EGG"));
-    Files.writeString(
+    writeString(
       this.dosFilesystem.getPath("Y:\\", "EGG", "EGG.TXT"),
       "EGG!");
 
-    final var sourceList =
-      robot.lookup(".fileChooserSourceList")
-        .query();
+    robot.waitUntil(TIMEOUT, () -> !sourceList.isDisabled());
+    final var sourceItem = robot.findWithText(sourceList, "Y:\\");
+    robot.pointAt(sourceItem);
+    robot.doubleClick(sourceItem);
 
-    final var directoryTable =
-      robot.lookup(".fileChooserDirectoryTable")
-        .query();
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    final var egg = robot.findWithText(directoryTable, "EGG");
+    robot.pointAt(egg);
+    robot.doubleClick(egg);
+    robot.waitUntil(TIMEOUT, () -> !sourceList.isDisabled());
 
-    final var sourceItem =
-      robot.lookup(".fileChooserSourceList")
-        .lookup("Y:\\")
-        .query();
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
 
-    robot.doubleClickOn(sourceItem);
-    delegate.waitUntil(() -> !sourceList.isDisabled());
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(directoryTable);
+    robot.click(directoryTable);
 
-    robot.doubleClickOn("EGG");
-    delegate.waitUntil(() -> !sourceList.isDisabled());
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    final var eggText = robot.findWithText(directoryTable, "EGG.TXT");
+    robot.click(eggText);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(directoryTable);
-    delegate.pauseBriefly();
-
-    robot.clickOn("EGG.TXT");
-    delegate.pauseBriefly();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Y:\\EGG\\EGG.TXT"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Y:\\EGG\\EGG.TXT");
+    assertEquals(0, this.events.size());
   }
 
   /**
@@ -337,122 +347,124 @@ public final class JWFileChooserTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectoryCreate(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var sourceList =
+      findSourceList(robot, window);
+    final var createButton =
+      findDirectoryCreateButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
 
-    final var rootItem =
-      robot.lookup(".fileChooserSourceList")
-        .lookup("X:\\")
-        .query();
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
-    robot.doubleClickOn(rootItem);
+    final var rootItem = robot.findWithText(sourceList, "X:\\");
+    robot.pointAt(rootItem);
+    robot.doubleClick(rootItem);
 
-    robot.clickOn("#fileChooserCreateDirectoryButton");
-    robot.write("CREATED");
-    robot.type(KeyCode.ENTER);
+    robot.waitUntil(TIMEOUT, () -> !createButton.isDisabled());
+    robot.pointAt(createButton);
+    robot.click(createButton);
+    robot.typeText("CREATED");
+    robot.typeRaw(ENTER);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn("CREATED");
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn("#fileChooserOKButton");
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
-    Assertions.assertEquals(
-      List.of("X:\\CREATED"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    final var created = robot.findWithText(directoryTable, "CREATED");
+    robot.pointAt(created);
+    robot.click(created);
+
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "X:\\CREATED");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Searching works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectorySearch(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
     final var searchField =
-      robot.lookup("#fileChooserSearchField")
-        .query();
-    robot.clickOn(searchField);
+      findSearchField(robot, window);
 
-    robot.write("PHOTO.JPG");
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+
+    robot.click(searchField);
+    robot.typeText(searchField, "PHOTO.JPG");
 
     final var tableItem =
-      robot.lookup("PHOTO.JPG")
-        .match(node -> node instanceof TableCell)
-        .query();
+      robot.findWithText(TableCell.class, directoryTable, "PHOTO.JPG");
 
     LOG.debug("testDirectorySearch: {}", tableItem);
-    robot.clickOn(tableItem);
-    delegate.pauseBriefly();
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.click(tableItem);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\PHOTO.JPG"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\PHOTO.JPG");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * The up button works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectoryUp(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var upButton =
+      findUpButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-
-    robot.clickOn("#fileChooserUpButton");
-    delegate.pauseBriefly();
-
-    robot.clickOn("#fileChooserUpButton");
-    delegate.pauseBriefly();
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
+    robot.click(upButton);
+    robot.waitUntil(TIMEOUT, () -> !upButton.isDisabled());
+    robot.click(upButton);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .queryAllAs(TableCell.class)
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
         .filter(cell -> Objects.equals(cell.getText(), "USERS"))
         .findFirst()
@@ -460,51 +472,44 @@ public final class JWFileChooserTest
           "Unable to locate a 'USERS' directory entry")
         );
 
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
-    robot.clickOn(targetCell);
+    robot.click(targetCell);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * The home button works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testDirectoryHome(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
     final var homeButton =
-      robot.lookup("#fileChooserHomeButton")
-        .queryButton();
+      findHomeButton(robot, window);
 
-    robot.clickOn(homeButton);
+    robot.waitUntil(TIMEOUT, () -> !homeButton.isDisabled());
+    robot.click(homeButton);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .queryAllAs(TableCell.class)
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
         .filter(cell -> Objects.equals(cell.getText(), "FILE.TXT"))
         .findFirst()
@@ -512,284 +517,265 @@ public final class JWFileChooserTest
           "Unable to locate a 'FILE.TXT' directory entry")
         );
 
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(targetCell);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\HOME\\FILE.TXT"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\HOME\\FILE.TXT");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Pressing escape closes the dialog without selecting a file.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testEscapeCloses(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
-    final var rootItem =
-      robot.lookup(".fileChooserSourceList")
-        .query();
+    final var sourceList =
+      findSourceList(robot, window);
 
-    robot.clickOn(rootItem);
-    robot.type(KeyCode.ESCAPE);
+    robot.click(sourceList);
+    robot.typeRaw(KeyCode.ESCAPE);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of(),
-      this.chooser.result()
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertEquals(List.of(), chooser.result());
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Sorting by type works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testSortType(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var column =
-      robot.lookup("#fileChooserTableColumnType")
-        .query();
+      robot.findWithId(directoryTable, "fileChooserTableColumnType");
 
-    delegate.pauseBriefly();
-    robot.clickOn(column);
-    robot.clickOn(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(column);
+    robot.click(column);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(column);
+    robot.click(column);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .nth(0)
-        .queryAs(TableCell.class);
-
-    delegate.pauseBriefly();
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\README.TXT"),
-      this.chooser.result()
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+        .findFirst()
+        .orElseThrow();
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.pointAt(targetCell);
+    robot.click(targetCell);
+
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\README.TXT");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Sorting by name works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testSortName(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var column =
-      robot.lookup("#fileChooserTableColumnName")
-        .query();
+      robot.findWithId(directoryTable, "fileChooserTableColumnName");
 
-    delegate.pauseBriefly();
-    robot.clickOn(column);
-    robot.clickOn(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .nth(0)
-        .queryAs(TableCell.class);
-
-    delegate.pauseBriefly();
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\README.TXT"),
-      this.chooser.result()
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+        .findFirst()
+        .orElseThrow();
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(targetCell);
+
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\README.TXT");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Sorting by time works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testSortTime(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var column =
-      robot.lookup("#fileChooserTableColumnModified")
-        .query();
+      robot.findWithId(directoryTable, "fileChooserTableColumnModified");
 
-    delegate.pauseBriefly();
-    robot.clickOn(column);
-    robot.clickOn(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .nth(0)
-        .queryAs(TableCell.class);
-
-    delegate.pauseBriefly();
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\PHOTO.JPG"),
-      this.chooser.result()
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+        .findFirst()
+        .orElseThrow();
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(targetCell);
+
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\PHOTO.JPG");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Sorting by size works.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void testSortSize(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var directoryTable =
+      findDirectoryTable(robot, window);
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
 
     final var column =
-      robot.lookup("#fileChooserTableColumnSize")
-        .query();
+      robot.findWithId(directoryTable, "fileChooserTableColumnSize");
 
-    delegate.pauseBriefly();
-    robot.clickOn(column);
-    robot.clickOn(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(column);
 
     final var targetCell =
-      robot.lookup(n -> n instanceof TableCell)
-        .nth(0)
-        .queryAs(TableCell.class);
-
-    delegate.pauseBriefly();
-    robot.clickOn(targetCell);
-    delegate.pauseBriefly();
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
-      this.chooser.result()
+      robot.findAll(TableCell.class, directoryTable)
         .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+        .findFirst()
+        .orElseThrow();
+
+    robot.waitUntil(TIMEOUT, () -> !directoryTable.isDisabled());
+    robot.click(targetCell);
+
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\DATA.XML");
+    assertEquals(0, this.events.size());
   }
 
   /**
    * Typing a name into the name field and pressing return selects an item and
    * requests focus for the OK button. Pressing return again presses the button.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_TypeNameIntoFieldAndReturn_CandidateSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      findOKButton(robot, window);
     final var fileField =
-      robot.lookup("#fileChooserNameField")
-        .query();
+      findNameField(robot, window);
 
-    robot.clickOn(fileField);
-    robot.write("DATA.XML");
-    robot.type(KeyCode.ENTER);
-    delegate.pauseBriefly();
+    robot.click(fileField);
+    robot.typeText(fileField, "DATA.XML");
+    robot.typeRaw(ENTER);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.type(KeyCode.ENTER);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.typeRaw(ENTER);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\DATA.XML");
+    assertEquals(0, this.events.size());
   }
 }

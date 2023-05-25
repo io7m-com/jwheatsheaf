@@ -1,5 +1,9 @@
+JWVersion(
+  appVersion,
+  appBuild) ::= <<
+
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford \<code@io7m.com\> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,38 +20,15 @@
 
 package com.io7m.jwheatsheaf.api;
 
-import java.io.Closeable;
-
-/**
- * A provider of file choosers.
- *
- * File chooser providers are expected to be application-scoped, and reused
- * to produce file choosers on demand.
- */
-
-public interface JWFileChoosersType extends Closeable
+public final class JWVersion
 {
-  /**
-   * Create a new file chooser.
-   *
-   * @param configuration The file chooser configuration
-   *
-   * @return A new file chooser
-   */
+  public static final String MAIN_VERSION = "<appVersion>";
+  public static final String MAIN_BUILD = "<appBuild>";
 
-  JWFileChooserType create(
-    JWFileChooserConfiguration configuration
-  );
+  private JWVersion()
+  {
 
-  /**
-   * @return A filter that allows access to all files
-   */
-
-  JWFileChooserFilterType filterForAllFiles();
-
-  /**
-   * @return A filter that only allows access to directories
-   */
-
-  JWFileChooserFilterType filterForOnlyDirectories();
+  }
 }
+
+>>

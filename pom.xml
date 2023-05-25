@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>7.5.0</version>
+    <version>7.7.0</version>
   </parent>
 
   <groupId>com.io7m.jwheatsheaf</groupId>
@@ -35,11 +35,10 @@
   </modules>
 
   <properties>
-    <com.codacy.id>b0ab224c1aa641afbe9d0d34b1f60f1d</com.codacy.id>
     <com.io7m.immutables.version>2.9.3</com.io7m.immutables.version>
+    <com.io7m.xoanon.version>0.0.3</com.io7m.xoanon.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
     <javafx.version>20.0.1</javafx.version>
-    <testfx.version>4.0.16-alpha</testfx.version>
     <junit.version>5.9.3</junit.version>
   </properties>
 
@@ -196,24 +195,34 @@
         <version>2.6.1</version>
       </dependency>
       <dependency>
-        <groupId>org.testfx</groupId>
-        <artifactId>testfx-junit5</artifactId>
-        <version>${testfx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.testfx</groupId>
-        <artifactId>testfx-core</artifactId>
-        <version>${testfx.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
         <version>7.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.percentpass</groupId>
+        <artifactId>com.io7m.percentpass.extension</artifactId>
+        <version>0.0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.xoanon</groupId>
+        <artifactId>com.io7m.xoanon.extension</artifactId>
+        <version>${com.io7m.xoanon.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.io7m.stmp</groupId>
+          <artifactId>string-template-maven-plugin</artifactId>
+          <version>1.2.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <!-- Add immutables.org artifacts to compiler classpath -->
       <plugin>
@@ -228,12 +237,6 @@
             </dependency>
           </annotationProcessorPaths>
         </configuration>
-      </plugin>
-
-      <!-- Check style -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
 
       <!-- Generate a site -->

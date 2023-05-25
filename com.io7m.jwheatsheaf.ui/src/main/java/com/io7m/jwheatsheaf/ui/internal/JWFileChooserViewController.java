@@ -49,6 +49,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +117,7 @@ public final class JWFileChooserViewController
   private JWStrings strings;
   private JWToolTips toolTips;
   private List<Node> lockableViews;
-  private List<Path> result;
+  private volatile List<Path> result;
   private TableView.TableViewSelectionModel<JWFileItem> directoryTableSelectionModel;
   private volatile Path currentDirectory;
 
@@ -558,6 +559,7 @@ public final class JWFileChooserViewController
     dialog.setTitle(this.strings.enterPathTitle());
     dialog.setHeaderText(null);
     dialog.setContentText(this.strings.enterPath());
+    dialog.getEditor().setId("fileChooserDialogSelectDirectTextField");
 
     this.configuration.cssStylesheet().ifPresent(css -> {
       dialog.getDialogPane()
@@ -684,10 +686,11 @@ public final class JWFileChooserViewController
     }
 
     this.result = resultTarget;
-    final var window = this.mainContent.getScene().getWindow();
+    final var window =
+      (Stage) this.mainContent.getScene().getWindow();
 
     LOG.trace("ok: hiding window");
-    window.hide();
+    window.close();
   }
 
   /**

@@ -44,6 +44,8 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static javafx.stage.StageStyle.DECORATED;
+
 /**
  * The default implementation of the {@link JWFileChoosersType} interface.
  */
@@ -168,10 +170,8 @@ public final class JWFileChoosers implements JWFileChoosersType
 
   @Override
   public JWFileChooserType create(
-    final Window window,
     final JWFileChooserConfiguration configuration)
   {
-    Objects.requireNonNull(window, "window");
     Objects.requireNonNull(configuration, "configuration");
 
     try {
@@ -198,10 +198,10 @@ public final class JWFileChoosers implements JWFileChoosersType
         configuration
       );
 
-      final var dialog = new Stage(((Stage) window).getStyle());
-      dialog.initModality(Modality.APPLICATION_MODAL);
-      dialog.initStyle(StageStyle.DECORATED);
+      final var dialog = new Stage(DECORATED);
       dialog.setScene(new Scene(pane));
+      dialog.initModality(configuration.modality());
+
 
       /*
        * Configure the title for the dialog.

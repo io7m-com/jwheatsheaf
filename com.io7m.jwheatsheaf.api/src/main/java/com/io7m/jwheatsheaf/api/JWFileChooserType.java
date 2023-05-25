@@ -16,6 +16,8 @@
 
 package com.io7m.jwheatsheaf.api;
 
+import javafx.stage.Stage;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
@@ -64,4 +66,10 @@ public interface JWFileChooserType
    */
 
   void cancel();
+
+  /**
+   * @return The stage to which this file chooser is attached
+   */
+
+  Stage stage();
 }

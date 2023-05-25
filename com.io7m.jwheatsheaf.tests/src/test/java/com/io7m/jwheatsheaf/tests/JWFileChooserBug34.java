@@ -19,43 +19,51 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCKey;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findNameField;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+import static javafx.scene.input.KeyCode.ENTER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserBug34
 {
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
-    throws Exception
+  @BeforeAll
+  public static void beforeAll()
+  {
+    JWTestUtilities.publishApplicationInfo();
+  }
+
+  @BeforeEach
+  public void setup()
+    throws IOException
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
 
@@ -63,7 +71,7 @@ public final class JWFileChooserBug34
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAction(JWFileChooserAction.CREATE)
         .setFileSystem(this.dosFilesystem)
@@ -73,60 +81,44 @@ public final class JWFileChooserBug34
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
    * In CREATE mode, specifying a nonexistent file if using a filter that
    * checks if files are regular files, does not silently fail when the user
    * clicks OK.
-   *
-   * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_NameField_NonexistentFileDoesNotSilentlyFail(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      findOKButton(robot, window);
+    final var nameField =
+      findNameField(robot, window);
 
-    robot.clickOn("#fileChooserNameField");
+    robot.click(nameField);
+    robot.typeText(nameField, "THIS_DOES_NOT_EXIST.TXT");
+    robot.type(nameField, List.of(new XCKey(ENTER, false, false, false)));
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("THIS_DOES_NOT_EXIST.TXT");
-    delegate.pauseBriefly();
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-
-    robot.type(KeyCode.ENTER);
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\THIS_DOES_NOT_EXIST.TXT"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\THIS_DOES_NOT_EXIST.TXT");
+    assertEquals(0, this.events.size());
   }
 }

@@ -72,4 +72,10 @@ final class JWFileChooser implements JWFileChooserType
   {
     this.viewController.cancel();
   }
+
+  @Override
+  public Stage stage()
+  {
+    return this.window;
+  }
 }

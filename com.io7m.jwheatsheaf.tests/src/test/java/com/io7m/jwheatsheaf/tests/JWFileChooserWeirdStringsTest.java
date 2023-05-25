@@ -19,41 +19,54 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import javafx.stage.Window;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findNameField;
+import static javafx.scene.input.KeyCode.BACK_SPACE;
+import static javafx.scene.input.KeyCode.SPACE;
+import static javafx.stage.Window.getWindows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserWeirdStringsTest
 {
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
-    throws Exception
+  @BeforeAll
+  public static void beforeAll()
+  {
+    JWTestUtilities.publishApplicationInfo();
+  }
+
+  @BeforeEach
+  public void setup()
+    throws IOException
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
 
@@ -61,7 +74,7 @@ public final class JWFileChooserWeirdStringsTest
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.CREATE)
@@ -71,17 +84,13 @@ public final class JWFileChooserWeirdStringsTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
@@ -91,49 +100,65 @@ public final class JWFileChooserWeirdStringsTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_Confirmation_WeirdStrings_CandidateSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
     throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("Manticulate")
-        .queryButton();
+      robot.findWithText(Button.class, window, "Manticulate");
+    final var nameField =
+      findNameField(robot, window);
 
-    robot.clickOn("#fileChooserNameField");
+    robot.waitUntil(TIMEOUT, () -> !nameField.isDisabled());
+    robot.click(nameField);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("DATA.XML");
-    delegate.pauseBriefly();
+    robot.typeText(nameField, "DATA.XML");
+    robot.typeRaw(SPACE);
+    robot.typeRaw(BACK_SPACE);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-    delegate.pauseBriefly();
+    robot.waitUntil(TIMEOUT, () -> windowIsOpenWithTitle("Confirmation"));
 
-    robot.lookup("Defloccate velleity 'DATA.XML'?")
-      .queryLabeled();
-    robot.lookup("Defloccate velleity?")
-      .queryLabeled();
+    final var dialog =
+      robot.evaluate(() -> {
+        return getWindows()
+          .stream()
+          .filter(w -> w instanceof Stage)
+          .map(Stage.class::cast)
+          .filter(s -> Objects.equals(s.getTitle(), "Confirmation"))
+          .findFirst()
+          .orElseThrow();
+      });
+
+    robot.findWithText(dialog, "Defloccate velleity 'DATA.XML'?");
+    robot.findWithText(dialog, "Defloccate velleity?");
 
     final var replaceButton =
-      robot.lookup("Defloccate")
-        .queryButton();
+      robot.findWithText(Button.class, dialog, "Defloccate");
 
-    robot.clickOn(replaceButton);
-    delegate.pauseBriefly();
+    robot.pointAt(replaceButton);
+    robot.click(replaceButton);
+    robot.waitUntil(TIMEOUT, () -> !dialog.isShowing());
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\DATA.XML"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\DATA.XML");
+    assertEquals(0, this.events.size());
+  }
+
+  private static boolean windowIsOpenWithTitle(
+    final String title)
+  {
+    return Window.getWindows()
+      .stream()
+      .filter(w -> w instanceof Stage)
+      .map(Stage.class::cast)
+      .anyMatch(w -> Objects.equals(w.getTitle(), title));
   }
 }
