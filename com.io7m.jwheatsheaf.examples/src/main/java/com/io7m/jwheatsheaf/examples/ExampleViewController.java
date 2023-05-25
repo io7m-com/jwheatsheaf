@@ -273,9 +273,7 @@ public final class ExampleViewController implements Initializable
       testing,
       locale
     )) {
-      final var chooser =
-        choosers.create(this.main.getScene().getWindow(), configuration);
-
+      final var chooser = choosers.create(configuration);
       chooser.setEventListener(event -> {
         if (event instanceof JWFileChooserEventType.JWFileChooserEventErrorType) {
           final var alert = new Alert(Alert.AlertType.ERROR);
