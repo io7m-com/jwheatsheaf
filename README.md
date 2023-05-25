@@ -71,7 +71,7 @@ final var configuration =
     .build();
 
 final var choosers = JWFileChoosers.create();
-final var chooser = choosers.create(mainWindow, configuration);
+final var chooser = choosers.create(configuration);
 final List<Path> selected = chooser.showAndWait();
 ```
 
