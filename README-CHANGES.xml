@@ -118,7 +118,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2023-05-25T19:07:14+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+    <c:release date="2023-05-26T10:50:34+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
       <c:changes>
         <c:change compatible="false" date="2022-02-13T00:00:00+00:00" summary="Require JDK 17"/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-controls 19 → 20."/>
@@ -141,7 +141,8 @@
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update com.io7m.primogenitor:com.io7m.primogenitor.support 7.5.0 → 7.7.0."/>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.9.2 → 5.9.3."/>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.9.2 → 5.9.3."/>
-        <c:change date="2023-05-25T19:07:14+00:00" summary="Refactored test suite to use xoanon instead of TestFX."/>
+        <c:change date="2023-05-25T00:00:00+00:00" summary="Refactored test suite to use xoanon instead of TestFX."/>
+        <c:change compatible="false" date="2023-05-26T10:50:34+00:00" summary="File choosers no longer require a Stage argument."/>
       </c:changes>
     </c:release>
   </c:releases>
