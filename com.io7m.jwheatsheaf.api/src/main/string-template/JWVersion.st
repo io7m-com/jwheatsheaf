@@ -1,5 +1,9 @@
+JWVersion(
+  appVersion,
+  appBuild) ::= <<
+
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford \<code@io7m.com\> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,33 +20,15 @@
 
 package com.io7m.jwheatsheaf.api;
 
-/**
- * The kind of a file.
- */
-
-public enum JWFileKind
+public final class JWVersion
 {
-  /**
-   * The file is a regular file.
-   */
+  public static final String MAIN_VERSION = "<appVersion>";
+  public static final String MAIN_BUILD = "<appBuild>";
 
-  REGULAR_FILE,
+  private JWVersion()
+  {
 
-  /**
-   * The file is a directory.
-   */
-
-  DIRECTORY,
-
-  /**
-   * The file is a symbolic link.
-   */
-
-  SYMBOLIC_LINK,
-
-  /**
-   * The file is an unknown type.
-   */
-
-  UNKNOWN
+  }
 }
+
+>>

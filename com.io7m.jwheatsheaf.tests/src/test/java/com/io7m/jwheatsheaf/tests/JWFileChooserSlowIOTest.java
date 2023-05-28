@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,27 +19,22 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
 import com.io7m.jwheatsheaf.ui.internal.JWFileChoosersTesting;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import javafx.scene.control.ListView;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -47,10 +42,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findDirectoryTable;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserSlowIOTest
 {
   private static final Logger LOG =
@@ -58,21 +58,22 @@ public final class JWFileChooserSlowIOTest
 
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
+  @BeforeEach
+  public void setup()
     throws Exception
   {
-    this.events = Collections.synchronizedList(new ArrayList<>());
+    this.events =
+      Collections.synchronizedList(new ArrayList<>());
 
     this.filesystems = JWTestFilesystems.create();
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.OPEN_EXISTING_MULTIPLE)
@@ -87,18 +88,13 @@ public final class JWFileChooserSlowIOTest
           .build(),
         Locale.getDefault()
       );
-
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
@@ -108,49 +104,42 @@ public final class JWFileChooserSlowIOTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_SelectItem_SingleClickFirstRow_CandidateSelected(
-    final FxRobot robot,
-    final TestInfo info)
-    throws TimeoutException
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      findOKButton(robot, window);
     final var root =
-      robot.lookup(".fileChooserSourceList")
-        .query();
-
+      robot.findWithId(ListView.class, window, "fileChooserSourceList");
     final var directoryTable =
-      robot.lookup(".fileChooserDirectoryTable")
-        .query();
+      findDirectoryTable(robot, window);
 
-    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.waitUntil(5_000L, () -> !root.isDisabled());
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
 
-    robot.doubleClickOn("Z:\\");
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
+    robot.doubleClick(robot.findWithText(root, "Z:\\"));
+    robot.waitUntil(TIMEOUT, okButton::isDisabled);
 
-    delegate.waitUntil(() -> Boolean.valueOf(!root.isDisabled()));
-    robot.clickOn(directoryTable);
-    delegate.pauseBriefly();
-    robot.clickOn("USERS");
+    robot.waitUntil(5_000L, () -> !root.isDisabled());
+    robot.click(directoryTable);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(5_000L, () -> !root.isDisabled());
+    robot.click(robot.findWithText(directoryTable, "USERS"));
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    robot.waitUntil(5_000L, () -> !root.isDisabled());
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS");
+    assertEquals(0, this.events.size());
   }
 }

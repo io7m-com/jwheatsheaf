@@ -9,14 +9,14 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>3.0.0</version>
+    <version>4.0.0-beta0001</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.tests</artifactId>
 
   <name>com.io7m.jwheatsheaf.tests</name>
   <description>JavaFX File Chooser (Test suite)</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <properties>
     <mdep.analyze.skip>true</mdep.analyze.skip>
@@ -39,14 +39,6 @@
       <artifactId>javafx-swing</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.testfx</groupId>
-      <artifactId>testfx-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testfx</groupId>
-      <artifactId>testfx-junit5</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
     </dependency>
@@ -59,12 +51,20 @@
       <artifactId>memoryfilesystem</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.io7m.percentpass</groupId>
+      <artifactId>com.io7m.percentpass.extension</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.xoanon</groupId>
+      <artifactId>com.io7m.xoanon.extension</artifactId>
     </dependency>
   </dependencies>
 

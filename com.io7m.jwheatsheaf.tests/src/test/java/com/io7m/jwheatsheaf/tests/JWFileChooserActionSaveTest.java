@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,50 +19,63 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static javafx.scene.input.KeyCode.ENTER;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserActionSaveTest
 {
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
+  @BeforeAll
+  public static void beforeAll()
+  {
+    JWTestUtilities.publishApplicationInfo();
+  }
+
+  @BeforeEach
+  public void setup()
     throws Exception
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
 
-    this.filesystems = JWTestFilesystems.create();
-    final var systems = this.filesystems.filesystems();
-    this.dosFilesystem = systems.get("ExampleDOS");
+    this.filesystems =
+      JWTestFilesystems.create();
+    final var systems =
+      this.filesystems.filesystems();
+    this.dosFilesystem =
+      systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.CREATE)
@@ -70,17 +83,13 @@ public final class JWFileChooserActionSaveTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
@@ -89,39 +98,35 @@ public final class JWFileChooserActionSaveTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_NameField_ExplicitlyTypedName_CandidateSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
+      JWTestUtilities.findOKButton(robot, window);
+    final var nameField =
+      JWTestUtilities.findNameField(robot, window);
 
-    robot.clickOn("#fileChooserNameField");
+    robot.waitUntil(TIMEOUT, () -> !nameField.isDisabled());
+    robot.pointAt(nameField);
+    robot.click(nameField);
+    robot.typeText(nameField, "GCC.EXE");
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.typeRaw(nameField, ENTER);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("GCC.EXE");
-    delegate.pauseBriefly();
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    robot.type(KeyCode.ENTER);
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
-
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\GCC.EXE"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\GCC.EXE");
     Assertions.assertEquals(0, this.events.size());
   }
 
@@ -133,40 +138,48 @@ public final class JWFileChooserActionSaveTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_SelectDirectly_TargetIsNotFile_TargetSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      JWTestUtilities.findOKButton(robot, window);
     final var selectButton =
-      robot.lookup("#fileChooserSelectDirectButton")
-        .queryButton();
+      JWTestUtilities.findSelectButton(robot, window);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(selectButton);
+    robot.waitUntil(TIMEOUT, () -> !selectButton.isDisabled());
+    robot.pointAt(selectButton);
+    robot.click(selectButton);
+    robot.waitUntil(TIMEOUT, () -> windowIsOpenWithTitle("Enter Path"));
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("Y:\\NEWFILE.TXT");
+    final var dialogField =
+      robot.findWithIdInAnyStage(
+        TextField.class, "fileChooserDialogSelectDirectTextField");
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.type(KeyCode.ENTER);
+    /*
+     * There is a problem with using '\' in some keyboard layouts, so we set
+     * the text field directly here and then act as if the user typed it.
+     */
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.pointAt(dialogField);
+    robot.execute(() -> dialogField.setText("Y:\\NEWFILE.TXT"));
+    robot.typeRaw(KeyCode.SPACE);
+    robot.typeRaw(KeyCode.BACK_SPACE);
+    robot.typeRaw(ENTER);
 
-    Assertions.assertEquals(
-      List.of("Y:\\NEWFILE.TXT"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Y:\\NEWFILE.TXT");
     Assertions.assertEquals(0, this.events.size());
   }
 
@@ -178,40 +191,48 @@ public final class JWFileChooserActionSaveTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_SelectDirectly_TargetIsFile_TargetSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      JWTestUtilities.findOKButton(robot, window);
     final var selectButton =
-      robot.lookup("#fileChooserSelectDirectButton")
-        .queryButton();
+      JWTestUtilities.findSelectButton(robot, window);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(selectButton);
+    robot.waitUntil(TIMEOUT, () -> !selectButton.isDisabled());
+    robot.pointAt(selectButton);
+    robot.click(selectButton);
+    robot.waitUntil(TIMEOUT, () -> windowIsOpenWithTitle("Enter Path"));
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("Z:\\USERS\\GROUCH\\PHOTO.JPG");
+    final var dialogField =
+      robot.findWithIdInAnyStage(
+        TextField.class, "fileChooserDialogSelectDirectTextField");
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.type(KeyCode.ENTER);
+    /*
+     * There is a problem with using '\' in some keyboard layouts, so we set
+     * the text field directly here and then act as if the user typed it.
+     */
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.pointAt(dialogField);
+    robot.execute(() -> dialogField.setText("Z:\\USERS\\GROUCH\\PHOTO.JPG"));
+    robot.typeRaw(KeyCode.SPACE);
+    robot.typeRaw(KeyCode.BACK_SPACE);
+    robot.typeRaw(ENTER);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\PHOTO.JPG"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
+
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\PHOTO.JPG");
     Assertions.assertEquals(0, this.events.size());
   }
 
@@ -222,45 +243,58 @@ public final class JWFileChooserActionSaveTest
    * @param robot The FX test robot
    */
 
-  @Test
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
   public void test_SelectDirectly_TargetIsDirectory_TargetSelected(
-    final FxRobot robot,
-    final TestInfo info)
+    final XCCommanderType commander,
+    final XCRobotType robot)
     throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-
+      JWTestUtilities.findOKButton(robot, window);
     final var selectButton =
-      robot.lookup("#fileChooserSelectDirectButton")
-        .queryButton();
+      JWTestUtilities.findSelectButton(robot, window);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.clickOn(selectButton);
+    robot.waitUntil(TIMEOUT, () -> !selectButton.isDisabled());
+    robot.pointAt(selectButton);
+    robot.click(selectButton);
+    robot.waitUntil(TIMEOUT, () -> windowIsOpenWithTitle("Enter Path"));
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.write("Z:\\USERS\\");
+    final var dialogField =
+      robot.findWithIdInAnyStage(
+        TextField.class, "fileChooserDialogSelectDirectTextField");
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isDisabled());
-    robot.type(KeyCode.ENTER);
+    /*
+     * There is a problem with using '\' in some keyboard layouts, so we set
+     * the text field directly here and then act as if the user typed it.
+     */
 
-    delegate.waitUntil(() -> !okButton.isDisabled());
+    robot.pointAt(dialogField);
+    robot.execute(() -> dialogField.setText("Z:\\USERS\\"));
+    robot.typeRaw(KeyCode.SPACE);
+    robot.typeRaw(KeyCode.BACK_SPACE);
+    robot.typeRaw(ENTER);
 
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
+    assertIsSelected(chooser, "Z:\\USERS");
     Assertions.assertEquals(0, this.events.size());
+  }
+
+  private static boolean windowIsOpenWithTitle(
+    final String title)
+  {
+    return Window.getWindows()
+      .stream()
+      .filter(w -> w instanceof Stage)
+      .map(Stage.class::cast)
+      .anyMatch(w -> Objects.equals(w.getTitle(), title));
   }
 }

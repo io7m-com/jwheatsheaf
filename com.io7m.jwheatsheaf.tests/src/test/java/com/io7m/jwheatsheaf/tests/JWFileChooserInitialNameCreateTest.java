@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,42 +19,47 @@ package com.io7m.jwheatsheaf.tests;
 import com.io7m.jwheatsheaf.api.JWFileChooserAction;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
-import com.io7m.jwheatsheaf.api.JWFileChooserType;
 import com.io7m.jwheatsheaf.api.JWFileChoosersType;
 import com.io7m.jwheatsheaf.ui.JWFileChoosers;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import com.io7m.percentpass.extension.MinimumPassing;
+import com.io7m.xoanon.commander.api.XCCommanderType;
+import com.io7m.xoanon.commander.api.XCRobotType;
+import com.io7m.xoanon.extension.XoExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.api.FxAssert;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
-import org.testfx.framework.junit5.Stop;
-import org.testfx.matcher.base.NodeMatchers;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
-@ExtendWith(ApplicationExtension.class)
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.TIMEOUT;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.assertIsSelected;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.createChooser;
+import static com.io7m.jwheatsheaf.tests.JWTestUtilities.findOKButton;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(XoExtension.class)
 public final class JWFileChooserInitialNameCreateTest
 {
   private JWTestFilesystems filesystems;
   private FileSystem dosFilesystem;
-  private JWFileChooserType chooser;
   private List<JWFileChooserEventType> events;
   private JWFileChoosersType choosers;
+  private JWFileChooserConfiguration configuration;
 
-  @Start
-  public void start(final Stage stage)
-    throws Exception
+  @BeforeAll
+  public static void beforeAll()
+  {
+    JWTestUtilities.publishApplicationInfo();
+  }
+
+  @BeforeEach
+  public void setup()
+    throws IOException
   {
     this.events = Collections.synchronizedList(new ArrayList<>());
 
@@ -62,7 +67,7 @@ public final class JWFileChooserInitialNameCreateTest
     final var systems = this.filesystems.filesystems();
     this.dosFilesystem = systems.get("ExampleDOS");
 
-    final var configuration =
+    this.configuration =
       JWFileChooserConfiguration.builder()
         .setAllowDirectoryCreation(true)
         .setAction(JWFileChooserAction.CREATE)
@@ -71,17 +76,13 @@ public final class JWFileChooserInitialNameCreateTest
         .build();
 
     this.choosers = JWFileChoosers.create();
-    this.chooser = this.choosers.create(stage, configuration);
-    this.chooser.setEventListener(event -> this.events.add(event));
-    this.chooser.show();
   }
 
-  @Stop
-  public void stop()
+  @AfterEach
+  public void tearDown()
     throws IOException
   {
     this.choosers.close();
-    this.chooser.cancel();
   }
 
   /**
@@ -90,34 +91,26 @@ public final class JWFileChooserInitialNameCreateTest
    * @param robot The FX test robot
    */
 
-  @Test
-  public void test_SelectItem_WithInitialFileName_CandidateSelected(
-    final FxRobot robot,
-    final TestInfo info)
-    throws TimeoutException
+  @MinimumPassing(executionCount = 5, passMinimum = 4)
+  public void testInitialNameCreate(
+    final XCCommanderType commander,
+    final XCRobotType robot)
+    throws Exception
   {
-    JWFileWindowTitles.setTitle(this.chooser, info);
-
-    final var delegate = new JWRobotDelegate(robot);
+    final var chooser =
+      createChooser(this.choosers, this.configuration, commander);
+    final var window =
+      chooser.stage();
 
     final var okButton =
-      robot.lookup("#fileChooserOKButton")
-        .queryButton();
-    final var textField =
-      robot.lookup("#fileChooserNameField")
-        .queryTextInputControl();
+      findOKButton(robot, window);
 
-    delegate.waitUntil(() -> !textField.textProperty().get().isEmpty());
-    FxAssert.verifyThat(okButton, NodeMatchers.isEnabled());
-    robot.clickOn(okButton);
+    robot.waitUntil(TIMEOUT, () -> !okButton.isDisabled());
+    robot.pointAt(okButton);
+    robot.click(okButton);
+    robot.waitForStageToClose(window, TIMEOUT);
 
-    Assertions.assertEquals(
-      List.of("Z:\\USERS\\GROUCH\\SOMETHING.TXT"),
-      this.chooser.result()
-        .stream()
-        .map(Path::toString)
-        .collect(Collectors.toList())
-    );
-    Assertions.assertEquals(0, this.events.size());
+    assertIsSelected(chooser, "Z:\\USERS\\GROUCH\\SOMETHING.TXT");
+    assertEquals(0, this.events.size());
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -49,6 +49,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +117,7 @@ public final class JWFileChooserViewController
   private JWStrings strings;
   private JWToolTips toolTips;
   private List<Node> lockableViews;
-  private List<Path> result;
+  private volatile List<Path> result;
   private TableView.TableViewSelectionModel<JWFileItem> directoryTableSelectionModel;
   private volatile Path currentDirectory;
 
@@ -558,6 +559,7 @@ public final class JWFileChooserViewController
     dialog.setTitle(this.strings.enterPathTitle());
     dialog.setHeaderText(null);
     dialog.setContentText(this.strings.enterPath());
+    dialog.getEditor().setId("fileChooserDialogSelectDirectTextField");
 
     this.configuration.cssStylesheet().ifPresent(css -> {
       dialog.getDialogPane()
@@ -650,6 +652,8 @@ public final class JWFileChooserViewController
   @FXML
   private void onOKSelected()
   {
+    LOG.debug("ok: selected");
+
     this.result = List.of();
 
     var resultTarget = List.<Path>of();
@@ -669,25 +673,24 @@ public final class JWFileChooserViewController
         break;
     }
 
-    resultTarget =
-      resultTarget.stream()
-        .filter(this::filterSelectionMode)
-        .collect(Collectors.toList());
-
-    if (!resultTarget.isEmpty()) {
-      final boolean confirmed;
-      if (this.isFileSelectionConfirmationRequired()) {
-        confirmed = this.confirmFileSelection(resultTarget);
-      } else {
-        confirmed = true;
-      }
-
-      if (confirmed) {
-        this.result = resultTarget;
-        final var window = this.mainContent.getScene().getWindow();
-        window.hide();
-      }
+    final boolean confirmed;
+    if (this.isFileSelectionConfirmationRequired()) {
+      confirmed = this.confirmFileSelection(resultTarget);
+    } else {
+      confirmed = true;
     }
+
+    if (!confirmed) {
+      LOG.trace("ok: confirmation failed");
+      return;
+    }
+
+    this.result = resultTarget;
+    final var window =
+      (Stage) this.mainContent.getScene().getWindow();
+
+    LOG.trace("ok: hiding window");
+    window.close();
   }
 
   /**

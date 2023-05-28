@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -32,10 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -43,6 +40,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static javafx.stage.StageStyle.DECORATED;
 
 /**
  * The default implementation of the {@link JWFileChoosersType} interface.
@@ -168,10 +167,8 @@ public final class JWFileChoosers implements JWFileChoosersType
 
   @Override
   public JWFileChooserType create(
-    final Window window,
     final JWFileChooserConfiguration configuration)
   {
-    Objects.requireNonNull(window, "window");
     Objects.requireNonNull(configuration, "configuration");
 
     try {
@@ -198,10 +195,10 @@ public final class JWFileChoosers implements JWFileChoosersType
         configuration
       );
 
-      final var dialog = new Stage(((Stage) window).getStyle());
-      dialog.initModality(Modality.APPLICATION_MODAL);
-      dialog.initStyle(StageStyle.DECORATED);
+      final var dialog = new Stage(DECORATED);
       dialog.setScene(new Scene(pane));
+      dialog.initModality(configuration.modality());
+
 
       /*
        * Configure the title for the dialog.

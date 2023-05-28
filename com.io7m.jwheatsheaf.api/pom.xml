@@ -9,14 +9,14 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>3.0.0</version>
+    <version>4.0.0-beta0001</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.api</artifactId>
 
   <name>com.io7m.jwheatsheaf.api</name>
   <description>JavaFX File Chooser (API)</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <dependencies>
     <dependency>
@@ -66,6 +66,35 @@
             <ignoredUnusedDeclaredDependency>org.openjfx:*:*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.io7m.stmp</groupId>
+        <artifactId>string-template-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-version</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>render</goal>
+            </goals>
+            <configuration>
+              <templates>
+                <template>
+                  <directory>src/main/string-template</directory>
+                  <name>JWVersion</name>
+                  <target>
+                    ${project.build.directory}/generated-sources/string-template/com/io7m/jwheatsheaf/api/JWVersion.java
+                  </target>
+                  <properties>
+                    <appVersion>${project.version}</appVersion>
+                    <appBuild>${buildNumber}</appBuild>
+                  </properties>
+                </template>
+              </templates>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

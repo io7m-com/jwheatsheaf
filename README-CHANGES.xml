@@ -39,7 +39,7 @@
         <c:change date="2020-04-10T00:00:00+00:00" summary="Enable CheckStyle to enforce code style"/>
       </c:changes>
     </c:release>
-    <c:release date="2021-05-02T11:31:11+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
+    <c:release date="2021-05-18T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="3.0.0">
       <c:changes>
         <c:change date="2021-04-10T00:00:00+00:00" summary="Allow the escape key to close file choosers">
           <c:tickets>
@@ -111,11 +111,38 @@
             <c:ticket id="7"/>
           </c:tickets>
         </c:change>
-        <c:change date="2021-05-02T11:31:11+00:00" summary="Add the ability to confirm file selections">
+        <c:change date="2021-05-02T00:00:00+00:00" summary="Add the ability to confirm file selections">
           <c:tickets>
             <c:ticket id="17"/>
           </c:tickets>
         </c:change>
+      </c:changes>
+    </c:release>
+    <c:release date="2023-05-26T10:50:34+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+      <c:changes>
+        <c:change compatible="false" date="2022-02-13T00:00:00+00:00" summary="Require JDK 17"/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-controls 19 → 20."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-fxml 19 → 20."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-graphics 19 → 20."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-swing 19 → 20."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.9.1 → 5.9.2."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.9.1 → 5.9.2."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update nl.jqno.equalsverifier:equalsverifier 3.12.3 → 3.14.1."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.slf4j:slf4j-api 2.0.6 → 2.0.7."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update ch.qos.logback:logback-classic 1.4.5 → 1.4.6."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.mockito:mockito-core 4.10.0 → 5.3.0."/>
+        <c:change date="2023-04-17T00:00:00+00:00" summary="Update com.github.marschall:memoryfilesystem 2.4.0 → 2.5.0."/>
+        <c:change date="2022-02-13T00:00:00+00:00" summary="Fix a silently failing OK button">
+          <c:tickets>
+            <c:ticket id="34"/>
+          </c:tickets>
+        </c:change>
+        <c:change date="2023-05-20T00:00:00+00:00" summary="Update com.github.marschall:memoryfilesystem 2.6.0 → 2.6.1."/>
+        <c:change date="2023-05-20T00:00:00+00:00" summary="Update com.io7m.primogenitor:com.io7m.primogenitor.support 7.5.0 → 7.7.0."/>
+        <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.9.2 → 5.9.3."/>
+        <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.9.2 → 5.9.3."/>
+        <c:change date="2023-05-25T00:00:00+00:00" summary="Refactored test suite to use xoanon instead of TestFX."/>
+        <c:change compatible="false" date="2023-05-26T10:50:34+00:00" summary="File choosers no longer require a Stage argument."/>
       </c:changes>
     </c:release>
   </c:releases>

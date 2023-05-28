@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,6 +18,7 @@ package com.io7m.jwheatsheaf.api;
 
 import com.io7m.immutables.styles.ImmutablesStyleType;
 import com.io7m.jaffirm.core.Preconditions;
+import javafx.stage.Modality;
 import org.immutables.value.Value;
 
 import java.net.URL;
@@ -139,7 +140,7 @@ public interface JWFileChooserConfigurationType
   }
 
   /**
-   * Determine whether or not to show a link to the parent directory inside
+   * Determine whether to show a link to the parent directory inside
    * the file listing. This entry is always called "..".
    *
    * @return {@code true} if the directory listing will contain ".."
@@ -243,5 +244,17 @@ public interface JWFileChooserConfigurationType
   default JWFileChooserStringOverridesType stringOverrides()
   {
     return JWFileChooserStringOverridesEmpty.get();
+  }
+
+  /**
+   * @return The modality that will be used for file choosers
+   *
+   * @since 4.0.0
+   */
+
+  @Value.Default
+  default Modality modality()
+  {
+    return Modality.APPLICATION_MODAL;
   }
 }

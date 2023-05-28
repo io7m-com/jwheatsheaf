@@ -9,14 +9,14 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>3.0.0</version>
+    <version>4.0.0-beta0001</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.oxygen</artifactId>
 
   <name>com.io7m.jwheatsheaf.oxygen</name>
   <description>JavaFX File Chooser (Oxygen Icon Theme)</description>
-  <url>http://github.com/io7m/jwheatsheaf</url>
+  <url>https://www.io7m.com/software/jwheatsheaf</url>
 
   <licenses>
     <license>

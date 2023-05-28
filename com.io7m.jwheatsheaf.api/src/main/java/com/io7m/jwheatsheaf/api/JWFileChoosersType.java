@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Mark Raynsford <code@io7m.com> http://io7m.com
+ * Copyright © 2020 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,8 +16,6 @@
 
 package com.io7m.jwheatsheaf.api;
 
-import javafx.stage.Window;
-
 import java.io.Closeable;
 
 /**
@@ -32,14 +30,12 @@ public interface JWFileChoosersType extends Closeable
   /**
    * Create a new file chooser.
    *
-   * @param window        The owning window
    * @param configuration The file chooser configuration
    *
    * @return A new file chooser
    */
 
   JWFileChooserType create(
-    Window window,
     JWFileChooserConfiguration configuration
   );
 

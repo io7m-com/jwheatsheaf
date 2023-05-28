@@ -2,18 +2,22 @@ jwheatsheaf
 ===
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jwheatsheaf%22)
-[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.svg?style=flat-square)](https://oss.sonatype.org/content/repositories/snapshots/com/io7m/jwheatsheaf/)
+[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.svg?style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/jwheatsheaf/)
 [![Codecov](https://img.shields.io/codecov/c/github/io7m/jwheatsheaf.svg?style=flat-square)](https://codecov.io/gh/io7m/jwheatsheaf)
 
 ![jwheatsheaf](./src/site/resources/jwheatsheaf.jpg?raw=true)
 
-| JVM             | Platform | Status |
-|-----------------|----------|--------|
-| OpenJDK LTS     | Linux    | [![Build (OpenJDK LTS, Linux)](https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_lts-linux)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_lts-linux) |
-| OpenJDK Current | Linux    | [![Build (OpenJDK Current, Linux)](https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_current-linux)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_current-linux)
-| OpenJDK Current | Windows  | [![Build (OpenJDK Current, Windows)](https://img.shields.io/github/workflow/status/io7m/jwheatsheaf/main-openjdk_current-windows)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain-openjdk_current-windows)
+| JVM | Platform | Status |
+|-----|----------|--------|
+| OpenJDK (Temurin) Current | Linux | [![Build (OpenJDK (Temurin) Current, Linux)](https://img.shields.io/github/actions/workflow/status/io7m/jwheatsheaf/main.linux.temurin.current.yml)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain.linux.temurin.current)|
+| OpenJDK (Temurin) LTS | Linux | [![Build (OpenJDK (Temurin) LTS, Linux)](https://img.shields.io/github/actions/workflow/status/io7m/jwheatsheaf/main.linux.temurin.lts.yml)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain.linux.temurin.lts)|
+| OpenJDK (Temurin) Current | Windows | [![Build (OpenJDK (Temurin) Current, Windows)](https://img.shields.io/github/actions/workflow/status/io7m/jwheatsheaf/main.windows.temurin.current.yml)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain.windows.temurin.current)|
+| OpenJDK (Temurin) LTS | Windows | [![Build (OpenJDK (Temurin) LTS, Windows)](https://img.shields.io/github/actions/workflow/status/io7m/jwheatsheaf/main.windows.temurin.lts.yml)](https://github.com/io7m/jwheatsheaf/actions?query=workflow%3Amain.windows.temurin.lts)|
 
-An alternative to JavaFX's FileChooser that aims to be feature-compatible, 
+
+# jwheatsheaf
+
+An alternative to JavaFX's FileChooser that aims to be feature-compatible,
 if not fully API-compatible.
 
 ### Features
@@ -23,7 +27,7 @@ if not fully API-compatible.
   * Directory creation.
   * Configurable, extensible file/directory filtering.
   * Simple case-insensitive directory searching.
-  * Written in pure Java 11.
+  * Written in pure Java 17.
   * [OSGi](https://www.osgi.org/) ready
   * [JPMS](https://en.wikipedia.org/wiki/Java_Platform_Module_System) ready
   * ISC license
@@ -41,6 +45,20 @@ slightly differently on each platform.  The purpose of the `jwheatsheaf` package
 configurable, styleable, consistent, non-native file chooser implementation analogous to the `JFileChooser`
 class.
 
+### Building
+
+```
+$ mvn clean verify
+```
+
+Note: The above will run the test suite, and this _will_ take over your
+keyboard and mouse for the duration of the test suite run. If you don't
+want to run the tests, use the `skipTests` propery:
+
+```
+$ mvn -DskipTests=true clean verify
+```
+
 ### Usage
 
 The simplest possible code that can open a file chooser and select at most one file:
@@ -53,7 +71,7 @@ final var configuration =
     .build();
 
 final var choosers = JWFileChoosers.create();
-final var chooser = choosers.create(mainWindow, configuration);
+final var chooser = choosers.create(configuration);
 final List<Path> selected = chooser.showAndWait();
 ```
 
