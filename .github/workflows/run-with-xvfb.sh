@@ -25,6 +25,13 @@ export DISPLAY=:99
 sleep 1
 
 #---------------------------------------------------------------------
+# Start recording the session.
+#
+
+ffmpeg -f x11grab -y -r 60 -video_size 1280x1024 -i :99 -vcodec vp9 test-suite.webm &
+FFMPEG_PID="$!"
+
+#---------------------------------------------------------------------
 # Start fluxbox on the X server.
 #
 
@@ -39,13 +46,6 @@ feh --bg-tile .github/workflows/wallpaper.jpg
 sleep 1
 
 #---------------------------------------------------------------------
-# Start recording the session.
-#
-
-ffmpeg -f x11grab -y -r 60 -video_size 1280x1024 -i :99 test-suite.webm &
-FFMPEG_PID="$!"
-
-#---------------------------------------------------------------------
 # Execute the passed-in build command.
 #
 
@@ -58,4 +58,4 @@ FFMPEG_PID="$!"
 #
 
 sleep 20
-kill -INT "${FFMPEG_PID}"
+kill -INT "${FFMPEG_PID}" || true
