@@ -36,7 +36,7 @@
 
   <properties>
     <com.io7m.immutables.version>2.9.3</com.io7m.immutables.version>
-    <com.io7m.xoanon.version>0.0.3</com.io7m.xoanon.version>
+    <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
     <io7m.api.previousVersion>2.0.0</io7m.api.previousVersion>
     <javafx.version>20.0.1</javafx.version>
     <junit.version>5.9.3</junit.version>
