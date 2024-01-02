@@ -35,11 +35,11 @@
   </modules>
 
   <properties>
-    <com.io7m.immutables.version>2.9.3</com.io7m.immutables.version>
+    <com.io7m.immutables.version>2.10.0</com.io7m.immutables.version>
     <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
     <io7m.api.previousVersion>4.0.0-SNAPSHOT</io7m.api.previousVersion>
-    <javafx.version>20.0.1</javafx.version>
-    <junit.version>5.9.3</junit.version>
+    <javafx.version>21.0.1</javafx.version>
+    <junit.version>5.10.1</junit.version>
   </properties>
 
   <licenses>
@@ -157,7 +157,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.14.2</version>
+        <version>3.15.5</version>
       </dependency>
       <dependency>
         <groupId>org.jgrapht</groupId>
@@ -167,12 +167,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.7</version>
+        <version>2.0.10</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.7</version>
+        <version>1.4.14</version>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -187,12 +187,12 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>5.3.1</version>
+        <version>5.8.0</version>
       </dependency>
       <dependency>
         <groupId>com.github.marschall</groupId>
         <artifactId>memoryfilesystem</artifactId>
-        <version>2.6.1</version>
+        <version>2.7.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
