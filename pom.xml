@@ -38,6 +38,7 @@
     <com.io7m.immutables.version>2.10.0</com.io7m.immutables.version>
     <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
     <io7m.api.previousVersion>4.0.0-SNAPSHOT</io7m.api.previousVersion>
+    <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
     <javafx.version>21.0.1</javafx.version>
     <junit.version>5.10.1</junit.version>
   </properties>
