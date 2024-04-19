@@ -30,6 +30,6 @@ jobs:
           name: test-logs
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
       - name: Coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: com.io7m.jwheatsheaf.tests/target/site/jacoco/jacoco.xml
