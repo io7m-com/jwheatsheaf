@@ -51,9 +51,9 @@
   </licenses>
 
   <scm>
-    <url>https://github.com/io7m/jwheatsheaf</url>
-    <connection>scm:git:https://github.com/io7m/jwheatsheaf</connection>
-    <developerConnection>scm:git:https://github.com/io7m/jwheatsheaf</developerConnection>
+    <url>https://www.github.com/io7m-com/jwheatsheaf</url>
+    <connection>scm:git:https://www.github.com/io7m-com/jwheatsheaf</connection>
+    <developerConnection>scm:git:https://www.github.com/io7m-com/jwheatsheaf</developerConnection>
   </scm>
 
   <developers>
@@ -73,7 +73,7 @@
   </contributors>
 
   <issueManagement>
-    <url>https://github.com/io7m/jwheatsheaf/issues</url>
+    <url>https://www.github.com/io7m-com/jwheatsheaf/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 

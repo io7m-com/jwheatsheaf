@@ -147,6 +147,6 @@
     </c:release>
   </c:releases>
   <c:ticket-systems>
-    <c:ticket-system default="true" id="com.github.io7m.jwheatsheaf" url="https://www.github.com/io7m/jwheatsheaf/issues/"/>
+    <c:ticket-system default="true" id="com.github.io7m.jwheatsheaf" url="https://www.github.com/io7m-com/jwheatsheaf/issues/"/>
   </c:ticket-systems>
 </c:changelog>

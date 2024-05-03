@@ -10,11 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 21
+          distribution: 'temurin'
       - name: Build
         run: ./.github/workflows/run-with-xvfb.sh mvn --errors clean verify site
       - name: Upload video
@@ -30,6 +31,7 @@ jobs:
           name: test-logs
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
       - name: Coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4.3.1
         with:
-          file: com.io7m.jwheatsheaf.tests/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: com.io7m.jwheatsheaf.tests/target/site/jacoco-aggregate/jacoco.xml
