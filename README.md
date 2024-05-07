@@ -4,7 +4,7 @@ jwheatsheaf
 [![Maven Central](https://img.shields.io/maven-central/v/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.jwheatsheaf%22)
 [![Maven Central (snapshot)](https://img.shields.io/nexus/s/com.io7m.jwheatsheaf/com.io7m.jwheatsheaf?server=https%3A%2F%2Fs01.oss.sonatype.org&style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/jwheatsheaf/)
 [![Codecov](https://img.shields.io/codecov/c/github/io7m-com/jwheatsheaf.svg?style=flat-square)](https://codecov.io/gh/io7m-com/jwheatsheaf)
-![Java Version](https://img.shields.io/badge/21-java?label=java&color=007fff)
+![Java Version](https://img.shields.io/badge/21-java?label=java&color=e6c35c)
 
 ![com.io7m.jwheatsheaf](./src/site/resources/jwheatsheaf.jpg?raw=true)
 
