@@ -2,15 +2,7 @@
 
 <div xmlns="http://www.w3.org/1999/xhtml">
   <h3>User documentation</h3>
-
   <p>
     See the <a href="https://www.github.com/io7m-com/jwheatsheaf/blob/develop/README.md">README.md</a> for documentation.
   </p>
-
-  <h4>JavaDoc</h4>
-
-  <p>
-    See the <a href="documentation/apidocs/index.html">JavaDoc</a> for more information.
-  </p>
-
 </div>

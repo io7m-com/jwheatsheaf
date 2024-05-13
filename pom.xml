@@ -26,7 +26,6 @@
 
   <modules>
     <module>com.io7m.jwheatsheaf.api</module>
-    <module>com.io7m.jwheatsheaf.documentation</module>
     <module>com.io7m.jwheatsheaf.examples</module>
     <module>com.io7m.jwheatsheaf.filter.glob</module>
     <module>com.io7m.jwheatsheaf.oxygen</module>
@@ -35,12 +34,17 @@
   </modules>
 
   <properties>
-    <com.io7m.immutables.version>2.10.0</com.io7m.immutables.version>
-    <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
+    <!-- Configuration. -->
     <io7m.api.previousVersion>4.0.0-SNAPSHOT</io7m.api.previousVersion>
     <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
+
+    <!-- io7m dependencies. -->
+    <com.io7m.immutables.version>2.10.0</com.io7m.immutables.version>
+    <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
+
+    <!-- Third-party dependencies. -->
     <javafx.version>21.0.1</javafx.version>
-    <junit.version>5.10.1</junit.version>
+    <org.junit.version>5.10.1</org.junit.version>
   </properties>
 
   <licenses>
@@ -95,21 +99,33 @@
 
   <ciManagement>
     <system>GitHub Actions</system>
-    <url>https://github.com/jwheatsheaf/actions</url>
+    <url>https://www.github.com/io7m-com/jwheatsheaf/actions</url>
   </ciManagement>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation.bundle</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation.versioning</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+
       <dependency>
         <groupId>org.immutables</groupId>
         <artifactId>value</artifactId>
         <version>${com.io7m.immutables.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.io7m.immutables.style</groupId>
-        <artifactId>com.io7m.immutables.style</artifactId>
-        <version>0.0.1</version>
+        <groupId>com.io7m.immutables-style</groupId>
+        <artifactId>com.io7m.immutables-style</artifactId>
+        <version>1.0.0</version>
       </dependency>
+
       <dependency>
         <groupId>com.io7m.jaffirm</groupId>
         <artifactId>com.io7m.jaffirm.core</artifactId>
@@ -120,6 +136,7 @@
         <artifactId>com.io7m.junreachable.core</artifactId>
         <version>4.0.0</version>
       </dependency>
+
       <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-fxml</artifactId>
@@ -140,16 +157,7 @@
         <artifactId>javafx-swing</artifactId>
         <version>${javafx.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.annotation.bundle</artifactId>
-        <version>2.0.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.annotation.versioning</artifactId>
-        <version>1.1.2</version>
-      </dependency>
+
       <dependency>
         <groupId>org.quicktheories</groupId>
         <artifactId>quicktheories</artifactId>
@@ -175,15 +183,14 @@
         <artifactId>logback-classic</artifactId>
         <version>1.4.14</version>
       </dependency>
+
+      <!-- Test suite. -->
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.version}</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${org.junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
@@ -196,14 +203,9 @@
         <version>2.7.0</version>
       </dependency>
       <dependency>
-        <groupId>com.io7m.primogenitor</groupId>
-        <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>8.2.0</version>
-      </dependency>
-      <dependency>
         <groupId>com.io7m.percentpass</groupId>
         <artifactId>com.io7m.percentpass.extension</artifactId>
-        <version>0.0.3</version>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.xoanon</groupId>
