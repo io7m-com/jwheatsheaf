@@ -43,7 +43,7 @@
     <com.io7m.xoanon.version>1.0.0-beta0001</com.io7m.xoanon.version>
 
     <!-- Third-party dependencies. -->
-    <javafx.version>21.0.1</javafx.version>
+    <javafx.version>21.0.3</javafx.version>
     <org.junit.version>5.10.1</org.junit.version>
   </properties>
 
