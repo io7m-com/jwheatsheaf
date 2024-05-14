@@ -5,10 +5,10 @@
 #  Workflow profile: ScreenRecorded
 #
 
-name: main.windows.temurin.current
+name: pr.windows.temurin.lts
 
 on:
-  push:
+  pull_request:
     branches: [ develop, feature/*, release/* ]
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
       - name: JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 22
+          java-version: 21
           distribution: 'temurin'
 
       - name: Collect project version

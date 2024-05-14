@@ -1,4 +1,9 @@
 #!/bin/bash -ex
+#
+#  Automatically generated: DO NOT EDIT.
+#
+#  Generation code: https://www.github.com/io7m-com/.github/
+#
 
 exec > >(tee build.txt) 2>&1
 
@@ -42,7 +47,7 @@ sleep 1
 # Set a desktop image.
 #
 
-feh --bg-tile .github/workflows/wallpaper.jpg
+feh --bg-tile .github/workflows/wallpaper.png
 sleep 1
 
 #---------------------------------------------------------------------

@@ -1,32 +1,54 @@
+#
+#  Automatically generated: DO NOT EDIT.
+#
+#  Generation code: https://www.github.com/io7m-com/.github/
+#  Workflow profile: ScreenRecorded
+#
+
 name: main.linux.temurin.current
 
 on:
   push:
     branches: [ develop, feature/*, release/* ]
-  pull_request:
-    branches: [ develop ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - name: JDK
         uses: actions/setup-java@v4
         with:
           java-version: 22
           distribution: 'temurin'
+
+      - name: Collect project version
+        id: project_version
+        run: java .github/workflows/Tools.java ShowProjectVersion pom.xml >> "$GITHUB_OUTPUT"
+
+      - name: Collect project snapshot
+        id: project_is_snapshot
+        run: java .github/workflows/Tools.java ShowProjectIsSnapshot pom.xml >> "$GITHUB_OUTPUT"
+
       - name: Build
-        run: ./.github/workflows/run-with-xvfb.sh mvn --errors clean verify site
+        run: ./.github/workflows/run-with-xvfb.sh mvn --batch-mode --strict-checksums --errors clean verify site
+
       - name: Upload video
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-video
           path: test-suite.webm
+
       - name: Upload test logs
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-logs
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
+
+
+
