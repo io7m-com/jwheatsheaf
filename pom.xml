@@ -44,7 +44,7 @@
 
     <!-- Third-party dependencies. -->
     <javafx.version>21.0.3</javafx.version>
-    <org.junit.version>5.10.1</org.junit.version>
+    <org.junit.version>5.10.2</org.junit.version>
   </properties>
 
   <licenses>
