@@ -33,6 +33,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributeView;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.spi.FileSystemProvider;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -85,9 +86,9 @@ public final class JWTestFilesystems
       .thenReturn(path);
 
     Mockito.when(provider.readAttributes(
-      path,
-      BasicFileAttributes.class,
-      LinkOption.NOFOLLOW_LINKS))
+        path,
+        BasicFileAttributes.class,
+        LinkOption.NOFOLLOW_LINKS))
       .thenReturn(attributes);
     Mockito.when(provider.readAttributes(path, BasicFileAttributes.class))
       .thenReturn(attributes);
@@ -125,9 +126,9 @@ public final class JWTestFilesystems
       .thenReturn(path);
 
     Mockito.when(provider.readAttributes(
-      path,
-      BasicFileAttributes.class,
-      LinkOption.NOFOLLOW_LINKS))
+        path,
+        BasicFileAttributes.class,
+        LinkOption.NOFOLLOW_LINKS))
       .thenReturn(attributes);
     Mockito.when(provider.readAttributes(path, BasicFileAttributes.class))
       .thenReturn(attributes);
@@ -140,7 +141,7 @@ public final class JWTestFilesystems
   private static FileSystem createDosFilesystem()
     throws IOException
   {
-    final FileSystem filesystem =
+    final var filesystem =
       MemoryFileSystemBuilder.newEmpty()
         .addRoot("Z:\\")
         .setSeparator("\\")
@@ -179,13 +180,39 @@ public final class JWTestFilesystems
         })
         .build();
 
-    Files.createDirectories(filesystem.getPath("Z:\\HOME"));
+    final var home = filesystem.getPath("Z:\\HOME");
+    Files.createDirectories(home);
     Files.writeString(filesystem.getPath("Z:\\HOME", "FILE.TXT"), "FILE!");
-    Files.createDirectories(filesystem.getPath("DOC"));
-    Files.writeString(filesystem.getPath("README.TXT"), "HELLO!");
-    Files.writeString(filesystem.getPath("DATA.XML"), "Some data.");
-    Files.writeString(filesystem.getPath("PHOTO.JPG"), "☺");
+
+    final var doc = filesystem.getPath("DOC");
+    Files.createDirectories(doc);
+    Files.setLastModifiedTime(doc, fileTimeOfYear(2002));
+
+    final var readme = filesystem.getPath("README.TXT");
+    Files.writeString(readme, "HELLO!");
+    Files.setLastModifiedTime(readme, fileTimeOfYear(2003));
+
+    final var data = filesystem.getPath("DATA.XML");
+    Files.writeString(data, "Some data.");
+    Files.setLastModifiedTime(data, fileTimeOfYear(2004));
+
+    final var photo = filesystem.getPath("PHOTO.JPG");
+    Files.writeString(photo, "☺");
+    Files.setLastModifiedTime(photo, fileTimeOfYear(2005));
+
+    final var dot = filesystem.getPath(".");
+    Files.setLastModifiedTime(dot, fileTimeOfYear(2001));
     return filesystem;
+  }
+
+  private static FileTime fileTimeOfYear(
+    final int year)
+  {
+    return FileTime.from(
+      Instant.parse(
+        "%d-01-01T00:00:00+00:00".formatted(Integer.valueOf(year))
+      )
+    );
   }
 
   public Map<String, FileSystem> filesystems()
