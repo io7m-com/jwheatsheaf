@@ -192,7 +192,8 @@ public final class JWFileChoosers implements JWFileChoosersType
       final var dialog = new Stage(DECORATED);
       dialog.setScene(new Scene(pane));
       dialog.initModality(configuration.modality());
-
+      dialog.setWidth(800.0);
+      dialog.setHeight(600.0);
 
       /*
        * Configure the title for the dialog.
