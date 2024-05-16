@@ -118,7 +118,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-05-15T20:44:54+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+    <c:release date="2024-05-16T10:06:36+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
       <c:changes>
         <c:change compatible="false" date="2022-02-13T00:00:00+00:00" summary="Require JDK 17"/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-controls 19 → 20."/>
@@ -155,7 +155,8 @@
         <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-fxml:21.0.3 → 22.0.1"/>
         <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-graphics:21.0.3 → 22.0.1"/>
         <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-swing:21.0.3 → 22.0.1"/>
-        <c:change date="2024-05-15T20:44:54+00:00" summary="Update com.io7m.xoanon:com.io7m.xoanon.extension:1.0.0 → 1.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.io7m.xoanon:com.io7m.xoanon.extension:1.0.0 → 1.0.1"/>
+        <c:change compatible="false" date="2024-05-16T10:06:36+00:00" summary="Require JDK 21."/>
       </c:changes>
     </c:release>
   </c:releases>
