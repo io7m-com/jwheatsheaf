@@ -19,7 +19,7 @@
  */
 
 @Export
-@Version("4.0.0")
+@Version("4.0.1")
 package com.io7m.jwheatsheaf.api;
 
 import org.osgi.annotation.bundle.Export;
