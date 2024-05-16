@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.jwheatsheaf</artifactId>
     <groupId>com.io7m.jwheatsheaf</groupId>
-    <version>4.0.0-beta0001</version>
+    <version>4.0.0</version>
   </parent>
 
   <artifactId>com.io7m.jwheatsheaf.filter.glob</artifactId>
@@ -45,8 +45,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.io7m.immutables.style</groupId>
-      <artifactId>com.io7m.immutables.style</artifactId>
+      <groupId>com.io7m.immutables-style</groupId>
+      <artifactId>com.io7m.immutables-style</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

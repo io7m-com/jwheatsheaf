@@ -1,35 +1,72 @@
+#
+#  Automatically generated: DO NOT EDIT.
+#
+#  Generation code: https://www.github.com/io7m-com/.github/
+#  Workflow profile: ScreenRecorded
+#
+
 name: main.linux.temurin.lts
 
 on:
   push:
     branches: [ develop, feature/*, release/* ]
-  pull_request:
-    branches: [ develop ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: JDK
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v4
         with:
-          java-version: 17
+          submodules: true
+
+      - name: JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Collect project version
+        id: project_version
+        run: java .github/workflows/Tools.java ShowProjectVersion pom.xml >> "$GITHUB_OUTPUT"
+
+      - name: Collect project snapshot
+        id: project_is_snapshot
+        run: java .github/workflows/Tools.java ShowProjectIsSnapshot pom.xml >> "$GITHUB_OUTPUT"
+
       - name: Build
-        run: ./.github/workflows/run-with-xvfb.sh mvn --errors clean verify site
+        run: ./.github/workflows/run-with-xvfb.sh mvn --batch-mode --strict-checksums --errors clean verify site
+
       - name: Upload video
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-video
           path: test-suite.webm
+
       - name: Upload test logs
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-logs
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
+
       - name: Coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4.4.0
         with:
-          file: com.io7m.jwheatsheaf.tests/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: com.io7m.jwheatsheaf.tests/target/site/jacoco-aggregate/jacoco.xml
+
+      - name: Log in to Quay.io.
+        uses: redhat-actions/podman-login@v1.7
+        with:
+          username: ${{ secrets.QUAY_IO_USERNAME }}
+          password: ${{ secrets.QUAY_IO_PASSWORD }}
+          registry: 'quay.io'
+
+      - name: Deploy snapshot
+        if: ${{ steps.project_is_snapshot.outputs.IO7M_PROJECT_VERSION_IS_SNAPSHOT == 'true' }}
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: .github/workflows/deploy-snapshot.sh
+

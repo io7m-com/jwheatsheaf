@@ -95,17 +95,11 @@ public final class JWFileChoosers implements JWFileChoosersType
   public static JWFileChoosersType create()
   {
     final var executor =
-      Executors.newSingleThreadExecutor(runnable -> {
-        final var thread = new Thread(runnable);
-        thread.setDaemon(true);
-        thread.setName(
-          String.format(
-            "com.io7m.jwheatsheaf.ui.io[%d]",
-            Long.valueOf(thread.getId())
-          )
-        );
-        return thread;
-      });
+      Executors.newThreadPerTaskExecutor(
+        Thread.ofVirtual()
+          .name("com.io7m.jwheatsheaf.ui.io", 0L)
+          .factory()
+      );
 
     return createWith(executor, Locale.getDefault());
   }
@@ -198,7 +192,8 @@ public final class JWFileChoosers implements JWFileChoosersType
       final var dialog = new Stage(DECORATED);
       dialog.setScene(new Scene(pane));
       dialog.initModality(configuration.modality());
-
+      dialog.setWidth(800.0);
+      dialog.setHeight(600.0);
 
       /*
        * Configure the title for the dialog.

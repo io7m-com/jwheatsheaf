@@ -1,19 +1,47 @@
+#
+#  Automatically generated: DO NOT EDIT.
+#
+#  Generation code: https://www.github.com/io7m-com/.github/
+#  Workflow profile: ScreenRecorded
+#
+
 name: main.windows.temurin.lts
 
 on:
   push:
     branches: [ develop, feature/*, release/* ]
-  pull_request:
-    branches: [ develop ]
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: JDK
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v4
         with:
-          java-version: 17
+          submodules: true
+
+      - name: JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Collect project version
+        id: project_version
+        run: java .github/workflows/Tools.java ShowProjectVersion pom.xml >> "$GITHUB_OUTPUT"
+
+      - name: Collect project snapshot
+        id: project_is_snapshot
+        run: java .github/workflows/Tools.java ShowProjectIsSnapshot pom.xml >> "$GITHUB_OUTPUT"
+
       - name: Build
-        run: mvn -DskipTests=true --errors clean verify site
+        run: mvn --batch-mode --strict-checksums --errors clean verify site
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-logs
+          path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
+
+
+

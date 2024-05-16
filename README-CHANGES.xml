@@ -118,9 +118,14 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2023-05-26T10:50:34+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+    <c:release date="2024-05-16T10:07:30+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
       <c:changes>
         <c:change compatible="false" date="2022-02-13T00:00:00+00:00" summary="Require JDK 17"/>
+        <c:change date="2022-02-13T00:00:00+00:00" summary="Fix a silently failing OK button">
+          <c:tickets>
+            <c:ticket id="34"/>
+          </c:tickets>
+        </c:change>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-controls 19 → 20."/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-fxml 19 → 20."/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.openjfx:javafx-graphics 19 → 20."/>
@@ -132,21 +137,31 @@
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update ch.qos.logback:logback-classic 1.4.5 → 1.4.6."/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update org.mockito:mockito-core 4.10.0 → 5.3.0."/>
         <c:change date="2023-04-17T00:00:00+00:00" summary="Update com.github.marschall:memoryfilesystem 2.4.0 → 2.5.0."/>
-        <c:change date="2022-02-13T00:00:00+00:00" summary="Fix a silently failing OK button">
-          <c:tickets>
-            <c:ticket id="34"/>
-          </c:tickets>
-        </c:change>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update com.github.marschall:memoryfilesystem 2.6.0 → 2.6.1."/>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update com.io7m.primogenitor:com.io7m.primogenitor.support 7.5.0 → 7.7.0."/>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.9.2 → 5.9.3."/>
         <c:change date="2023-05-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.9.2 → 5.9.3."/>
         <c:change date="2023-05-25T00:00:00+00:00" summary="Refactored test suite to use xoanon instead of TestFX."/>
-        <c:change compatible="false" date="2023-05-26T10:50:34+00:00" summary="File choosers no longer require a Stage argument."/>
+        <c:change compatible="false" date="2023-05-26T00:00:00+00:00" summary="File choosers no longer require a Stage argument."/>
+        <c:change date="2024-05-13T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.8.0 → 5.12.0."/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.io7m.jaffirm:com.io7m.jaffirm.core:4.0.0 → 4.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.io7m.junreachable:com.io7m.junreachable.core:4.0.0 → 4.0.2"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update nl.jqno.equalsverifier:equalsverifier:3.15.5 → 3.16.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.slf4j:slf4j-api:2.0.10 → 2.0.13"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update ch.qos.logback:logback-classic:1.4.14 → 1.5.6"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.github.marschall:memoryfilesystem:2.7.0 → 2.8.0"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.junit:junit-bom:5.10.1 → 5.10.2"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.immutables:value:2.10.0 → 2.10.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-controls:21.0.3 → 22.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-fxml:21.0.3 → 22.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-graphics:21.0.3 → 22.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-swing:21.0.3 → 22.0.1"/>
+        <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.io7m.xoanon:com.io7m.xoanon.extension:1.0.0 → 1.0.1"/>
+        <c:change compatible="false" date="2024-05-16T00:00:00+00:00" summary="Require JDK 21."/>
       </c:changes>
     </c:release>
   </c:releases>
   <c:ticket-systems>
-    <c:ticket-system default="true" id="com.github.io7m.jwheatsheaf" url="https://www.github.com/io7m/jwheatsheaf/issues/"/>
+    <c:ticket-system default="true" id="com.github.io7m.jwheatsheaf" url="https://www.github.com/io7m-com/jwheatsheaf/issues/"/>
   </c:ticket-systems>
 </c:changelog>

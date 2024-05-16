@@ -17,7 +17,6 @@
 package com.io7m.jwheatsheaf.ui.internal;
 
 import com.io7m.jaffirm.core.Preconditions;
-import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.jwheatsheaf.api.JWDirectoryCreationFailed;
 import com.io7m.jwheatsheaf.api.JWFileChooserConfiguration;
 import com.io7m.jwheatsheaf.api.JWFileChooserEventType;
@@ -656,25 +655,22 @@ public final class JWFileChooserViewController
 
     this.result = List.of();
 
-    var resultTarget = List.<Path>of();
-    switch (this.configuration.action()) {
-      case OPEN_EXISTING_MULTIPLE:
-      case OPEN_EXISTING_SINGLE:
-        resultTarget =
-          this.directoryTableSelectionModel
+    final var resultTarget =
+      switch (this.configuration.action()) {
+        case OPEN_EXISTING_MULTIPLE, OPEN_EXISTING_SINGLE -> {
+          yield this.directoryTableSelectionModel
             .getSelectedItems()
             .stream()
             .map(JWFileItem::path)
             .collect(Collectors.toList());
-        break;
-      case CREATE:
-        resultTarget =
-          List.of(this.currentDirectory.resolve(this.fileName.getText()));
-        break;
-    }
+        }
+        case CREATE -> {
+          yield List.of(this.currentDirectory.resolve(this.fileName.getText()));
+        }
+      };
 
     final boolean confirmed;
-    if (this.isFileSelectionConfirmationRequired()) {
+    if (this.isFileSelectionConfirmationRequired(resultTarget)) {
       confirmed = this.confirmFileSelection(resultTarget);
     } else {
       confirmed = true;
@@ -749,17 +745,29 @@ public final class JWFileChooserViewController
       .anyMatch(b -> Objects.equals(b, confirm));
   }
 
-  private boolean isFileSelectionConfirmationRequired()
-  {
-    switch (this.configuration.action()) {
-      case OPEN_EXISTING_SINGLE:
-      case OPEN_EXISTING_MULTIPLE:
-        return false;
-      case CREATE:
-        return this.configuration.confirmFileSelection();
-    }
+  /**
+   * File selection confirmation is only required if confirmation is enabled
+   * and any of the selected files exist.
+   *
+   * @param files The selected files
+   *
+   * @return {@code true} if a confirmation dialog must be displayed
+   */
 
-    throw new UnreachableCodeException();
+  private boolean isFileSelectionConfirmationRequired(
+    final List<Path> files)
+  {
+    return switch (this.configuration.action()) {
+      case OPEN_EXISTING_SINGLE, OPEN_EXISTING_MULTIPLE -> false;
+      case CREATE -> {
+        if (this.configuration.confirmFileSelection()) {
+          yield files.stream().anyMatch(Files::exists);
+        } else {
+          yield false;
+        }
+      }
+    };
+
   }
 
   @FXML

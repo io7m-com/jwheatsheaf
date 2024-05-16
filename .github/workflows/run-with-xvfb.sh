@@ -1,4 +1,9 @@
 #!/bin/bash -ex
+#
+#  Automatically generated: DO NOT EDIT.
+#
+#  Generation code: https://www.github.com/io7m-com/.github/
+#
 
 exec > >(tee build.txt) 2>&1
 
@@ -25,6 +30,13 @@ export DISPLAY=:99
 sleep 1
 
 #---------------------------------------------------------------------
+# Start recording the session.
+#
+
+ffmpeg -f x11grab -y -r 60 -video_size 1280x1024 -i :99 -vcodec vp9 test-suite.webm &
+FFMPEG_PID="$!"
+
+#---------------------------------------------------------------------
 # Start fluxbox on the X server.
 #
 
@@ -35,15 +47,8 @@ sleep 1
 # Set a desktop image.
 #
 
-feh --bg-tile .github/workflows/wallpaper.jpg
+feh --bg-tile .github/workflows/wallpaper.png
 sleep 1
-
-#---------------------------------------------------------------------
-# Start recording the session.
-#
-
-ffmpeg -f x11grab -y -r 60 -video_size 1280x1024 -i :99 test-suite.webm &
-FFMPEG_PID="$!"
 
 #---------------------------------------------------------------------
 # Execute the passed-in build command.
@@ -58,4 +63,4 @@ FFMPEG_PID="$!"
 #
 
 sleep 20
-kill -INT "${FFMPEG_PID}"
+kill -INT "${FFMPEG_PID}" || true
