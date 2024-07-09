@@ -40,10 +40,10 @@
 
     <!-- io7m dependencies. -->
     <com.io7m.immutables.version>2.10.1</com.io7m.immutables.version>
-    <com.io7m.xoanon.version>1.0.1</com.io7m.xoanon.version>
+    <com.io7m.xoanon.version>2.0.0</com.io7m.xoanon.version>
 
     <!-- Third-party dependencies. -->
-    <javafx.version>22.0.1</javafx.version>
+    <javafx.version>23-ea+22</javafx.version>
     <org.junit.version>5.10.3</org.junit.version>
   </properties>
 

@@ -118,7 +118,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-05-16T10:07:30+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
+    <c:release date="2024-05-16T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.0">
       <c:changes>
         <c:change compatible="false" date="2022-02-13T00:00:00+00:00" summary="Require JDK 17"/>
         <c:change date="2022-02-13T00:00:00+00:00" summary="Fix a silently failing OK button">
@@ -158,6 +158,12 @@
         <c:change date="2024-05-15T00:00:00+00:00" summary="Update org.openjfx:javafx-swing:21.0.3 → 22.0.1"/>
         <c:change date="2024-05-15T00:00:00+00:00" summary="Update com.io7m.xoanon:com.io7m.xoanon.extension:1.0.0 → 1.0.1"/>
         <c:change compatible="false" date="2024-05-16T00:00:00+00:00" summary="Require JDK 21."/>
+      </c:changes>
+    </c:release>
+    <c:release date="2024-07-09T12:14:47+00:00" is-open="true" ticket-system="com.github.io7m.jwheatsheaf" version="4.0.1">
+      <c:changes>
+        <c:change date="2024-07-09T00:00:00+00:00" summary="Update com.io7m.xoanon:com.io7m.xoanon:1.0.1 → 2.0.0"/>
+        <c:change date="2024-07-09T12:14:47+00:00" summary="Switch to using development versions of JavaFX, but not exposing them as a transitive dependency."/>
       </c:changes>
     </c:release>
   </c:releases>
