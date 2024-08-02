@@ -33,6 +33,7 @@ jobs:
         id: project_is_snapshot
         run: java .github/workflows/Tools.java ShowProjectIsSnapshot pom.xml >> "$GITHUB_OUTPUT"
 
+
       - name: Build
         env:
           XOANON_REALLY_USE_LOCAL_DISPLAY: true
