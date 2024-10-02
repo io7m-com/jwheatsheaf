@@ -54,7 +54,7 @@ jobs:
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
 
       - name: Coverage
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: com.io7m.jwheatsheaf.tests/target/site/jacoco-aggregate/jacoco.xml
