@@ -9,7 +9,7 @@ name: main.linux.temurin.current
 
 on:
   push:
-    branches: [ develop, feature/*, release/* ]
+    branches: [ master, main, develop, feature/*, release/* ]
 
 jobs:
   build:

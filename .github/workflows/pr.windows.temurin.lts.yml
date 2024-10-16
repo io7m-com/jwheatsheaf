@@ -9,7 +9,7 @@ name: pr.windows.temurin.lts
 
 on:
   pull_request:
-    branches: [ develop, feature/*, release/* ]
+    branches: [ master, main, develop, feature/*, release/* ]
 
 jobs:
   build:
