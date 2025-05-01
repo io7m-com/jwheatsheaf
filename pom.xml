@@ -43,7 +43,7 @@
     <com.io7m.xoanon.version>2.0.0</com.io7m.xoanon.version>
 
     <!-- Third-party dependencies. -->
-    <javafx.version>23-ea+22</javafx.version>
+    <javafx.version>23.0.2</javafx.version>
     <org.junit.version>5.12.1</org.junit.version>
   </properties>
 
