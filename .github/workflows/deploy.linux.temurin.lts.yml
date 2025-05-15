@@ -11,6 +11,9 @@ on:
   push:
     tags: [ com.io7m.jwheatsheaf-* ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,7 +37,7 @@ jobs:
         run: echo "${PGP_SIGNING_KEY}" | gpg -v --import
 
       - name: Log in to Quay.io.
-        uses: redhat-actions/podman-login@v1.7
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603
         with:
           username: ${{ secrets.QUAY_IO_USERNAME }}
           password: ${{ secrets.QUAY_IO_PASSWORD }}

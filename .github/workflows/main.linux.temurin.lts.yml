@@ -11,6 +11,9 @@ on:
   push:
     branches: [ master, main, develop, feature/*, release/* ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -54,13 +57,13 @@ jobs:
           path: ./com.io7m.jwheatsheaf.tests/target/surefire-reports
 
       - name: Coverage
-        uses: codecov/codecov-action@v5.4.2
+        uses: codecov/codecov-action@525fcbf8a05e5933b1ef3c7885da8fd1d7231920
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: com.io7m.jwheatsheaf.tests/target/site/jacoco-aggregate/jacoco.xml
 
       - name: Log in to Quay.io.
-        uses: redhat-actions/podman-login@v1.7
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603
         with:
           username: ${{ secrets.QUAY_IO_USERNAME }}
           password: ${{ secrets.QUAY_IO_PASSWORD }}
