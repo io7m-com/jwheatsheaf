@@ -1,6 +1,5 @@
 
-
-# jwheatsheaf
+## jwheatsheaf
 
 An alternative to JavaFX's FileChooser that aims to be feature-compatible,
 if not fully API-compatible.
@@ -251,7 +250,7 @@ final var configuration =
     .build();
 ```
 
-<h4><a id="css-styling" href="#css-styling">Styling</a></h4>
+#### Styling
 
 The `jwheatsheaf` file chooser is styleable via CSS. By default, the file chooser applies
 no styling and uses whatever is the default for the application. A custom stylesheet and icon set

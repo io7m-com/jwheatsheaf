@@ -15,8 +15,7 @@ jwheatsheaf
 | OpenJDK (Temurin) Current | Windows | [![Build (OpenJDK (Temurin) Current, Windows)](https://img.shields.io/github/actions/workflow/status/io7m-com/jwheatsheaf/main.windows.temurin.current.yml)](https://www.github.com/io7m-com/jwheatsheaf/actions?query=workflow%3Amain.windows.temurin.current)|
 | OpenJDK (Temurin) LTS | Windows | [![Build (OpenJDK (Temurin) LTS, Windows)](https://img.shields.io/github/actions/workflow/status/io7m-com/jwheatsheaf/main.windows.temurin.lts.yml)](https://www.github.com/io7m-com/jwheatsheaf/actions?query=workflow%3Amain.windows.temurin.lts)|
 
-
-# jwheatsheaf
+## jwheatsheaf
 
 An alternative to JavaFX's FileChooser that aims to be feature-compatible,
 if not fully API-compatible.
@@ -267,7 +266,7 @@ final var configuration =
     .build();
 ```
 
-<h4><a id="css-styling" href="#css-styling">Styling</a></h4>
+#### Styling
 
 The `jwheatsheaf` file chooser is styleable via CSS. By default, the file chooser applies
 no styling and uses whatever is the default for the application. A custom stylesheet and icon set
