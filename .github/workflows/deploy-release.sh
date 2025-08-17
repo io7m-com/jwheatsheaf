@@ -45,12 +45,7 @@ fi
 
   <servers>
     <server>
-      <id>sonatype-nexus-snapshots</id>
-      <username>${MAVEN_CENTRAL_USERNAME}</username>
-      <password>${MAVEN_CENTRAL_PASSWORD}</password>
-    </server>
-    <server>
-      <id>sonatype-nexus-staging</id>
+      <id>central</id>
       <username>${MAVEN_CENTRAL_USERNAME}</username>
       <password>${MAVEN_CENTRAL_PASSWORD}</password>
     </server>
