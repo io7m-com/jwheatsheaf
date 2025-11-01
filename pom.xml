@@ -39,7 +39,7 @@
     <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
-    <com.io7m.immutables.version>2.11.4</com.io7m.immutables.version>
+    <com.io7m.immutables.version>2.11.6</com.io7m.immutables.version>
     <com.io7m.xoanon.version>2.0.0</com.io7m.xoanon.version>
 
     <!-- Third-party dependencies. -->
