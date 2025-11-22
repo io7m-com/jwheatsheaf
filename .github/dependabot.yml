@@ -6,11 +6,15 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 21
 
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 21
 
     target-branch: "develop"
     ignore:
