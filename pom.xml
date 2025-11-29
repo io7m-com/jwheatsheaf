@@ -9,7 +9,7 @@
 
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
-    <artifactId>com.io7m.primogenitor.full</artifactId>
+    <artifactId>com.io7m.primogenitor.lite</artifactId>
     <version>9.1.0</version>
   </parent>
 
@@ -236,13 +236,6 @@
             </dependency>
           </annotationProcessorPaths>
         </configuration>
-      </plugin>
-
-      <!-- Generate a site -->
-      <plugin>
-        <groupId>com.io7m.minisite</groupId>
-        <artifactId>com.io7m.minisite.maven_plugin</artifactId>
-        <inherited>false</inherited>
       </plugin>
     </plugins>
   </build>
