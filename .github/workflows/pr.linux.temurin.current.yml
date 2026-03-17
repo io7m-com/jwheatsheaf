@@ -14,6 +14,9 @@ on:
 permissions:
   contents: read
 
+env:
+  NO_VULKAN_DEVICE_TESTS: false
+
 jobs:
   build:
     name: Build
