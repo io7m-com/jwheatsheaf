@@ -1,4 +1,17 @@
 
+## Repository Relocation
+
+Development of this project has moved to an
+[open-source but not open-contribution](https://sqlite.org/copyright.html#notopencontrib)
+model.
+
+Source code and commits will remain publicly available perpetually, but issues
+and/or pull requests will be rejected and/or ignored. Additionally, this project
+will now only be available via a read-only mirror at:
+
+  https://codeberg.org/io7m-com/jwheatsheaf
+
+
 ## jwheatsheaf
 
 An alternative to JavaFX's FileChooser that aims to be feature-compatible,
